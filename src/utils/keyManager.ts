@@ -18,6 +18,6 @@ export class KeyManager {
     }
     static getButton(key: KeyName): Phaser.Input.Keyboard.Key{
         if(this.keys[key]) return this.keys[key];
-        throw new Error('指定されたキーが見つかりません : ' + key);
+        throw new Error(`キー ${key} が見つかりません`);
     }
 }

@@ -1,6 +1,5 @@
 import "phaser";
 import { TitleScene } from "./scenes/titleScene";
-import { SceneManager } from "./utils/sceneManager";
 
 export class Game extends Phaser.Game{
     constructor(config: Phaser.Types.Core.GameConfig){
