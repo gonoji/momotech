@@ -1,19 +1,14 @@
-import { KeyManager } from '../utils/keymanager';
-import { SceneManager } from '../utils/sceneManager';
-import { TitleScene } from './titleScene';
+import { KeyManager } from "../utils/keymanager";
+import { SceneManager } from "../utils/sceneManager";
+import { TitleScene } from "./titleScene";
 
 export class TestScene extends Phaser.Scene {
-    constructor() {
+    constructor(){
         super({ key: 'TestScene' });
     }
 
-    init():void{
-        console.log('init : testScene');
-        KeyManager.init(this);
-        KeyManager.replaceKey('DOWN', 'S');
-        KeyManager.replaceKey('UP', 'W');
-        KeyManager.replaceKey('LEFT', 'A');
-        KeyManager.replaceKey('RIGHT', 'D');
+    init(){
+        SceneManager.init(this);
     }
     //本来はこのメソッドで、画像ファイルなどのロード
     preload(){
@@ -31,9 +26,7 @@ export class TestScene extends Phaser.Scene {
         this.startText = this.add.text(parseInt(this.game.config.width.toString())/2, parseInt(this.game.config.height.toString())/2, ('Test' + TestScene.num++), this.fontStyle);
         this.startText.setOrigin(0.5);
         this.startText.setInteractive();
-        this.startText.on('pointerdown', () => {
-            SceneManager.set('TitleScene', TitleScene, this);
-        });
+        this.startText.on('pointerdown', () => SceneManager.start(TitleScene));
         
         this.ellipse = this.add.ellipse(0, 0, 100, 100, 0x00ff00);
     }
