@@ -1,14 +1,15 @@
-import { Scene } from "phaser";
+import { KeyManager } from "./keymanager";
 
 export class SceneManager {
-    public static start(sceneName:string, nowScene: Scene){
-        nowScene.scene.start(sceneName);
+    private static current: Phaser.Scene;
+    static init(scene: Phaser.Scene){
+        this.current = scene;
+        KeyManager.init(this.current);
     }
-    public static set(sceneName:string, scene: Function | Phaser.Scene, nowScene: Scene){
-        const nextScene = nowScene.scene.get(sceneName);
-        if(nextScene == null){
-            nowScene.scene.add(sceneName, scene, false);
+    static start(next: Function){
+        if(this.current.scene.get(next.name) == null){
+            this.current.scene.add(next.name, next);
         }
-        this.start(sceneName, nowScene);
+        this.current.scene.start(next.name);
     }
 }
