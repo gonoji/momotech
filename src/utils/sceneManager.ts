@@ -12,4 +12,7 @@ export class SceneManager {
         }
         this.current.scene.start(next.name);
     }
+    public static getCurrentScene():Phaser.Scene{
+        return SceneManager.current;
+    }
 }
