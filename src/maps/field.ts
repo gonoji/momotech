@@ -1,3 +1,4 @@
+import { SceneManager } from "../utils/sceneManager";
 import { Station } from "./station";
 
 export class Field{
