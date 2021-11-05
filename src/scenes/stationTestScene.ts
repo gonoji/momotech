@@ -10,7 +10,13 @@ export class StationTestScene extends Phaser.Scene {
     }
     field :Field;
     init(){
+        
         SceneManager.init(this);
+        
+        KeyManager.replaceKey('UP','W');
+        KeyManager.replaceKey('DOWN','S');
+        KeyManager.replaceKey('RIGHT','D');
+        KeyManager.replaceKey('LEFT','A');
         this.field = new Field();
     }
     //本来はこのメソッドで、画像ファイルなどのロード
