@@ -1,4 +1,4 @@
-import { KeyManager } from "./keymanager";
+import { KeyManager } from "./keyManager";
 
 export class SceneManager {
     private static current: Phaser.Scene;

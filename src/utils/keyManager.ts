@@ -3,20 +3,31 @@ type KeyName = typeof keyNames[number];
 
 export class KeyManager {
     static keys: { [key in KeyName]?: Phaser.Input.Keyboard.Key };
+    static counts: { [key in KeyName]?: number };
     static init(scene: Phaser.Scene){
         this.keys = {};
-        for(const key of keyNames) this.keys[key] = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[key]);
+        this.counts = {};
+        for(const key of keyNames){
+            this.keys[key] = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[key]);
+            this.counts[key] = 0;
+        }
     }
-    static isDown(key: KeyName){
-        return this.getButton(key).isDown;
+    static update(){
+        for(const key of keyNames){
+            if(this.pressed(key)) this.counts[key] ++;
+            else this.counts[key] = 0;
+        }
     }
-    static isUp(key: KeyName){
-        return this.getButton(key).isUp;
+    static pressed(key: KeyName){
+        return this.getKey(key).isDown;
+    }
+    static down(key: KeyName){
+        return this.counts[key] == 1;
     }
     static replaceKey(key1: KeyName, key2: KeyName){
         [this.keys[key1], this.keys[key2]] = [this.keys[key2], this.keys[key1]];
     }
-    static getButton(key: KeyName): Phaser.Input.Keyboard.Key{
+    static getKey(key: KeyName): Phaser.Input.Keyboard.Key{
         if(this.keys[key]) return this.keys[key];
         throw new Error(`キー ${key} が見つかりません`);
     }
