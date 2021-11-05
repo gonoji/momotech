@@ -1,6 +1,6 @@
-import { KeyManager } from "../utils/keymanager";
+import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
-import { TestScene } from "./testScene";
+import { GameScene } from "./gameScene";
 
 export class TitleScene extends Phaser.Scene {
     constructor(){
@@ -26,20 +26,20 @@ export class TitleScene extends Phaser.Scene {
 
         this.startText.setOrigin(0.5);
         this.startText.setInteractive();
-        this.startText.on('pointerdown', () => SceneManager.start(TestScene));
+        this.startText.on('pointerdown', () => SceneManager.start(GameScene));
         this.ellipse = this.add.ellipse(0, 0, 100, 100, 0x00ff00);
     }
     update(){
-        if(KeyManager.isDown('UP')){
+        if(KeyManager.pressed('UP')){
             this.ellipse.y -= 5;
         }
-        if(KeyManager.isDown('DOWN')){
+        if(KeyManager.pressed('DOWN')){
             this.ellipse.y += 5;
         }
-        if(KeyManager.isDown('RIGHT')){
+        if(KeyManager.pressed('RIGHT')){
             this.ellipse.x += 5;
         }
-        if(KeyManager.isDown('LEFT')){
+        if(KeyManager.pressed('LEFT')){
             this.ellipse.x -= 5;
         }
     }
