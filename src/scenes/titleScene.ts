@@ -1,6 +1,6 @@
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
-import { TestScene } from "./testScene";
+import { GameScene } from "./gameScene";
 
 export class TitleScene extends Phaser.Scene {
     constructor(){
@@ -26,7 +26,7 @@ export class TitleScene extends Phaser.Scene {
 
         this.startText.setOrigin(0.5);
         this.startText.setInteractive();
-        this.startText.on('pointerdown', () => SceneManager.start(TestScene));
+        this.startText.on('pointerdown', () => SceneManager.start(GameScene));
         this.ellipse = this.add.ellipse(0, 0, 100, 100, 0x00ff00);
     }
     update(){

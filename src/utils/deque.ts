@@ -37,4 +37,7 @@ export class Deque<T>{
     empty(){
         return this.fronts.length + this.backs.length == 0;
     }
+    print(){
+        console.log([...[...this.fronts].reverse(), ...this.backs]);
+    }
 }
