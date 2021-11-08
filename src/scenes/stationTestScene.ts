@@ -1,8 +1,11 @@
 import { Field } from "../maps/field";
 import { Station } from "../maps/station";
-import { KeyManager } from "../utils/keymanager";
+import { StationPlus } from "../maps/stations/stationPlus";
+import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { TitleScene } from "./titleScene";
+import { Event } from "../events/event"
+import { StationMinus } from "../maps/stations/stationMinus";
 
 export class StationTestScene extends Phaser.Scene {
     constructor(){
@@ -12,11 +15,11 @@ export class StationTestScene extends Phaser.Scene {
     init(){
         
         SceneManager.init(this);
-        
+        /*
         KeyManager.replaceKey('UP','W');
         KeyManager.replaceKey('DOWN','S');
         KeyManager.replaceKey('RIGHT','D');
-        KeyManager.replaceKey('LEFT','A');
+        KeyManager.replaceKey('LEFT','A');*/
         this.field = new Field();
     }
     //本来はこのメソッドで、画像ファイルなどのロード
@@ -24,6 +27,7 @@ export class StationTestScene extends Phaser.Scene {
         this.load.baseURL='static/';
         
 	    this.load.image('plus', 'images/masu_plus_128.png');
+	    this.load.image('minus', 'images/masu_minus_128.png');
         console.log('Hello Phaser');
     }
     private startText?: Phaser.GameObjects.Text; // 追加
@@ -36,28 +40,17 @@ export class StationTestScene extends Phaser.Scene {
         
         this.cameras.main.setBackgroundColor(this.bk_color);
         
-        this.startText = this.add.text(parseInt(this.game.config.width.toString())/2, parseInt(this.game.config.height.toString())/2, ('StationTest'), this.fontStyle);
-        this.startText.setOrigin(0.5);
-        this.startText.setInteractive();
-        this.startText.on('pointerdown', () => SceneManager.start(TitleScene));
-        
-        this.ellipse = this.add.ellipse(0, 0, 100, 100, 0x00ff00);
-
-        this.field.addStation(new Station(100,200));
+        let a=new StationPlus(1,1);
+        let b=new StationMinus(1,3);
+        this.field.addStation(a);
+        this.field.addStation(b);
+        a.addDownStation(b);
     }
     update(){
-        if(KeyManager.isDown('UP')){
-            this.ellipse.y -= 5;
-        }
-        if(KeyManager.isDown('DOWN')){
-            this.ellipse.y += 5;
-        }
-        if(KeyManager.isDown('LEFT')){
-            this.ellipse.x += 5;
-        }
-        if(KeyManager.isDown('RIGHT')){
-            this.ellipse.x -= 5;
-            //this.field.addStation(new Station(0,0));
+        KeyManager.update();
+        if(KeyManager.down('ESC')){
+            console.log("esc");
+            SceneManager.start(TitleScene);
         }
         this.field.update();
     }
