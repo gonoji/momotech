@@ -20,6 +20,8 @@ export class GameScene extends Phaser.Scene {
         this.load.baseURL = 'static/images/';
 	    this.load.image('plus', 'masu_plus_128.png');
 	    this.load.image('minus', 'masu_minus_128.png');
+        this.load.image('tate','road_tate.png');
+        this.load.image('yoko','road_yoko.png');
     }
     create(){
         this.cameras.main.setBackgroundColor('0xeeeeee');

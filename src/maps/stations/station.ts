@@ -4,7 +4,7 @@ import { SceneManager } from "../../utils/sceneManager";
 type stationType = 'plus' | 'minus';
 
 export abstract class Station{
-    static size: number = 100;
+    static size: number = 128;
     static count: number = 0;
 
     private id: number;
@@ -30,23 +30,13 @@ export abstract class Station{
         this.sprite.x = this.x * Station.size;
         this.sprite.y = this.y * Station.size;
     }
-    addUpStation(other: Station){
-        this.nexts.up = other;
-        other.nexts.down = this;
-    }
-
-    addDownStation(other: Station){
-        this.nexts.down = other;
-        other.nexts.up = this;
-    }
-
-    addLeftStation(other: Station){
-        this.nexts.left = other;
-        other.nexts.right = this;
-    }
     addRightStation(other: Station){
         this.nexts.right = other;
         other.nexts.left = this;
+    }
+    addDownStation(other: Station){
+        this.nexts.down = other;
+        other.nexts.up = this;
     }
 
     abstract event(): GameEvent;
