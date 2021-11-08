@@ -8,7 +8,7 @@ export interface Event{
 
     /**
      * イベントの処理
-     * @return イベントが終了しないとき `false`、終了するとき `true`、別のイベントに引き継ぐときはそのイベント
+     * @return イベントが終了しないとき `continues`、終了するとき `ends`、次のイベントに引き継ぐときはそのイベント
      */
     update(): 'continues' | 'ends' | Event;
 
