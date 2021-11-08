@@ -22,12 +22,11 @@ export class EventMessage implements GameEvent{
     init(){
 
         
-        /*
-        this.message = scene.add.text(x, y, this.text, {color: 'black', fontSize: '50px'})
+        
+        this.message = this.scene.add.text(this.x, this.y, '', {color: 'black', fontSize: '50px'})
             .setOrigin(0.5)
             .setPadding(0, 10, 0, 0)
             .setDepth(100);
-        */
         
         // 箱を作ろう
         this.box = this.scene.add.rectangle(this.x, this.y, 2*this.x, 2*this.y, 0x00ff00, 0.5)
@@ -41,20 +40,14 @@ export class EventMessage implements GameEvent{
     update(){
         let textOnScreen;
         if(this.nanmojime < this.text.length && !KeyManager.down('Z')){
-            this.nanmojime+=0.5;
+            this.nanmojime+=0.1;
             textOnScreen = this.text.substr(0, this.nanmojime); 
         }
         else{
             textOnScreen = this.text;
         }
-        if(KeyManager.down('X')){
-            this.message.destroy();
-        this.message = this.scene.add.text(this.x, this.y, textOnScreen, {color: 'black', fontSize: '50px'})
-            .setOrigin(0.5)
-            .setPadding(0, 10, 0, 0)
-            .setDepth(100);
-
-        } 
+        
+        this.message.setText(textOnScreen);
         
         
         
