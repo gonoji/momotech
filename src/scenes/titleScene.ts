@@ -22,7 +22,7 @@ export class TitleScene extends Phaser.Scene {
     private static num: integer = 0;
     create(){
         this.cameras.main.setBackgroundColor(this.bk_color);
-        this.startText = this.add.text(parseInt(this.game.config.width.toString())/2, parseInt(this.game.config.height.toString())/2, ('Titlepepepe' + TitleScene.num++), this.fontStyle);
+        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, ('Titlepepepe' + TitleScene.num++), this.fontStyle);
 
         this.startText.setOrigin(0.5);
         this.startText.setInteractive();

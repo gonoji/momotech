@@ -1,4 +1,5 @@
 import { KeyManager } from "../utils/keyManager";
+import { SceneManager } from "../utils/sceneManager";
 import { GameEvent } from "./event";
 import { EventManager } from "./eventManager";
 
@@ -16,9 +17,10 @@ export class EventDice implements GameEvent{
         this.rolls = true;
     }
     init(){
-        const x = Number(EventManager.scene.game.config.width.toString()) / 2;
-        const y = Number(EventManager.scene.game.config.height.toString()) / 2;
-        this.message = EventManager.scene.add.text(x, y, '', {color: 'black', fontSize: '50px'}).setOrigin(0.5).setPadding(0, 10, 0, 0);
+        this.message = EventManager.scene.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, '', {color: 'black', fontSize: '50px'})
+            .setOrigin(0.5)
+            .setPadding(0, 10, 0, 0)
+            .setDepth(100);
     }
     update(){
         if(this.rolls){

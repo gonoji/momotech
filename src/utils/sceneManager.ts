@@ -12,7 +12,13 @@ export class SceneManager {
         }
         this.current.scene.start(next.name);
     }
-    public static getCurrentScene():Phaser.Scene{
+    static get scene(){
         return SceneManager.current;
+    }
+    static get sceneWidth(){
+        return Number(this.current.game.config.width.toString());
+    }
+    static get sceneHeight(){
+        return Number(this.current.game.config.height.toString());
     }
 }

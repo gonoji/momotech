@@ -23,7 +23,7 @@ export class TestScene extends Phaser.Scene {
     create(){
         this.cameras.main.setBackgroundColor(this.bk_color);
         
-        this.startText = this.add.text(parseInt(this.game.config.width.toString())/2, parseInt(this.game.config.height.toString())/2, ('Test' + TestScene.num++), this.fontStyle);
+        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, 'Test' + TestScene.num++, this.fontStyle);
         this.startText.setOrigin(0.5);
         this.startText.setInteractive();
         this.startText.on('pointerdown', () => SceneManager.start(TitleScene));
