@@ -1,13 +1,12 @@
-import { TitleScene } from "../scenes/titleScene";
 import { Deque } from "../utils/deque";
 import { KeyManager } from "../utils/keyManager";
-import { Event } from "./event";
+import { GameEvent } from "./event";
 
 export class EventManager{
     static scene: Phaser.Scene;
-    private events: Deque<Event>;
-    constructor(event: Event){
-        this.events = new Deque<Event>();
+    private events: Deque<GameEvent>;
+    constructor(event: GameEvent){
+        this.events = new Deque<GameEvent>();
         this.push(event);
     }
     static init(scene: Phaser.Scene){
@@ -25,7 +24,7 @@ export class EventManager{
         if(next != 'ends') this.push(next);
         return this.events.empty() ? 'ends' : 'continues';
     }
-    private push(event: Event){
+    private push(event: GameEvent){
         this.events.pushFront(event);
         event.init();
     }

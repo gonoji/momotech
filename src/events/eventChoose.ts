@@ -1,9 +1,9 @@
-import { Event } from "./event";
+import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
 import { EventManager } from "./eventManager";
 
-export class EventChoose implements Event{
-    private choices: { name: string, event: Event }[];
+export class EventChoose implements GameEvent{
+    private choices: { name: string, event: GameEvent }[];
     private messages: Phaser.GameObjects.Text[];
     private index: number;
     
@@ -30,7 +30,7 @@ export class EventChoose implements Event{
     final(){
         for(const message of this.messages) message.destroy();
     }
-    setChoice(name: string, event: Event){
+    setChoice(name: string, event: GameEvent){
         this.choices.push({name, event});
         return this;
     }
