@@ -14,7 +14,7 @@ export abstract class Station{
         public x: number,
         public y: number,
         public z: number,
-        readonly stationType: stationType,
+        readonly stationType: stationType
     ){
         this.id = Station.count++;
         this.sprite = SceneManager.getCurrentScene().add.sprite(x, y, stationType);
@@ -22,9 +22,6 @@ export abstract class Station{
         this.calcPosition();
     }
     update(){
-        if(this.nexts.up != null){
-            console.log(this.nexts.up.id);
-        }
     }
     final(){
         this.sprite.destroy();
