@@ -30,7 +30,13 @@ export class EventChoose implements GameEvent{
     final(){
         for(const message of this.messages) message.destroy();
     }
-    setChoice(name: string, event: GameEvent){
+
+    /** 選択肢を追加する
+     * @param name 選択肢の名前
+     * @param event 選択時のイベント
+     * @returns `this`
+     */
+    addChoice(name: string, event: GameEvent){
         this.choices.push({name, event});
         return this;
     }
