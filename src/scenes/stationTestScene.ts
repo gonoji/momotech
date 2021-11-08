@@ -1,10 +1,8 @@
 import { Field } from "../maps/field";
-import { Station } from "../maps/station";
 import { StationPlus } from "../maps/stations/stationPlus";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { TitleScene } from "./titleScene";
-import { Event } from "../events/event"
 import { StationMinus } from "../maps/stations/stationMinus";
 
 export class StationTestScene extends Phaser.Scene {
