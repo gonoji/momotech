@@ -1,7 +1,6 @@
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { GameEvent } from "./event";
-import { EventManager } from "./eventManager";
 
 export class EventDice implements GameEvent{
     private message: Phaser.GameObjects.Text;
@@ -17,7 +16,7 @@ export class EventDice implements GameEvent{
         this.rolls = true;
     }
     init(){
-        this.message = EventManager.scene.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, '', {color: 'black', fontSize: '50px'})
+        this.message = SceneManager.scene.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, '', {color: 'black', fontSize: '50px'})
             .setOrigin(0.5)
             .setPadding(0, 10, 0, 0)
             .setDepth(100);

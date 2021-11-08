@@ -3,14 +3,10 @@ import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
 
 export class EventManager{
-    static scene: Phaser.Scene;
     private events: Deque<GameEvent>;
     constructor(event: GameEvent){
         this.events = new Deque<GameEvent>();
         this.push(event);
-    }
-    static init(scene: Phaser.Scene){
-        EventManager.scene = scene;
     }
     update(){
         if(KeyManager.down('P')){

@@ -13,7 +13,6 @@ export class GameScene extends Phaser.Scene {
     }
     init(){
         SceneManager.init(this);
-        EventManager.init(this);
         this.eventManager = new EventManager(eventTurn());
     }
     preload(){

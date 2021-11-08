@@ -22,12 +22,10 @@ export class TestScene extends Phaser.Scene {
     private static num: integer = 0;
     create(){
         this.cameras.main.setBackgroundColor(this.bk_color);
-        
-        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, 'Test' + TestScene.num++, this.fontStyle);
-        this.startText.setOrigin(0.5);
-        this.startText.setInteractive();
-        this.startText.on('pointerdown', () => SceneManager.start(TitleScene));
-        
+        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, 'Test' + TestScene.num++, this.fontStyle)
+            .setOrigin(0.5)
+            .setInteractive()
+            .on('pointerdown', () => SceneManager.start(TitleScene));
         this.ellipse = this.add.ellipse(0, 0, 100, 100, 0x00ff00);
     }
     update(){
