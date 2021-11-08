@@ -1,10 +1,10 @@
-import { Event } from "./event";
+import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
 import { EventManager } from "./eventManager";
 
-export class EventMessage implements Event{
+export class EventMessage implements GameEvent{
     private message: Phaser.GameObjects.Text;
-    constructor(private text: string, private next?: Event){
+    constructor(private text: string, private next?: GameEvent){
     }
     init(){
         const x = Number(EventManager.scene.game.config.width.toString()) / 2;

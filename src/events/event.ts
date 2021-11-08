@@ -1,5 +1,5 @@
 
-export interface Event{
+export interface GameEvent{
 
     /**
      * イベントの初期化
@@ -10,7 +10,7 @@ export interface Event{
      * イベントの処理
      * @return イベントが終了しないとき `continues`、終了するとき `ends`、次のイベントに引き継ぐときはそのイベント
      */
-    update(): 'continues' | 'ends' | Event;
+    update(): 'continues' | 'ends' | GameEvent;
 
     /** イベントの終了処理
      * 
