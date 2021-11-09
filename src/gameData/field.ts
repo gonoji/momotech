@@ -44,4 +44,9 @@ export class Field{
 
         for(const station of stations) this.add(station);
     }
+
+    static size = 100;
+    static at(x: number, y: number){
+        return [x * Field.size, y * Field.size];
+    }
 }

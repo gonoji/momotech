@@ -1,11 +1,11 @@
 import { GameEvent } from "../../events/event";
 import { Depth } from "../../utils/depthManager";
 import { SceneManager } from "../../utils/sceneManager";
+import { Field } from "../field";
 
 type stationType = 'plus' | 'minus';
 
 export abstract class Station{
-    static size: number = 100;
     static count: number = 0;
 
     private id: number;
@@ -20,16 +20,12 @@ export abstract class Station{
         this.id = Station.count++;
         this.sprite = SceneManager.scene.add.sprite(x, y, stationType).setDepth(Depth.of('field', 0));
         this.nexts = { up: null, down: null, right: null, left: null };
-        this.calcPosition();
+        [this.sprite.x, this.sprite.y] = Field.at(x, y);
     }
     update(){
     }
     final(){
         this.sprite.destroy();
-    }
-    private calcPosition(){
-        this.sprite.x = this.x * Station.size;
-        this.sprite.y = this.y * Station.size;
     }
     addUpStation(other: Station){
         this.nexts.up = other;
