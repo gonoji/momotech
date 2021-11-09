@@ -1,15 +1,16 @@
 import { EventManager } from "../events/eventManager";
 import { eventTurn } from "../events/eventTurn";
-import { Field } from "../maps/field";
+import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { TitleScene } from "./titleScene";
 
 export class GameScene extends Phaser.Scene {
     private eventManager: EventManager;
-    private field: Field;
-    constructor(){
+    private gameData: GameData;
+    constructor(numPlayers: number){
         super({ key: 'GameScene' });
+        this.gameData = new GameData(numPlayers);
     }
     init(){
         SceneManager.init(this);
@@ -22,17 +23,14 @@ export class GameScene extends Phaser.Scene {
     }
     create(){
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.field = Field.generate();
+        this.gameData.create();
     }
     update(){
         KeyManager.update();
-        this.field.update();
+        this.gameData.update();
         if(this.eventManager.update() == 'ends'){
             SceneManager.start(TitleScene);
-            this.final();
+            this.gameData.final();
         }
-    }
-    final(){
-        this.field.final();
     }
 }
