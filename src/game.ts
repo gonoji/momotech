@@ -1,12 +1,6 @@
 import "phaser";
 import { TitleScene } from "./scenes/titleScene";
 
-export class Game extends Phaser.Game{
-    constructor(config: Phaser.Types.Core.GameConfig){
-        super(config);
-    }
-}
-
 // windowイベントで、ロードされたらゲーム開始
 window.addEventListener('load', () => {
     const scene = new TitleScene();

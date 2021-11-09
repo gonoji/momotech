@@ -7,11 +7,6 @@ import { StationPlus } from "./stations/stationPlus";
 export class Field{
     private _stations: Station[];
     // private loads: GameObjects.Group;
-    constructor(){
-        this._stations = [];
-        // this.loads = SceneManager.getCurrentScene().add.group();
-        // console.log('length: ' + this.loads.getLength());
-    }
     update(){
         for(const station of this.stations) station.update();
     }
@@ -26,7 +21,11 @@ export class Field{
         for(const station of this.stations) station.final();        
     }
 
-    static generate(){
+    create(){
+        this._stations = [];
+        // this.loads = SceneManager.getCurrentScene().add.group();
+        // console.log('length: ' + this.loads.getLength());
+
         const stations = [
             new StationPlus (1, 1),
             new StationPlus (3, 1),
@@ -43,8 +42,6 @@ export class Field{
         stations[1].addDownStation(stations[4]);
         stations[2].addDownStation(stations[5]);
 
-        const field = new Field();
-        for(const station of stations) field.add(station);
-        return field;
+        for(const station of stations) this.add(station);
     }
 }
