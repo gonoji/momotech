@@ -36,6 +36,11 @@ export class Field{
             new StationPlus (1, 3),
             new StationMinus(3, 3),
             new StationPlus (7, 3),
+            new StationPlus (7, 1),
+            new StationPlus (9, 1),
+            new StationPlus (9, 5),
+            new StationPlus (7, 5),
+            new StationPlus (3, 5),
         ];
 
         const field = new Field();
@@ -44,9 +49,17 @@ export class Field{
         field.addLeftRightStation(stations[1],stations[2]);
         field.addLeftRightStation(stations[3],stations[4]);
         field.addLeftRightStation(stations[4],stations[5]);
+        field.addLeftRightStation(stations[2],stations[6]);
+        field.addLeftRightStation(stations[6],stations[7]);
+        field.addLeftRightStation(stations[9],stations[8]);
+        field.addLeftRightStation(stations[10],stations[9]);
         field.addUpDownStation(stations[0],stations[3]);
         field.addUpDownStation(stations[1],stations[4]);
         field.addUpDownStation(stations[2],stations[5]);
+        field.addUpDownStation(stations[6],stations[5]);
+        field.addUpDownStation(stations[7],stations[8]);
+        field.addUpDownStation(stations[5],stations[9]);
+        field.addUpDownStation(stations[4],stations[10]);
 
 
         for(const station of stations) field.add(station);
