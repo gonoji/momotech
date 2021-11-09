@@ -1,5 +1,4 @@
-import { Field } from "./maps/field";
-
+import { Field } from "./field";
 
 export class GameData{
     public readonly field: Field;

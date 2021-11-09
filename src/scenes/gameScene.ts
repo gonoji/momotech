@@ -1,7 +1,6 @@
 import { EventManager } from "../events/eventManager";
 import { eventTurn } from "../events/eventTurn";
-import { GameData } from "../gameData";
-import { Field } from "../maps/field";
+import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { TitleScene } from "./titleScene";
