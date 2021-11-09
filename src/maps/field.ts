@@ -45,40 +45,41 @@ export class Field{
 
         const field = new Field();
         
-        field.addLeftRightStation(stations[0],stations[1]);
-        field.addLeftRightStation(stations[1],stations[2]);
-        field.addLeftRightStation(stations[3],stations[4]);
-        field.addLeftRightStation(stations[4],stations[5]);
-        field.addLeftRightStation(stations[2],stations[6]);
-        field.addLeftRightStation(stations[6],stations[7]);
-        field.addLeftRightStation(stations[9],stations[8]);
-        field.addLeftRightStation(stations[10],stations[9]);
-        field.addUpDownStation(stations[0],stations[3]);
-        field.addUpDownStation(stations[1],stations[4]);
-        field.addUpDownStation(stations[2],stations[5]);
-        field.addUpDownStation(stations[6],stations[5]);
-        field.addUpDownStation(stations[7],stations[8]);
-        field.addUpDownStation(stations[5],stations[9]);
-        field.addUpDownStation(stations[4],stations[10]);
+        field.addLeftRightStation(stations[0], stations[1]);
+        field.addLeftRightStation(stations[1], stations[2]);
+        field.addLeftRightStation(stations[3], stations[4]);
+        field.addLeftRightStation(stations[4], stations[5]);
+        field.addLeftRightStation(stations[2], stations[6]);
+        field.addLeftRightStation(stations[6], stations[7]);
+        field.addLeftRightStation(stations[9], stations[8]);
+        field.addLeftRightStation(stations[10], stations[9]);
+        
+        field.addUpDownStation(stations[0], stations[3]);
+        field.addUpDownStation(stations[1], stations[4]);
+        field.addUpDownStation(stations[2], stations[5]);
+        field.addUpDownStation(stations[6], stations[5]);
+        field.addUpDownStation(stations[7], stations[8]);
+        field.addUpDownStation(stations[5], stations[9]);
+        field.addUpDownStation(stations[4], stations[10]);
 
 
         for(const station of stations) field.add(station);
         return field;
     }
 
-    addUpDownStation(up: Station,down: Station){
-        if(up.x!=down.x)return;
+    addUpDownStation(up: Station, down: Station){
+        if(up.x != down.x) return;
         up.addDownStation(down);
-        for(let i=up.y+1;i<down.y;i++){
-            this._roads.push(new Road(up.x,i,'tate'));
+        for(let i = up.y+1; i < down.y;i++){
+            this._roads.push(new Road(up.x, i, 'tate'));
         }
     }
     
-    addLeftRightStation(left: Station,right: Station){
-        if(left.y!=right.y)return;
+    addLeftRightStation(left: Station, right: Station){
+        if(left.y != right.y) return;
         left.addRightStation(right);
-        for(let i=left.x+1;i<right.x;i++){
-            this._roads.push(new Road(i,left.y,'yoko'));
+        for(let i = left.x+1; i < right.x; i++){
+            this._roads.push(new Road(i, left.y, 'yoko'));
         }
     }
 }
