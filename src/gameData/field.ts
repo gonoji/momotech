@@ -12,8 +12,7 @@ export class Field{
     constructor(){
         this._stations = [];
         this._roads=[];
-        //this.roads = SceneManager.getCurrentScene().add.group();
-        // console.log('length: ' + this.loads.getLength());
+        this.create();
     }
     update(){
         for(const station of this.stations) station.update();
@@ -30,6 +29,7 @@ export class Field{
     }
 
     create(){
+        
         this._stations = [];
         // this.loads = SceneManager.getCurrentScene().add.group();
         // console.log('length: ' + this.loads.getLength());
@@ -47,28 +47,26 @@ export class Field{
             new StationPlus (7, 5),
             new StationPlus (3, 5),
         ];
-        const field = new Field();
         
-        field.addLeftRightStation(stations[0], stations[1]);
-        field.addLeftRightStation(stations[1], stations[2]);
-        field.addLeftRightStation(stations[3], stations[4]);
-        field.addLeftRightStation(stations[4], stations[5]);
-        field.addLeftRightStation(stations[2], stations[6]);
-        field.addLeftRightStation(stations[6], stations[7]);
-        field.addLeftRightStation(stations[9], stations[8]);
-        field.addLeftRightStation(stations[10], stations[9]);
+        this.addLeftRightStation(stations[0], stations[1]);
+        this.addLeftRightStation(stations[1], stations[2]);
+        this.addLeftRightStation(stations[3], stations[4]);
+        this.addLeftRightStation(stations[4], stations[5]);
+        this.addLeftRightStation(stations[2], stations[6]);
+        this.addLeftRightStation(stations[6], stations[7]);
+        this.addLeftRightStation(stations[9], stations[8]);
+        this.addLeftRightStation(stations[10], stations[9]);
         
-        field.addUpDownStation(stations[0], stations[3]);
-        field.addUpDownStation(stations[1], stations[4]);
-        field.addUpDownStation(stations[2], stations[5]);
-        field.addUpDownStation(stations[6], stations[5]);
-        field.addUpDownStation(stations[7], stations[8]);
-        field.addUpDownStation(stations[5], stations[9]);
-        field.addUpDownStation(stations[4], stations[10]);
+        this.addUpDownStation(stations[0], stations[3]);
+        this.addUpDownStation(stations[1], stations[4]);
+        this.addUpDownStation(stations[2], stations[5]);
+        this.addUpDownStation(stations[6], stations[5]);
+        this.addUpDownStation(stations[7], stations[8]);
+        this.addUpDownStation(stations[5], stations[9]);
+        this.addUpDownStation(stations[4], stations[10]);
 
 
-        for(const station of stations) field.add(station);
-        return field;
+        for(const station of stations) this.add(station);
 
     }
 
