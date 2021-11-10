@@ -1,3 +1,4 @@
+import { GameData } from "../gameData/gameData";
 import { Deque } from "../utils/deque";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
@@ -11,9 +12,9 @@ export class EventManager{
         this.events = new Deque<GameEvent<unknown>>();
         this.advance();
     }
-    update(){
+    update(gameData: GameData){
         if(KeyManager.down('P')) this.events.print();
-        return this.events.front().update() && this.advance();
+        return this.events.front().update(gameData) && this.advance();
     }
     private advance(){
         const next = this.routine.next();
