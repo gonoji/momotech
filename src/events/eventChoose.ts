@@ -3,18 +3,14 @@ import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { Depth } from "../utils/depthManager";
 
-export class EventChoose implements GameEvent{
-    private choices: { name: string, event: GameEvent }[];
+export class EventChoose implements GameEvent<string>{
     private messages: Phaser.GameObjects.Text[];
-    private index: number;
-    
-    constructor(){
-        this.choices = [];
-        this.index = 0;
+    private index: number = 0;
+    constructor(private choices: string[]){
     }
     init(){
         this.messages = this.choices.map((choice, index) =>
-            SceneManager.scene.add.text(100, 100 + 60 * index, choice.name, {color: 'black', fontSize: '50px'})
+            SceneManager.scene.add.text(100, 100 + 60 * index, choice, {color: 'black', fontSize: '50px'})
                 .setPadding(0, 4, 0, 0)
                 .setDepth(Depth.of('dialog', 0))
         );
@@ -22,25 +18,15 @@ export class EventChoose implements GameEvent{
     update(){
         if(KeyManager.down('DOWN')) this.index = (this.index + 1) % this.choices.length;
         if(KeyManager.down('UP')) this.index = (this.index + this.choices.length - 1) % this.choices.length;
-        if(KeyManager.down('Z')){
-            return this.choices[this.index].event;
-        }
         this.messages.forEach((message, index) => {
             message.setColor(index == this.index? 'red': 'black');
         });
-        return 'continues';
+        return KeyManager.down('Z');
     }
     final(){
         for(const message of this.messages) message.destroy();
     }
-
-    /** 選択肢を追加する
-     * @param name 選択肢の名前
-     * @param event 選択時のイベント
-     * @returns `this`
-     */
-    addChoice(name: string, event: GameEvent){
-        this.choices.push({name, event});
-        return this;
+    result(){
+        return this.choices[this.index];
     }
 }

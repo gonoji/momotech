@@ -2,26 +2,32 @@ import { Deque } from "../utils/deque";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
 
+type command = GameEvent<unknown> | 'end';
+export type routine = Generator<command, command, unknown>;
+
 export class EventManager{
-    private events: Deque<GameEvent>;
-    constructor(event: GameEvent){
-        this.events = new Deque<GameEvent>();
-        this.push(event);
+    private events: Deque<GameEvent<unknown>>;
+    constructor(private routine: routine){
+        this.events = new Deque<GameEvent<unknown>>();
+        this.advance();
     }
     update(){
-        if(KeyManager.down('P')){
-            this.events.print();
-        }
-
-        const next = this.events.front().update();
-        if(next == 'continues') return 'continues';
-
-        this.events.popFront().final();
-        if(next != 'ends') this.push(next);
-        return this.events.empty() ? 'ends' : 'continues';
+        if(KeyManager.down('P')) this.events.print();
+        return this.events.front().update() && this.advance();
     }
-    private push(event: GameEvent){
-        this.events.pushFront(event);
-        event.init();
+    private advance(){
+        const next = this.routine.next();
+        console.log(next.value);
+        if(next.value === undefined) return true;
+        const value = next.value;
+        switch(value){
+        case 'end':
+            this.events.popFront().final();
+            return this.advance();
+        default:
+            this.events.pushFront(value);
+            value.init();
+        }
+        return next.done;
     }
 }

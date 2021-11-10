@@ -1,16 +1,26 @@
 
-export interface GameEvent{
+export interface GameEvent<T>{
 
     /** イベントの初期化
      */
     init(): void;
 
     /** イベントの処理
-     * @return イベントが終了しないとき `continues`、終了するとき `ends`、次のイベントに引き継ぐときはそのイベント
+     * @returns イベントが終了するかどうか
      */
-    update(): 'continues' | 'ends' | GameEvent;
+    update(): boolean;
+
+    /** イベントの結果
+     * @returns イベントの結果
+     */
+    result(): T;
 
     /** イベントの終了処理
      */
     final(): void;
+}
+
+export function* result<T>(event: GameEvent<T>){
+    yield event;
+    return event.result();
 }
