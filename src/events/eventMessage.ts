@@ -8,8 +8,8 @@ export class EventMessage implements GameEvent{
     private box: Phaser.GameObjects.Rectangle;
     private nanmojime = 0;
     private scene = SceneManager.getCurrentScene();
-    private x = Number(this.scene.game.config.width.toString()) / 2;
-    private y = Number(this.scene.game.config.height.toString()) / 2;
+    private width = Number(this.scene.game.config.width.toString());
+    private height = Number(this.scene.game.config.height.toString());
 
 
 
@@ -23,15 +23,14 @@ export class EventMessage implements GameEvent{
 
         
         
-        this.message = this.scene.add.text(this.x, this.y, '', {color: 'black', fontSize: '50px'})
-            .setOrigin(0.5)
+        this.message = this.scene.add.text(0.05*this.width, 0.7*this.height, '', {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
             .setDepth(100);
         
         // 箱を作ろう
-        this.box = this.scene.add.rectangle(this.x, this.y, 2*this.x, 2*this.y, 0x00ff00, 0.5)
+        this.box = this.scene.add.rectangle(0.5*this.width, 0.8*this.height, 0.95*this.width, 0.3*this.height, 0x00ff00, 0.5)
             .setOrigin(0.5)
-            .setDepth(100);
+            .setDepth(99);
         // メッセージの長さを知ろう
         const messageLength = this.text.length;
         //
@@ -39,16 +38,20 @@ export class EventMessage implements GameEvent{
     }
     update(){
         let textOnScreen;
-        if(this.nanmojime < this.text.length && !KeyManager.down('Z')){
-            this.nanmojime+=0.1;
-            textOnScreen = this.text.substr(0, this.nanmojime); 
+        if(this.nanmojime < this.text.length){
+            if(!KeyManager.down('Z')){
+                this.nanmojime+=0.25;
+                textOnScreen = this.text.substr(0, this.nanmojime); 
+            }else{
+                this.nanmojime = this.text.length;
+                return 'continues';
+
+            }
         }
         else{
             textOnScreen = this.text;
         }
-        
         this.message.setText(textOnScreen);
-        
         
         
         if(KeyManager.down('Z')) return this.next ?? 'ends';
@@ -56,5 +59,6 @@ export class EventMessage implements GameEvent{
     }
     final(){
         this.message.destroy();
+        this.box.destroy();
     }
 }
