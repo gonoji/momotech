@@ -6,18 +6,20 @@ import { Field } from "../field";
 type stationType = 'plus' | 'minus';
 
 export abstract class Station{
-    static count: number = 0;
+    static size: number = 128;
+    private static id_max: number = 2147483647;
 
-    private id: number;
     private sprite: Phaser.GameObjects.Sprite;
     readonly nexts: { up: Station, down: Station, right: Station, left: Station };
     constructor(
         public x: number,
         public y: number,
         public z: number,
-        readonly stationType: stationType
+        readonly stationType: stationType,
+        public id: number=-1
     ){
-        this.id = Station.count++;
+        if(id==-1)
+            this.id = this.getRandomInt(Station.id_max);
         this.sprite = SceneManager.scene.add.sprite(x, y, stationType).setDepth(Depth.of('field', 0));
         this.nexts = { up: null, down: null, right: null, left: null };
         [this.sprite.x, this.sprite.y] = Field.at(x, y);
@@ -27,24 +29,18 @@ export abstract class Station{
     final(){
         this.sprite.destroy();
     }
-    addUpStation(other: Station){
-        this.nexts.up = other;
-        other.nexts.down = this;
-    }
-
-    addDownStation(other: Station){
-        this.nexts.down = other;
-        other.nexts.up = this;
-    }
-
-    addLeftStation(other: Station){
-        this.nexts.left = other;
-        other.nexts.right = this;
-    }
     addRightStation(other: Station){
         this.nexts.right = other;
         other.nexts.left = this;
     }
+    addDownStation(other: Station){
+        this.nexts.down = other;
+        other.nexts.up = this;
+    }
+    getRandomInt(max): number{
+        return Math.floor(Math.random() * max);
+    }
+      
 
     abstract event(): GameEvent;
 }
