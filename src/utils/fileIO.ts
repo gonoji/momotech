@@ -5,6 +5,13 @@ import { SceneManager } from "./sceneManager";
 export class FileIO{
     static baseImageURL : string;
     static baseTextURL : string;
+    static baseJsonURL : string;
+
+    static init(){
+        FileIO.importImages();
+        FileIO.importTexts();
+        FileIO.importJson();
+    }
 
     static importImages(baseURL : string = 'static/images/'){
         FileIO.baseImageURL = baseURL;
@@ -14,9 +21,14 @@ export class FileIO{
         this.loadImage('yoko', 'road_yoko.png');
     }
 
-    static importTexts(baseURL:string = 'static/texts/'){
+    static importTexts(baseURL : string = 'static/texts/'){
         FileIO.baseTextURL = baseURL;
         this.loadText('test', 'test.txt');
+    }
+
+    static importJson(baseURL : string = 'static/json/'){
+        FileIO.baseJsonURL = baseURL;
+        this.loadJson('jsonTest', 'test.json');
     }
 
     static getText(name : string) : string[]{
@@ -41,12 +53,23 @@ export class FileIO{
         return lines;
     }
 
+    static getJson(name : string): any{
+        return SceneManager.scene.cache.json.get(name);
+    }
+
     private static loadImage(name : string, url : string){
         let scene = SceneManager.scene;
 	    scene.load.image(name, FileIO.baseImageURL + url);
-    }private static loadText(name : string, url : string){
+    }
+
+    private static loadText(name : string, url : string){
         let scene=SceneManager.scene;
 	    scene.load.text(name, FileIO.baseTextURL + url);
+    }
+    
+    private static loadJson(name : string, url : string){
+        let scene=SceneManager.scene;
+	    scene.load.json(name, FileIO.baseJsonURL + url);
     }
     
 }

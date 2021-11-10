@@ -13,8 +13,7 @@ export class TitleScene extends Phaser.Scene {
     }
     //本来はこのメソッドで、画像ファイルなどのロード
     preload(){
-        FileIO.importImages();
-        FileIO.importTexts();
+        FileIO.init();
         console.log('Hello Phaser');
     }
     private startText?: Phaser.GameObjects.Text // 追加
