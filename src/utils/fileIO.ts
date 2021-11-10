@@ -58,17 +58,17 @@ export class FileIO{
     }
 
     private static loadImage(name : string, url : string){
-        let scene = SceneManager.scene;
+        const scene = SceneManager.scene;
 	    scene.load.image(name, FileIO.baseImageURL + url);
     }
 
     private static loadText(name : string, url : string){
-        let scene=SceneManager.scene;
+        const scene=SceneManager.scene;
 	    scene.load.text(name, FileIO.baseTextURL + url);
     }
     
     private static loadJson(name : string, url : string){
-        let scene=SceneManager.scene;
+        const scene=SceneManager.scene;
 	    scene.load.json(name, FileIO.baseJsonURL + url);
     }
     

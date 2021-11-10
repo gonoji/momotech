@@ -1,4 +1,4 @@
-const keyNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'SPACE', 'ESC', 'BACKSPACE', 'SHIFT', 'ENTER'] as const;
+const keyNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'SPACE', 'ESC', 'BACKSPACE', 'SHIFT', 'ENTER', 'ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'PLUS', 'MINUS'] as const;
 type KeyName = typeof keyNames[number];
 
 export class KeyManager {
