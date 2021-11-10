@@ -28,7 +28,8 @@ export class EventMessage implements GameEvent{
             .setDepth(100);
         
         // 箱を作ろう
-        this.box = this.scene.add.rectangle(0.5*this.width, 0.8*this.height, 0.95*this.width, 0.3*this.height, 0x00ff00, 0.5)
+        this.box = this.scene.add.rectangle(0.5*this.width, 0.8*this.height, 0.95*this.width, 0.3*this.height, 0x000088, 0.5)
+            .setStrokeStyle(4, 0x080808)
             .setOrigin(0.5)
             .setDepth(99);
         // メッセージの長さを知ろう
@@ -40,7 +41,7 @@ export class EventMessage implements GameEvent{
         let textOnScreen;
         if(this.nanmojime < this.text.length){
             if(!KeyManager.down('Z')){
-                this.nanmojime+=0.25;
+                this.nanmojime+=0.5;//0.25;
                 textOnScreen = this.text.substr(0, this.nanmojime); 
             }else{
                 this.nanmojime = this.text.length;
