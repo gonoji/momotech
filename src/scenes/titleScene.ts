@@ -1,3 +1,4 @@
+import { FileIO } from "../utils/fileIO";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { GameScene } from "./gameScene";
@@ -12,6 +13,7 @@ export class TitleScene extends Phaser.Scene {
     }
     //本来はこのメソッドで、画像ファイルなどのロード
     preload(){
+        FileIO.init();
         console.log('Hello Phaser');
     }
     private startText?: Phaser.GameObjects.Text // 追加
