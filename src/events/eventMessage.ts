@@ -12,7 +12,7 @@ export class EventMessage implements GameEvent{
     private message: Phaser.GameObjects.Text;
     private box: Phaser.GameObjects.Rectangle;
     private nanmojime = 0;
-    private scene = SceneManager.getCurrentScene();
+    private scene = SceneManager.scene;
     private width = Number(this.scene.game.config.width.toString());
     private height = Number(this.scene.game.config.height.toString());
 
