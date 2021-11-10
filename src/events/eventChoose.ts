@@ -1,6 +1,7 @@
 import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
-import { EventManager } from "./eventManager";
+import { SceneManager } from "../utils/sceneManager";
+import { Depth } from "../utils/depthManager";
 
 export class EventChoose implements GameEvent{
     private choices: { name: string, event: GameEvent }[];
@@ -13,7 +14,9 @@ export class EventChoose implements GameEvent{
     }
     init(){
         this.messages = this.choices.map((choice, index) =>
-            EventManager.scene.add.text(100, 100 + 60 * index, choice.name, {color: 'black', fontSize: '50px'}).setPadding(0, 4, 0, 0)
+            SceneManager.scene.add.text(100, 100 + 60 * index, choice.name, {color: 'black', fontSize: '50px'})
+                .setPadding(0, 4, 0, 0)
+                .setDepth(Depth.of('dialog', 0))
         );
     }
     update(){

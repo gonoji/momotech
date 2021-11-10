@@ -1,3 +1,4 @@
+import { FileIO } from "../utils/fileIO";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { GameScene } from "./gameScene";
@@ -12,6 +13,7 @@ export class TitleScene extends Phaser.Scene {
     }
     //本来はこのメソッドで、画像ファイルなどのロード
     preload(){
+        FileIO.init();
         console.log('Hello Phaser');
     }
     private startText?: Phaser.GameObjects.Text // 追加
@@ -22,11 +24,10 @@ export class TitleScene extends Phaser.Scene {
     private static num: integer = 0;
     create(){
         this.cameras.main.setBackgroundColor(this.bk_color);
-        this.startText = this.add.text(parseInt(this.game.config.width.toString())/2, parseInt(this.game.config.height.toString())/2, ('Titlepepepe' + TitleScene.num++), this.fontStyle);
-
-        this.startText.setOrigin(0.5);
-        this.startText.setInteractive();
-        this.startText.on('pointerdown', () => SceneManager.start(GameScene));
+        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, ('Titlepepepe' + TitleScene.num++), this.fontStyle)
+            .setOrigin(0.5)
+            .setInteractive()
+            .on('pointerdown', () => SceneManager.start(GameScene));
         this.ellipse = this.add.ellipse(0, 0, 100, 100, 0x00ff00);
     }
     update(){
