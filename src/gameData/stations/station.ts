@@ -41,6 +41,5 @@ export abstract class Station{
         return Math.floor(Math.random() * max);
     }
       
-
-    abstract event(): GameEvent;
+    abstract event(): GameEvent<unknown>;
 }

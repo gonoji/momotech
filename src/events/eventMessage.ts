@@ -26,11 +26,13 @@ export class EventMessage implements GameEvent<void>{
             .setDepth(Depth.of('dialog', 0));
     }
     update(){
-        if(KeyManager.down('Z')){
-            this.index = this.text.length;
-            return false;
+        if(this.index < this.text.length){
+            if(KeyManager.down('Z')){
+                this.index = this.text.length;
+                return false;
+            }
+            else this.index += 0.5;
         }
-        else this.index += 0.5;
         this.message.setText(this.text.substr(0, this.index));
         return KeyManager.down('Z');
     }
