@@ -1,3 +1,4 @@
+import { GameData } from "../gameData/gameData";
 
 export interface GameEvent<T>{
 
@@ -8,7 +9,7 @@ export interface GameEvent<T>{
     /** イベントの処理
      * @returns イベントが終了するかどうか
      */
-    update(): boolean;
+    update(gameData: GameData): boolean;
 
     /** イベントの結果
      * @returns イベントの結果

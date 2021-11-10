@@ -27,7 +27,7 @@ export class GameScene extends Phaser.Scene {
     update(){
         KeyManager.update();
         this.gameData.update();
-        if(this.eventManager.update()){
+        if(this.eventManager.update(this.gameData)){
             SceneManager.start(TitleScene);
             this.gameData.final();
         }
