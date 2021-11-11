@@ -68,6 +68,7 @@ export class Field{
         let station1 = this.getStationByID(id1);
         let station2 = this.getStationByID(id2);
         if(station1 != null && station2 != null){
+            console.log("po");
             this.addUpDownStation(station1, station2);
             this.addLeftRightStation(station1, station2);
         }else{
@@ -141,7 +142,7 @@ export class Field{
 
     addUpDownStation(up: Station, down: Station){
         if(up.x != down.x) return;
-        if(up.y<down.y){
+        if(up.y > down.y){
             const sta = up;
             up = down;
             down = sta;
@@ -154,7 +155,7 @@ export class Field{
     
     addLeftRightStation(left : Station, right : Station){
         if(left.y != right.y) return;
-        if(right.x<left.x){
+        if(right.x < left.x){
             const sta = left;
             left = right;
             right = sta;
@@ -166,7 +167,7 @@ export class Field{
     }
     removeUpDownStation(up: Station, down: Station){
         if(up.x != down.x) return;
-        if(up.y<down.y){
+        if(up.y > down.y){
             const sta = up;
             up = down;
             down = sta;
@@ -175,9 +176,8 @@ export class Field{
         for(let i = 0;  i < this._roads.length; i++){
             let road : Road = this._roads[i]; 
             if(road.x == down.x && road.y > up.y && road.y < down.y){
-                console.log("po");
                 road.final();
-                this._roads = this._roads.splice(i, i+1);
+                this._roads.splice(i, 1);
                 i--;
             }
         }
@@ -185,7 +185,7 @@ export class Field{
     
     removeLeftRightStation(left : Station, right : Station){
         if(left.y != right.y) return;
-        if(right.x<left.x){
+        if(right.x < left.x){
             const sta = left;
             left = right;
             right = sta;
@@ -194,11 +194,8 @@ export class Field{
         for(let i = 0;  i < this._roads.length; i++){
             let road : Road = this._roads[i]; 
             if(road.y == right.y && road.x > left.x && road.x < right.x){
-                console.log("po");
                 road.final();
-                console.log(this._roads.length);
                 this._roads.splice(i, 1);
-                console.log(this._roads.length);
                 i--;
             }
         }

@@ -29,6 +29,8 @@ export class EditScene extends Scene{
         this.field.add(new StationPlus(1,1));
         this.field.add(new StationPlus(3,1));
         this.field.add(new StationPlus(5,1));
+        this.field.add(new StationPlus(3,3));
+        this.field.add(new StationPlus(3,5));
         //this.field.connectStationWithID(this.field.stations[0].id,this.field.stations[1].id);
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
