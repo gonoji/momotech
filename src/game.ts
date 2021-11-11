@@ -1,9 +1,9 @@
 import "phaser";
-import { TitleScene } from "./scenes/titleScene";
+import { PreloadScene1 } from "./scenes/preloadScene1";
 
 // windowイベントで、ロードされたらゲーム開始
 window.addEventListener('load', () => {
-    const scene = new TitleScene();
+    const scene = new PreloadScene1();
     const game = new Phaser.Game({
         title: 'Title',     // タイトル
         version: '0.0.1',   // バージョン
