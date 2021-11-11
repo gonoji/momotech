@@ -2,9 +2,10 @@ import { FileIO } from "../utils/fileIO";
 import { SceneManager } from "../utils/sceneManager";
 import { TitleScene } from "./titleScene";
 
-export class PreloadScene3 extends Phaser.Scene{
+export class PreloadScene extends Phaser.Scene{
+    static count : number = 0;
     constructor(){
-        super({ key: 'PreloadScene3' });
+        super({ key: 'PreloadScene' });
     }
 
     init(){
@@ -13,11 +14,17 @@ export class PreloadScene3 extends Phaser.Scene{
     //本来はこのメソッドで、画像ファイルなどのロード
     preload(){
         FileIO.init();
+        PreloadScene.count++;
     }create(){
-
-        SceneManager.start(TitleScene);
+        if(PreloadScene.count < 3){
+            SceneManager.start(PreloadScene);
+        }
+        else{
+            SceneManager.start(TitleScene);
+        }
     }
     update(){
+
     }
 
 }
