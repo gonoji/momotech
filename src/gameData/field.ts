@@ -28,7 +28,7 @@ export class Field{
 
     create(){
         this._stations = [];
-        this.importFromJson('stationJson');
+        this.importFromJson('stationsJson');
     }
 
     static size = 128;

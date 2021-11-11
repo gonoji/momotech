@@ -17,7 +17,6 @@ export class TitleScene extends Scene{
         SceneManager.init(this);
     }
     preload(){
-        FileIO.init();
     }
     create(){
         this.cameras.main.setBackgroundColor('0xeeeeee');

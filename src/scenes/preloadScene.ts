@@ -12,7 +12,7 @@ export class PreloadScene extends Scene{
         SceneManager.init(this);
     }
     preload(){
-        FileIO.init();
+        FileIO.preload(this.count);
     }
     create(){
         SceneManager.start(this.count < 3? new PreloadScene(this.count + 1) : new TitleScene());
