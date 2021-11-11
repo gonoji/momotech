@@ -25,7 +25,6 @@ export class TitleScene extends Scene{
         KeyManager.update();
         for(const numPlayer of [1, 2, 3, 4]){
             if(KeyManager.down(KeyManager.numberToKey(numPlayer))){
-                console.log(numPlayer);
                 SceneManager.start(new GameScene(numPlayer));
                 return;
             }
