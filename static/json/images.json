@@ -11,6 +11,8 @@
                     "name" : "tate" , "url" : "road_tate.png"
                 },{
                     "name" : "yoko" , "url" : "road_yoko.png"
+                },{
+                    "name" : "card" , "url" : "card.png"
                 }
             ]
         }
