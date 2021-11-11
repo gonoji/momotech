@@ -30,7 +30,7 @@ export class Player{
 
     /** 隣の駅に移動する
      * @param dir 移動する方向
-     * @returns 移動できた（進む方向に駅がない・塞がれていないなどにより、移動が失敗していない）かどうか
+     * @returns 移動できた（進む方向に駅があった）かどうか
      */
     moveTo(dir: Direction.asType){
         const next = this.location.nexts[dir];
@@ -40,6 +40,9 @@ export class Player{
             return true;
         }
         return false;
+    }
+    canMove(dir: Direction.asType){
+        return true; // todo: 要石があったらfalseに
     }
 
     private updatePos(){
