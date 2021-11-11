@@ -15,7 +15,8 @@ export function* eventTurn(): routine{
         if(event){
             yield 'end';
             yield event;
-            return 'end';
+            yield 'end';
+            return eventTurn();
         }
         yield 'wait';
     }
