@@ -1,22 +1,22 @@
 import { EventManager } from "../events/eventManager";
-import { eventTurn } from "../events/eventTurn";
-import { Field } from "../gameData/field";
+import { routineTurn } from "../events/routineTurn";
 import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
+import { Scene } from "./scene";
 import { TitleScene } from "./titleScene";
 
-export class GameScene extends Phaser.Scene {
+export class GameScene extends Scene{
     private eventManager: EventManager;
     private gameData: GameData;
-    field : Field;
+    
     constructor(numPlayers: number){
-        super({ key: 'GameScene' });
+        super(`GameScene${numPlayers}`);
         this.gameData = new GameData(numPlayers);
     }
     init(){
         SceneManager.init(this);
-        this.eventManager = new EventManager(eventTurn());
+        this.eventManager = new EventManager(routineTurn(this.gameData));
     }
     preload(){
     }
@@ -38,7 +38,7 @@ export class GameScene extends Phaser.Scene {
             this.gameData.field.exportStations();
         }
         if(this.eventManager.update(this.gameData)){
-            SceneManager.start(TitleScene);
+            SceneManager.start(new TitleScene());
             this.gameData.final();
         }
     }
