@@ -1,5 +1,5 @@
 import { EventManager } from "../events/eventManager";
-import { eventTurn } from "../events/eventTurn";
+import { routineTurn } from "../events/routineTurn";
 import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
@@ -16,7 +16,7 @@ export class GameScene extends Scene{
     }
     init(){
         SceneManager.init(this);
-        this.eventManager = new EventManager(eventTurn());
+        this.eventManager = new EventManager(routineTurn(this.gameData));
     }
     preload(){
     }

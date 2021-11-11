@@ -14,7 +14,7 @@ export class EventMove implements GameEvent<void>{
     update(gameData: GameData){
         for(const dir of Direction.asArray){
             if(KeyManager.down(dir)){
-                if(gameData.players[0].moveTo(dir)) this.steps--;
+                if(gameData.turnPlayer.moveTo(dir)) this.steps--;
             }
         }
         return this.steps <= 0;
