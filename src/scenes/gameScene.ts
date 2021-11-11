@@ -27,6 +27,14 @@ export class GameScene extends Phaser.Scene {
     update(){
         KeyManager.update();
         this.gameData.update();
+        
+        if(KeyManager.pressed('PLUS')){
+            this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*1.05);
+        }
+        if(KeyManager.pressed('MINUS')){
+            this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*0.95);
+        }
+        
         if(this.eventManager.update(this.gameData)){
             SceneManager.start(TitleScene);
             this.gameData.final();
