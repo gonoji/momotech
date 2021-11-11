@@ -1,5 +1,5 @@
 {
-  "name": "um2021summer",
+  "name": "momotech",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/UenoMizuki/UM2021Summer.git"
+    "url": "git+https://github.com/gonoji/momotech.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/UenoMizuki/UM2021Summer/issues"
+    "url": "https://github.com/gonoji/momotech/issues"
   },
-  "homepage": "https://github.com/UenoMizuki/UM2021Summer#readme",
+  "homepage": "https://github.com/gonoji/momotech#readme",
   "dependencies": {
     "phaser": "^3.55.2"
   },
