@@ -3,7 +3,7 @@ import { Deque } from "../utils/deque";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
 
-type command = GameEvent<unknown> | 'end';
+type command = GameEvent<unknown> | 'end' | 'wait';
 export type routine = Generator<command, command, unknown>;
 
 export class EventManager{
@@ -25,6 +25,8 @@ export class EventManager{
         case 'end':
             this.events.popFront().final();
             return this.advance();
+        case 'wait':
+            return false;
         default:
             this.events.pushFront(value);
             value.init();

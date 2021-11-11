@@ -81,18 +81,16 @@ export class Field{
     }
 
     addUpDownStation(up: Station, down: Station){
-        if(up.x != down.x)
-            return;
-        up.addDownStation(down);
+        if(up.x != down.x) return;
+        up.setNext('DOWN', down);
         for(let i = up.y+1; i < down.y; i++){
             this._roads.push(new Road(up.x, i, 'tate'));
         }
     }
     
     addLeftRightStation(left : Station, right : Station){
-        if(left.y != right.y)
-            return;
-        left.addRightStation(right);
+        if(left.y != right.y) return;
+        left.setNext('RIGHT', right);
         for(let i = left.x + 1; i < right.x; i++){
             this._roads.push(new Road(i, left.y, 'yoko'));
         }
