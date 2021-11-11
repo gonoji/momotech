@@ -18,4 +18,8 @@ export class Road{
         this.sprite.displayWidth=Road.size;
         this.sprite.displayHeight=Road.size;
     }
+    
+    final(){
+        this.sprite.destroy();
+    }
 }

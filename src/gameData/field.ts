@@ -1,3 +1,4 @@
+import { Direction } from "../utils/direction";
 import { FileIO } from "../utils/fileIO";
 import { SceneManager } from "../utils/sceneManager";
 import { Road } from "./road";
@@ -26,9 +27,9 @@ export class Field{
         for(const station of this.stations) station.final();        
     }
 
-    create(){
+    create(name : string = 'stationJson'){
         this._stations = [];
-        this.importFromJson('stationJson');
+        this.importFromJson(name);
     }
 
     static size = 128;
@@ -77,12 +78,74 @@ export class Field{
         }
     }
 
+    disconnectStationWithID(id1 : number, id2 : number){
+        let station1 = this.getStationByID(id1);
+        let station2 = this.getStationByID(id2);
+        if(station1 != null && station2 != null){
+            this.removeUpDownStation(station1, station2);
+            this.removeLeftRightStation(station1, station2);
+        }else{
+            if(station1 == null)
+                console.log("Non-existent ID : " + id1);
+            if(station2 == null)
+                console.log("Non-existent ID : " + id2);
+        }
+    }
+
     getStationByID(id : number) : Station{
         return this.stations.find(station => station.id == id);
+    }
+    
+    getNearestStation(currentStation : Station, dir : Direction.asType): Station{
+        let nearest : Station = null;
+        let index = Number.MAX_SAFE_INTEGER;
+        let dis : number = 0;
+        this._stations.forEach(sta => {
+            switch(dir){
+                case 'UP' : 
+                    dis = currentStation.y - sta.y;
+                    if(sta.x == currentStation.x && dis > 0){
+                    if(dis < index){
+                        nearest = sta;
+                        index = dis;
+                    }
+                }break;
+                case 'DOWN' : 
+                    dis = - currentStation.y + sta.y;
+                    if(sta.x == currentStation.x && dis > 0){
+                    if(dis < index){
+                        nearest = sta;
+                        index = dis;
+                    }
+                }break;
+                case 'RIGHT' : 
+                    dis = - currentStation.x + sta.x;
+                    if(sta.y == currentStation.y && dis > 0){
+                    if(dis < index){
+                        nearest = sta;
+                        index = dis;
+                    }
+                }break;
+                case 'LEFT' : 
+                    dis = currentStation.x - sta.x;
+                    if(sta.y == currentStation.y && dis > 0){
+                    if(dis < index){
+                        nearest = sta;
+                        index = dis;
+                    }
+                }break;
+            }
+        });
+        return nearest;
     }
 
     addUpDownStation(up: Station, down: Station){
         if(up.x != down.x) return;
+        if(up.y<down.y){
+            const sta = up;
+            up = down;
+            down = sta;
+        }
         up.setNext('DOWN', down);
         for(let i = up.y+1; i < down.y; i++){
             this._roads.push(new Road(up.x, i, 'tate'));
@@ -91,9 +154,53 @@ export class Field{
     
     addLeftRightStation(left : Station, right : Station){
         if(left.y != right.y) return;
+        if(right.x<left.x){
+            const sta = left;
+            left = right;
+            right = sta;
+        }
         left.setNext('RIGHT', right);
         for(let i = left.x + 1; i < right.x; i++){
             this._roads.push(new Road(i, left.y, 'yoko'));
+        }
+    }
+    removeUpDownStation(up: Station, down: Station){
+        if(up.x != down.x) return;
+        if(up.y<down.y){
+            const sta = up;
+            up = down;
+            down = sta;
+        }
+        up.removeNext('DOWN', down);
+        for(let i = 0;  i < this._roads.length; i++){
+            let road : Road = this._roads[i]; 
+            if(road.x == down.x && road.y > up.y && road.y < down.y){
+                console.log("po");
+                road.final();
+                this._roads = this._roads.splice(i, i+1);
+                i--;
+            }
+        }
+    }
+    
+    removeLeftRightStation(left : Station, right : Station){
+        if(left.y != right.y) return;
+        if(right.x<left.x){
+            const sta = left;
+            left = right;
+            right = sta;
+        }
+        left.removeNext('RIGHT', right);
+        for(let i = 0;  i < this._roads.length; i++){
+            let road : Road = this._roads[i]; 
+            if(road.y == right.y && road.x > left.x && road.x < right.x){
+                console.log("po");
+                road.final();
+                console.log(this._roads.length);
+                this._roads.splice(i, 1);
+                console.log(this._roads.length);
+                i--;
+            }
         }
     }
     exportStations(){

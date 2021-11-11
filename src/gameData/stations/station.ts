@@ -39,5 +39,9 @@ export abstract class Station implements Exportable{
         this.nexts[dir] = other;
         other.nexts[Direction.opposite(dir)] = this;
     }
+    removeNext(dir: Direction.asType, other: Station){
+        this.nexts[dir] = null;
+        other.nexts[Direction.opposite(dir)] = null;
+    }
     abstract event(): GameEvent<unknown>;
 }

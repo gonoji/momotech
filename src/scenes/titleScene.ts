@@ -2,6 +2,7 @@ import { Utils } from "phaser";
 import { FileIO } from "../utils/fileIO";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
+import { EditScene } from "./editScene";
 import { GameScene } from "./gameScene";
 import { Scene } from "./scene";
 
@@ -32,6 +33,9 @@ export class TitleScene extends Scene{
                 SceneManager.start(new GameScene(numPlayer));
                 return;
             }
+        }
+        if(KeyManager.pressed('SHIFT')&&KeyManager.pressed('CTRL')&&KeyManager.down('E')){
+            SceneManager.start(new EditScene());
         }
     }
 }
