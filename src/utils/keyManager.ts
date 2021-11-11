@@ -1,4 +1,10 @@
-const keyNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'UP', 'DOWN', 'LEFT', 'RIGHT', 'SPACE', 'ESC', 'BACKSPACE', 'SHIFT', 'ENTER', 'ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'PLUS', 'MINUS'] as const;
+const alphabetKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] as const;
+const numberKeys = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'] as const;
+const otherKeys = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'SPACE', 'ESC', 'BACKSPACE', 'SHIFT', 'ENTER', 'PLUS', 'MINUS'] as const;
+const keyNames = [...alphabetKeys, ...numberKeys, ...otherKeys] as const;
+
+// type alphabetKey = typeof alphabetKeys[number];
+type numberKey = typeof numberKeys[number];
 type KeyName = typeof keyNames[number];
 
 export class KeyManager {
@@ -30,5 +36,12 @@ export class KeyManager {
     static getKey(key: KeyName): Phaser.Input.Keyboard.Key{
         if(this.keys[key]) return this.keys[key];
         throw new Error(`キー ${key} が見つかりません`);
+    }
+
+    static numberToKey(num: number){
+        return numberKeys[num];
+    }
+    static keyToNumber(key: numberKey){
+        return numberKeys.indexOf(key);
     }
 }
