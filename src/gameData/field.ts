@@ -1,4 +1,5 @@
 import { FileIO } from "../utils/fileIO";
+import { SceneManager } from "../utils/sceneManager";
 import { Road } from "./road";
 import { Station } from "./stations/station";
 import { StationMinus } from "./stations/stationMinus";
@@ -52,10 +53,10 @@ export class Field{
             this.add(station);
         });
         json.forEach(ele => {
-            if(ele.nexts.up!=null){
+            if(ele.nexts.up != null){
                 this.connectStationWithID(ele.nexts.up, ele.id);
             }
-            if(ele.nexts.left!=null){
+            if(ele.nexts.left != null){
                 this.connectStationWithID(ele.nexts.left, ele.id);
             }
         });
@@ -94,5 +95,18 @@ export class Field{
         for(let i = left.x + 1; i < right.x; i++){
             this._roads.push(new Road(i, left.y, 'yoko'));
         }
+    }
+    exportStations(){
+        let str : string = '[';
+        let i: number=0;
+        this._stations.forEach(ele=>{
+            if(i!=0){
+                str+=',';
+            }
+            str+=JSON.stringify(ele.export());
+            i++;
+        });
+        str+=']';
+        SceneManager.scene.load.saveJSON(JSON.parse(str));
     }
 }

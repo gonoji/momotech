@@ -34,7 +34,9 @@ export class GameScene extends Phaser.Scene {
         if(KeyManager.pressed('MINUS')){
             this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*0.95);
         }
-        
+        if(KeyManager.down('S')&&KeyManager.pressed('SHIFT')){
+            this.gameData.field.exportStations();
+        }
         if(this.eventManager.update(this.gameData)){
             SceneManager.start(TitleScene);
             this.gameData.final();
