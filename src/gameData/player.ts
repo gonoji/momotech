@@ -1,11 +1,15 @@
 import { Depth } from "../utils/depthManager";
 import { Direction } from "../utils/direction";
 import { SceneManager } from "../utils/sceneManager";
+import { Card } from "./cards/card";
 import { Field } from "./field";
 import { Station } from "./stations/station";
 
 export class Player{
-    public location: Station;
+    location: Station;
+    money: number = 10;
+    readonly cards: Card[] = [];
+
     private sprite: Phaser.GameObjects.Group;
 
     constructor(readonly id: number){
