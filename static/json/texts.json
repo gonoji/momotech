@@ -1,6 +1,0 @@
-{
-    "baseURL": "static/texts/",
-    "contents": [
-        { "name" : "test", "url" : "test.txt" }
-    ]
-}

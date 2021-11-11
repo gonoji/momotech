@@ -1,5 +1,3 @@
-import { Utils } from "phaser";
-import { FileIO } from "../utils/fileIO";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { GameScene } from "./gameScene";
