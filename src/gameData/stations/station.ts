@@ -26,8 +26,8 @@ export abstract class Station implements Exportable{
         this.nexts = { UP: null, DOWN: null, LEFT: null, RIGHT: null };
         [this.sprite.x, this.sprite.y] = Field.at(x, y);
     }
-    export(): JSON {
-        return JSON.parse(`{"id" : ${this.id},"type" : "${this.stationType}","position" : {"x" : ${this.x}, "y" : ${this.y}},"nexts": { "up" : "${this.nexts.UP?.id}", "down": "${this.nexts.DOWN?.id}", "right": "${this.nexts.RIGHT?.id}", "left": "${this.nexts.LEFT?.id}"}}`);
+    export(){
+        return JSON.parse(`{"id":${this.id},"type":"${this.stationType}","position":{"x":${this.x},"y":${this.y}},"nexts":{"up":"${this.nexts.UP?.id}","down":"${this.nexts.DOWN?.id}","right":"${this.nexts.RIGHT?.id}","left":"${this.nexts.LEFT?.id}"}}`);
     }
     update(){
 
