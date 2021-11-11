@@ -1,47 +1,37 @@
+import { Utils } from "phaser";
 import { FileIO } from "../utils/fileIO";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { GameScene } from "./gameScene";
+import { Scene } from "./scene";
 
-export class TitleScene extends Phaser.Scene {
+export class TitleScene extends Scene{
+    private startText?: Phaser.GameObjects.Text // 追加
+    private fontStyle: Phaser.Types.GameObjects.Text.TextStyle = { color: 'red', fontSize: '70px' } // 追加
+    private static num: integer = 0;
+
     constructor(){
-        super({ key: 'TitleScene' });
+        super('TitleScene');
     }
-
     init(){
         SceneManager.init(this);
     }
-    //本来はこのメソッドで、画像ファイルなどのロード
     preload(){
         FileIO.init();
-        console.log('Hello Phaser');
     }
-    private startText?: Phaser.GameObjects.Text // 追加
-    private ellipse?: Phaser.GameObjects.Ellipse // 追加
-    private bk_color: string = '0xeeeeee' // 追加
-    private fontStyle: Phaser.Types.GameObjects.Text.TextStyle = { color: 'red', fontSize: '70px' } // 追加
-
-    private static num: integer = 0;
     create(){
-        this.cameras.main.setBackgroundColor(this.bk_color);
-        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, ('Titlepepepe' + TitleScene.num++), this.fontStyle)
-            .setOrigin(0.5)
-            .setInteractive()
-            .on('pointerdown', () => SceneManager.start(GameScene));
-        this.ellipse = this.add.ellipse(0, 0, 100, 100, 0x00ff00);
+        this.cameras.main.setBackgroundColor('0xeeeeee');
+        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, `Title[${TitleScene.num++}]`, this.fontStyle)
+            .setOrigin(0.5);
     }
     update(){
-        if(KeyManager.pressed('UP')){
-            this.ellipse.y -= 5;
-        }
-        if(KeyManager.pressed('DOWN')){
-            this.ellipse.y += 5;
-        }
-        if(KeyManager.pressed('RIGHT')){
-            this.ellipse.x += 5;
-        }
-        if(KeyManager.pressed('LEFT')){
-            this.ellipse.x -= 5;
+        KeyManager.update();
+        for(const numPlayer of [1, 2, 3, 4]){
+            if(KeyManager.down(KeyManager.numberToKey(numPlayer))){
+                console.log(numPlayer);
+                SceneManager.start(new GameScene(numPlayer));
+                return;
+            }
         }
     }
 }
