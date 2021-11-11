@@ -1,0 +1,14 @@
+{
+    "imagesJson" : {"url" : "static/json/images.json"},
+    "textsJson"  : {"url" : "static/json/texts.json" },
+    "jsons" : [
+        {
+            "baseURL" : "static/json/",
+            "contents" : [
+                {
+                    "name" : "stationJson", "url" : "station.json"
+                }
+            ]
+        }
+    ]
+}
