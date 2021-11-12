@@ -183,7 +183,7 @@ export class Field implements Exportable{
         up.removeNext('DOWN', down);
         for(let i = 0;  i < this._roads.length; i++){
             let road : Road = this._roads[i]; 
-            if(road.x == down.x && road.y > up.y && road.y < down.y){
+            if(road.x == down.x && road.y > up.y && road.y < down.y && road.roadType == 'tate'){
                 road.final();
                 this._roads.splice(i, 1);
                 i--;
@@ -202,7 +202,7 @@ export class Field implements Exportable{
         left.removeNext('RIGHT', right);
         for(let i = 0;  i < this._roads.length; i++){
             let road : Road = this._roads[i]; 
-            if(road.y == right.y && road.x > left.x && road.x < right.x){
+            if(road.y == right.y && road.x > left.x && road.x < right.x && road.roadType == 'yoko'){
                 road.final();
                 this._roads.splice(i, 1);
                 i--;

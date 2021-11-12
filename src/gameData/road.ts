@@ -1,15 +1,16 @@
 import { SceneManager } from "../utils/sceneManager";
 import { Station } from "./stations/station";
 
+export type roadType = 'tate' | 'yoko';
 export class Road{
     static size:number=Station.size;
     private sprite: Phaser.GameObjects.Sprite;
     constructor(
         public x: number,
         public y: number,
-        public imageName: string
+        public roadType: roadType
     ){
-        this.sprite = SceneManager.scene.add.sprite(x, y,imageName).setDepth(-10);
+        this.sprite = SceneManager.scene.add.sprite(x, y,roadType).setDepth(-10);
         this.calcPosition();
     }
     private calcPosition(){
