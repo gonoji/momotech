@@ -1,5 +1,4 @@
 import { EventManager } from "../events/eventManager";
-import { RoutineManager } from "../events/routineManager";
 import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";

@@ -1,4 +1,5 @@
 import "phaser";
+import "./gameData/cards/cards"; // Card より先に import されないとエラーを吐く
 import { TitleScene } from "./scenes/titleScene";
 
 // windowイベントで、ロードされたらゲーム開始
