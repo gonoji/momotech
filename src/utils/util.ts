@@ -1,10 +1,23 @@
 export namespace Util{
-    export function getRandomInt(max : number){
-        return Math.floor(Math.random() * max);
+
+    /** 指定した範囲の整数をランダムに得る
+     * @returns [`lb`, `ub`) 中のランダムな整数
+     */
+     export function getRandomInt(lb: number, ub: number){
+        return Math.floor(Math.random() * (ub - lb)) + lb;
     }
     
-    export function getRandomDouble(min : number ,max : number){
-        return Math.random() * (max - min) + min;
+    /** 指定した範囲の実数をランダムに得る
+     * @returns [`lb`, `ub`) 中のランダムな実数
+     */
+     export function getRandomDouble(lb: number, ub: number){
+        return Math.random() * (lb - ub) + lb;
     }
 
+    /** 配列の要素をランダムに得る
+     * @returns `array` 中のランダムな要素
+     */
+     export function pick<T>(array: T[]){
+        return array[Util.getRandomInt(0, array.length)];
+    }
 }
