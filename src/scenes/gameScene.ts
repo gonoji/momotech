@@ -16,7 +16,6 @@ export class GameScene extends Scene{
     }
     init(){
         SceneManager.init(this);
-        this.eventManager = new EventManager(routineTurn(this.gameData));
     }
     preload(){
 
@@ -24,6 +23,7 @@ export class GameScene extends Scene{
     create(){
         this.gameData.create();
         this.cameras.main.setBackgroundColor('0xeeeeee');
+        this.eventManager = new EventManager(routineTurn(this.gameData));
     }
     update(){
         KeyManager.update();

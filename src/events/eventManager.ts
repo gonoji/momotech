@@ -6,6 +6,7 @@ import { GameEvent } from "./event";
 type command = GameEvent<unknown> | 'end' | 'wait';
 
 export type routine = Generator<command, routine, unknown>;
+export type subroutine<T> = Generator<command, T, unknown>;
 
 export class EventManager{
     private events: Deque<GameEvent<unknown>>;
