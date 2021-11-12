@@ -1,3 +1,6 @@
+import { FileIO } from "./fileIO";
+import { SceneManager } from "./sceneManager";
+
 const alphabetKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] as const;
 const numberKeys = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'] as const;
 const otherKeys = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'SPACE', 'ESC', 'BACKSPACE', 'SHIFT', 'CTRL', 'ENTER', 'PLUS', 'MINUS', 'DELETE'] as const;
@@ -49,5 +52,11 @@ export class KeyManager {
     }
     static keyToNumber(key: numberKey){
         return numberKeys.indexOf(key);
+    }
+    static loadKeyConfig(){
+        const json = FileIO.getJson('keyConfig');
+        json.forEach(element => {
+            this.replaceKey(element.key1,element.key2);
+        });
     }
 }

@@ -20,6 +20,7 @@ export class TitleScene extends Scene{
         FileIO.preload();
     }
     create(){
+        KeyManager.loadKeyConfig();
         this.cameras.main.setBackgroundColor('0xeeeeee');
         this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, `Title[${TitleScene.num++}]`, this.fontStyle)
             .setOrigin(0.5);
