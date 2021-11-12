@@ -10,12 +10,16 @@ type KeyName = typeof keyNames[number];
 export class KeyManager {
     static keys: { [key in KeyName]?: Phaser.Input.Keyboard.Key };
     static counts: { [key in KeyName]?: number };
+    static replaceKeys : { key1 : KeyName, key2 : KeyName}[] = [];
     static init(scene: Phaser.Scene){
         this.keys = {};
         this.counts = {};
         for(const key of keyNames){
             this.keys[key] = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[key]);
             this.counts[key] = 0;
+        }
+        for(const key of this.replaceKeys){
+            this.replaceKey(key.key1, key.key2, false);
         }
     }
     static update(){
@@ -30,8 +34,10 @@ export class KeyManager {
     static down(key: KeyName){
         return this.counts[key] == 1;
     }
-    static replaceKey(key1: KeyName, key2: KeyName){
+    static replaceKey(key1: KeyName, key2: KeyName, save: boolean = true){
         [this.keys[key1], this.keys[key2]] = [this.keys[key2], this.keys[key1]];
+        if(save)
+            this.replaceKeys.push({ key1, key2});
     }
     static getKey(key: KeyName): Phaser.Input.Keyboard.Key{
         if(this.keys[key]) return this.keys[key];
