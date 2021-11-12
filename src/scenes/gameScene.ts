@@ -1,5 +1,4 @@
 import { EventManager } from "../events/eventManager";
-import { routineTurn } from "../events/routineTurn";
 import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
@@ -23,7 +22,7 @@ export class GameScene extends Scene{
     create(){
         this.gameData.create();
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.eventManager = new EventManager(routineTurn(this.gameData));
+        this.eventManager = new EventManager(this.gameData);
     }
     update(){
         KeyManager.update();
@@ -38,7 +37,7 @@ export class GameScene extends Scene{
         if(KeyManager.down('S')&&KeyManager.pressed('SHIFT')){
             this.load.saveJSON(this.gameData.field);
         }
-        if(this.eventManager.update(this.gameData)){
+        if(this.eventManager.update()){
             SceneManager.start(new TitleScene());
             this.gameData.final();
         }

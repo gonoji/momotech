@@ -1,3 +1,4 @@
+import { Card } from "./cards/card";
 import { Field } from "./field";
 import { GameDate } from "./gameDate";
 import { Player } from "./player";
@@ -16,6 +17,7 @@ export class GameData{
     }
     create(){
         this.field.create();
+        Card.create();
         for(const player of this.players) player.create(this.field.stations[0]);
     }
     update(){

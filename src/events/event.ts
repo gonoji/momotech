@@ -20,8 +20,3 @@ export interface GameEvent<T>{
      */
     final(): void;
 }
-
-export function* result<T>(event: GameEvent<T>){
-    yield event;
-    return event.result();
-}
