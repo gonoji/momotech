@@ -36,7 +36,7 @@ export class GameScene extends Scene{
             this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*0.95);
         }
         if(KeyManager.down('S')&&KeyManager.pressed('SHIFT')){
-            this.load.saveJSON(this.gameData.field.export());
+            this.load.saveJSON(this.gameData.field);
         }
         if(this.eventManager.update(this.gameData)){
             SceneManager.start(new TitleScene());
