@@ -49,10 +49,10 @@ export class EditScene extends Scene{
             for(const key of Direction.asArray){
                 if(KeyManager.down(key)){
                     switch(key){
-                        case 'UP':this.editArea.setPosition(this.editArea.x, this.editArea.y - 128);break;
-                        case 'DOWN':this.editArea.setPosition(this.editArea.x, this.editArea.y + 128);console.log("down");break;
-                        case 'LEFT':this.editArea.setPosition(this.editArea.x - 128, this.editArea.y );break;
-                        case 'RIGHT':this.editArea.setPosition(this.editArea.x + 128, this.editArea.y );break;
+                        case 'UP' : this.editArea.setPosition(this.editArea.x, this.editArea.y - 128);break;
+                        case 'DOWN' : this.editArea.setPosition(this.editArea.x, this.editArea.y + 128);break;
+                        case 'LEFT' : this.editArea.setPosition(this.editArea.x - 128, this.editArea.y );break;
+                        case 'RIGHT' : this.editArea.setPosition(this.editArea.x + 128, this.editArea.y );break;
                     }
                 }
             }
@@ -67,9 +67,7 @@ export class EditScene extends Scene{
                             const nextSta = nearSta.nexts[Direction.opposite(key)];
                             if(nextSta != null && nextSta != s){
                                 this.field.disconnectStationWithID(nextSta.id,nearSta.id);
-                                console.log("a");
                                 this.field.connectStationWithID(s.id, nearSta.id);
-                                console.log("b");
                                 this.field.connectStationWithID(s.id, nextSta.id);
                             }
                         }
@@ -93,8 +91,6 @@ export class EditScene extends Scene{
                                 this.field.connectStationWithID(this.player.location.id,sta.id);
                             }else if(sta.nexts[Direction.opposite(key)] == this.player.location){
                                 this.field.disconnectStationWithID(this.player.location.id,sta.id);
-                            }else{
-
                             }
                         }
                     }else{
@@ -110,7 +106,7 @@ export class EditScene extends Scene{
             this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*0.95);
         }
         if(KeyManager.down('S')&&KeyManager.pressed('SHIFT')){
-            this.load.saveJSON(this.field.export());
+            this.load.saveJSON(this.field);
         }
         if(KeyManager.down('ESC')){
             SceneManager.start(new TitleScene());

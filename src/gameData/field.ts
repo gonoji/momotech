@@ -147,6 +147,7 @@ export class Field implements Exportable{
         return nearest;
     }
     private addUpDownStation(up: Station, down: Station){
+        if(up == null || down == null) return ;
         if(up.x != down.x) return;
         if(up.y > down.y){
             const sta = up;
@@ -159,6 +160,7 @@ export class Field implements Exportable{
         }
     }
     private addLeftRightStation(left: Station, right: Station){
+        if(left == null || right == null) return ;
         if(left.y != right.y) return;
         if(right.x < left.x){
             const sta = left;
@@ -207,9 +209,8 @@ export class Field implements Exportable{
             }
         }
     }
-    export(){
-        const jsonStr = '[' + this._stations.map(e => JSON.stringify(e.export())).join(',') + ']';
-        return JSON.parse(jsonStr);
+    toJSON(){
+        return this._stations;
     }
 }
 
