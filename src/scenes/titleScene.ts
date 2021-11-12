@@ -1,3 +1,4 @@
+import { FileIO } from "../utils/fileIO";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { EditScene } from "./editScene";
@@ -16,6 +17,7 @@ export class TitleScene extends Scene{
         SceneManager.init(this);
     }
     preload(){
+        FileIO.preload();
     }
     create(){
         this.cameras.main.setBackgroundColor('0xeeeeee');

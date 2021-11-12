@@ -1,8 +1,5 @@
 import { GameObjects } from "phaser";
-import { EventManager } from "../events/eventManager";
-import { routineTurn } from "../events/routineTurn";
 import { Field } from "../gameData/field";
-import { GameData } from "../gameData/gameData";
 import { Player } from "../gameData/player";
 import { Station, stationType } from "../gameData/stations/station";
 import { StationPlus } from "../gameData/stations/stationPlus";
@@ -113,7 +110,7 @@ export class EditScene extends Scene{
             this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*0.95);
         }
         if(KeyManager.down('S')&&KeyManager.pressed('SHIFT')){
-            this.field.exportStations();
+            this.load.saveJSON(this.field.export());
         }
         if(KeyManager.down('ESC')){
             SceneManager.start(new TitleScene());
