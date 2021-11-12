@@ -1,6 +1,7 @@
 import { EventManager } from "../events/eventManager";
 import { routineTurn } from "../events/routineTurn";
 import { GameData } from "../gameData/gameData";
+import { FileIO } from "../utils/fileIO";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { Scene } from "./scene";
@@ -19,6 +20,7 @@ export class GameScene extends Scene{
         this.eventManager = new EventManager(routineTurn(this.gameData));
     }
     preload(){
+        FileIO.preload();
     }
     create(){
         this.gameData.create();
@@ -35,7 +37,7 @@ export class GameScene extends Scene{
             this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*0.95);
         }
         if(KeyManager.down('S')&&KeyManager.pressed('SHIFT')){
-            this.gameData.field.exportStations();
+            this.load.saveJSON(this.gameData.field.export());
         }
         if(this.eventManager.update(this.gameData)){
             SceneManager.start(new TitleScene());

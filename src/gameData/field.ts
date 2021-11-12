@@ -1,12 +1,12 @@
 import { Direction } from "../utils/direction";
+import { Exportable } from "../utils/exportable";
 import { FileIO } from "../utils/fileIO";
-import { SceneManager } from "../utils/sceneManager";
 import { Road } from "./road";
 import { Station } from "./stations/station";
 import { StationMinus } from "./stations/stationMinus";
 import { StationPlus } from "./stations/stationPlus";
 
-export class Field{
+export class Field implements Exportable{
     private _stations: Station[];
     private _roads: Road[];
     constructor(){
@@ -27,7 +27,7 @@ export class Field{
         for(const station of this.stations) station.final();        
     }
 
-    create(name : string = 'stationJson'){
+    create(name : string = 'stations'){
         this._stations = [];
         this.importFromJson(name);
     }
@@ -37,45 +37,30 @@ export class Field{
         return [x * Field.size, y * Field.size];
     }
 
-    importFromJson(name : string){
-        let json = FileIO.getJson(name);
-        json.forEach(ele => {
-            const stationType = ele.type;
-            let station : Station;
-            const x = ele.position.x;
-            const y = ele.position.y;
-            switch(stationType){
-                case 'plus' : station = new StationPlus(x, y, 0, ele.id);
-                    break;
-                case 'minus' : station = new StationMinus(x, y, 0, ele.id);
-                    break;
-                default :  break;
-            }
-            this.add(station);
-        });
-        json.forEach(ele => {
-            if(ele.nexts.up != null){
-                this.connectStationWithID(ele.nexts.up, ele.id);
-            }
-            if(ele.nexts.left != null){
-                this.connectStationWithID(ele.nexts.left, ele.id);
+    private importFromJson(name: string){
+        const json = FileIO.getJson(name);
+        json.forEach((e: any) => {
+            const x = e.position.x;
+            const y = e.position.y;
+            switch(e.type){
+                case 'plus': this.add(new StationPlus(x, y, 0, e.id)); break;
+                case 'minus': this.add(new StationMinus(x, y, 0, e.id)); break;
             }
         });
-        
+        json.forEach((e: any) => {
+            if(e.nexts.up != null){
+                this.connectStationWithID(e.nexts.up, e.id);
+            }
+            if(e.nexts.left != null){
+                this.connectStationWithID(e.nexts.left, e.id);
+            }
+        });
     }
-
-    connectStationWithID(id1 : number, id2 : number){
-        const station1 = this.getStationByID(id1);
-        const station2 = this.getStationByID(id2);
-        if(station1 != null && station2 != null){
-            this.addUpDownStation(station1, station2);
-            this.addLeftRightStation(station1, station2);
-        }else{
-            if(station1 == null)
-                console.log("Non-existent ID : " + id1);
-            if(station2 == null)
-                console.log("Non-existent ID : " + id2);
-        }
+    connectStationWithID(id1: number, id2: number){
+        const s1 = this.getStationByID(id1);
+        const s2 = this.getStationByID(id2);
+        this.addUpDownStation(s1, s2);
+        this.addLeftRightStation(s1, s2);
     }
 
     disconnectStationWithID(id1 : number, id2 : number){
@@ -92,7 +77,7 @@ export class Field{
         }
     }
 
-    getStationByID(id : number) : Station{
+    private getStationByID(id : number) : Station{
         return this.stations.find(station => station.id == id);
     }
     removeStationByID(id : number){
@@ -161,8 +146,7 @@ export class Field{
         });
         return nearest;
     }
-
-    addUpDownStation(up: Station, down: Station){
+    private addUpDownStation(up: Station, down: Station){
         if(up.x != down.x) return;
         if(up.y > down.y){
             const sta = up;
@@ -174,8 +158,7 @@ export class Field{
             this._roads.push(new Road(up.x, i, 'tate'));
         }
     }
-    
-    addLeftRightStation(left : Station, right : Station){
+    private addLeftRightStation(left: Station, right: Station){
         if(left.y != right.y) return;
         if(right.x < left.x){
             const sta = left;
@@ -224,18 +207,9 @@ export class Field{
             }
         }
     }
-    exportStations(){
-        let str : string = '[';
-        let i: number=0;
-        this._stations.forEach(ele=>{
-            if(i!=0){
-                str+=',';
-            }
-            str+=JSON.stringify(ele.export());
-            i++;
-        });
-        str+=']';
-        SceneManager.scene.load.saveJSON(JSON.parse(str));
+    export(){
+        const jsonStr = '[' + this._stations.map(e => JSON.stringify(e.export())).join(',') + ']';
+        return JSON.parse(jsonStr);
     }
 }
 

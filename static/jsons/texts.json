@@ -1,0 +1,9 @@
+{
+    "texts": {
+        "path": "static/texts",
+        "defaultType": "text",
+        "files": [
+            { "key" : "test", "url" : "test.txt" }
+        ]
+    }
+}

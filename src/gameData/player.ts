@@ -1,11 +1,15 @@
 import { Depth } from "../utils/depthManager";
 import { Direction } from "../utils/direction";
 import { SceneManager } from "../utils/sceneManager";
+import { Card } from "./cards/card";
 import { Field } from "./field";
 import { Station } from "./stations/station";
 
 export class Player{
-    public location: Station;
+    location: Station;
+    money: number = 10;
+    readonly cards: Card[] = [];
+
     private sprite: Phaser.GameObjects.Group;
 
     constructor(readonly id: number){
@@ -26,7 +30,7 @@ export class Player{
 
     /** 隣の駅に移動する
      * @param dir 移動する方向
-     * @returns 移動できた（進む方向に駅がない・塞がれていないなどにより、移動が失敗していない）かどうか
+     * @returns 移動できた（進む方向に駅があった）かどうか
      */
     moveTo(dir: Direction.asType){
         const next = this.location.nexts[dir];
@@ -36,6 +40,9 @@ export class Player{
             return true;
         }
         return false;
+    }
+    canMove(dir: Direction.asType){
+        return true; // todo: 要石があったらfalseに
     }
 
     private updatePos(){

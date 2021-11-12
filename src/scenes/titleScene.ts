@@ -1,5 +1,3 @@
-import { Utils } from "phaser";
-import { FileIO } from "../utils/fileIO";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { EditScene } from "./editScene";
@@ -18,7 +16,6 @@ export class TitleScene extends Scene{
         SceneManager.init(this);
     }
     preload(){
-        FileIO.init();
     }
     create(){
         this.cameras.main.setBackgroundColor('0xeeeeee');
@@ -29,7 +26,6 @@ export class TitleScene extends Scene{
         KeyManager.update();
         for(const numPlayer of [1, 2, 3, 4]){
             if(KeyManager.down(KeyManager.numberToKey(numPlayer))){
-                console.log(numPlayer);
                 SceneManager.start(new GameScene(numPlayer));
                 return;
             }
