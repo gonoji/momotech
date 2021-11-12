@@ -1,6 +1,6 @@
 
 export class GameDate{
-    readonly date: { year: number, month: number, week: number };
+    private readonly date: { year: number, month: number, week: number };
     static months: number = 12;
  
     constructor(){

@@ -1,10 +1,11 @@
-import { GameEvent } from "../../events/event";
+import { subroutine } from "../../events/eventManager";
 import { Depth } from "../../utils/depthManager";
 import { Direction } from "../../utils/direction";
 import { Exportable } from "../../utils/exportable";
 import { SceneManager } from "../../utils/sceneManager";
 import { Util } from "../../utils/util";
 import { Field } from "../field";
+import { GameData } from "../gameData";
 
 export type stationType = 'plus' | 'minus';
 
@@ -57,5 +58,6 @@ export abstract class Station implements Exportable{
         this.nexts[dir] = null;
         other.nexts[Direction.opposite(dir)] = null;
     }
-    abstract event(): GameEvent<unknown>;
+
+    abstract routine(gameData: GameData): subroutine<void>;
 }
