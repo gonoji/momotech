@@ -1,4 +1,4 @@
-import { subroutine } from "../../events/eventManager";
+import { subroutine } from "../../events/routineManager";
 import { Depth } from "../../utils/depthManager";
 import { Direction } from "../../utils/direction";
 import { Exportable } from "../../utils/exportable";

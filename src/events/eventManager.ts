@@ -2,43 +2,34 @@ import { GameData } from "../gameData/gameData";
 import { Deque } from "../utils/deque";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
+import { RoutineManager } from "./routineManager";
 
-type command = GameEvent<unknown> | 'end' | 'wait';
-
-export type routine = Generator<command, routine, unknown>;
-export type subroutine<T> = Generator<command, T, unknown>;
+export type command = GameEvent<unknown> | 'end' | 'wait';
 
 export class EventManager{
-    private events: Deque<GameEvent<unknown>>;
-    constructor(private routine: routine){
+    private readonly events: Deque<GameEvent<unknown>>;
+    private readonly routine: RoutineManager;
+    constructor(private readonly gameData: GameData){
         this.events = new Deque<GameEvent<unknown>>();
+        this.routine = new RoutineManager(gameData);
         this.advance();
     }
-    update(gameData: GameData){
+    update(){
         if(KeyManager.down('P')) this.events.print();
-        return this.events.front().update(gameData) && this.advance();
+        return this.events.front().update(this.gameData) && this.advance();
     }
     private advance(){
-        const next = this.routine.next();
-        const value = next.value;
-        console.log(value);
+        const command = this.routine.next();
+        console.log(command);
 
-        if(value == null) return true;
-        if(value == 'wait') return false;
-        if(value == 'end'){
+        if(command == null) return true;
+        if(command == 'wait') return false;
+        if(command == 'end'){
             this.events.popFront().final();
             return this.advance();
         }
-
-        // routine の更新
-        if('next' in value){
-            this.routine = value;
-            return this.advance();
-        }
-        
-        // event の更新
-        this.events.pushFront(value);
-        value.init();
+        this.events.pushFront(command);
+        command.init();
         return false;
     }
 }
