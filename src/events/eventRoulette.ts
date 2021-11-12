@@ -2,13 +2,12 @@ import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { Depth } from "../utils/depthManager";
-import { Util } from "../utils/util";
 
 export class EventRoulette<T> implements GameEvent<T>{
     private message: Phaser.GameObjects.Text;
     private choice: T;
     private rolls: boolean = true;
-    constructor(private choices: T[], private toText: (choice: T) => string){
+    constructor(private generateChoice: () => T, private toText: (choice: T) => string){
     }
 
     init(){
@@ -19,7 +18,7 @@ export class EventRoulette<T> implements GameEvent<T>{
     }
     update(){
         if(this.rolls){
-            this.choice = Util.pick(this.choices);
+            this.choice = this.generateChoice();
             this.message.setText(this.toText(this.choice));
         }
         if(KeyManager.down('Z')){
