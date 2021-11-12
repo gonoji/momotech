@@ -5,6 +5,7 @@ import { Exportable } from "../../utils/exportable";
 import { SceneManager } from "../../utils/sceneManager";
 import { Util } from "../../utils/util";
 import { Field } from "../field";
+import { GameData } from "../gameData";
 
 export type stationType = 'plus' | 'minus';
 
@@ -44,5 +45,5 @@ export abstract class Station implements Exportable{
         other.nexts[Direction.opposite(dir)] = null;
     }
 
-    abstract routine(): subroutine<void>;
+    abstract routine(gameData: GameData): subroutine<void>;
 }

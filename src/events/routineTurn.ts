@@ -22,7 +22,7 @@ function* routineTurnBody(gameData: GameData): routine{
             yield 'end';
             yield event;
             yield 'end';
-            yield* gameData.turnPlayer.location.routine();
+            yield* gameData.turnPlayer.location.routine(gameData);
             return routineTurnEnd(gameData);
         }
         yield 'wait';
@@ -37,7 +37,7 @@ function* routineTurnEnd(gameData: GameData): routine{
 }
 
 function dateToText(date: GameDate){
-    return `${date.year} 年 ${date.month} 月 ${date.week} 週`;
+    return `${date.year} 年 ${date.month} 月 ${date.week + 1} 週`;
 }
 
 function* action(choice: string): subroutine<EventMove|void>{

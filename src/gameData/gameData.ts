@@ -26,4 +26,8 @@ export class GameData{
     get turnPlayer(){
         return this.players[this.date.week];
     }
+
+    static moneyToText(money: number){
+        return `${money} 円`;
+    }
 }
