@@ -1,6 +1,6 @@
 const alphabetKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] as const;
 const numberKeys = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'] as const;
-const otherKeys = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'SPACE', 'ESC', 'BACKSPACE', 'SHIFT', 'CTRL', 'ENTER', 'PLUS', 'MINUS'] as const;
+const otherKeys = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'SPACE', 'ESC', 'BACKSPACE', 'SHIFT', 'CTRL', 'ENTER', 'PLUS', 'MINUS', 'DELETE'] as const;
 const keyNames = [...alphabetKeys, ...numberKeys, ...otherKeys] as const;
 
 // type alphabetKey = typeof alphabetKeys[number];

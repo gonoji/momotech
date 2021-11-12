@@ -40,10 +40,10 @@ export class Field{
     importFromJson(name : string){
         let json = FileIO.getJson(name);
         json.forEach(ele => {
-            let stationType = ele.type;
+            const stationType = ele.type;
             let station : Station;
-            let x = ele.position.x;
-            let y = ele.position.y;
+            const x = ele.position.x;
+            const y = ele.position.y;
             switch(stationType){
                 case 'plus' : station = new StationPlus(x, y, 0, ele.id);
                     break;
@@ -65,10 +65,9 @@ export class Field{
     }
 
     connectStationWithID(id1 : number, id2 : number){
-        let station1 = this.getStationByID(id1);
-        let station2 = this.getStationByID(id2);
+        const station1 = this.getStationByID(id1);
+        const station2 = this.getStationByID(id2);
         if(station1 != null && station2 != null){
-            console.log("po");
             this.addUpDownStation(station1, station2);
             this.addLeftRightStation(station1, station2);
         }else{
@@ -80,8 +79,8 @@ export class Field{
     }
 
     disconnectStationWithID(id1 : number, id2 : number){
-        let station1 = this.getStationByID(id1);
-        let station2 = this.getStationByID(id2);
+        const station1 = this.getStationByID(id1);
+        const station2 = this.getStationByID(id2);
         if(station1 != null && station2 != null){
             this.removeUpDownStation(station1, station2);
             this.removeLeftRightStation(station1, station2);
@@ -95,6 +94,29 @@ export class Field{
 
     getStationByID(id : number) : Station{
         return this.stations.find(station => station.id == id);
+    }
+    removeStationByID(id : number){
+        for(let i = 0;  i < this._stations.length; i++){
+            const sta : Station = this._stations[i]; 
+            if(sta.id == id){  
+                for(const key of Direction.asArray){
+                    if(sta.nexts[key] != null){
+                        if(sta.nexts[key] != null){
+                            this.removeLeftRightStation(sta.nexts[key], sta);
+                            this.removeUpDownStation(sta.nexts[key], sta);
+                        }
+                    }
+                }
+                sta.final();
+                this._stations.splice(i, 1);
+                return ;
+            }
+        }
+
+    }
+
+    getStationByPosition(x : number, y : number) : Station{
+        return this.stations.find(station => station.x == x && station.y == y);
     }
     
     getNearestStation(currentStation : Station, dir : Direction.asType): Station{
@@ -166,6 +188,7 @@ export class Field{
         }
     }
     removeUpDownStation(up: Station, down: Station){
+        if(up == null || down == null)return ;
         if(up.x != down.x) return;
         if(up.y > down.y){
             const sta = up;
@@ -184,6 +207,7 @@ export class Field{
     }
     
     removeLeftRightStation(left : Station, right : Station){
+        if(left == null || right == null)return ;
         if(left.y != right.y) return;
         if(right.x < left.x){
             const sta = left;
@@ -214,3 +238,4 @@ export class Field{
         SceneManager.scene.load.saveJSON(JSON.parse(str));
     }
 }
+
