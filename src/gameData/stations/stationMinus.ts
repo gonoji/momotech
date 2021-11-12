@@ -11,11 +11,15 @@ export class StationMinus extends Station{
     }
     *routine(gameData: GameData){
         yield new EventMessage('マイナス駅に止まった');
-        const loss = yield* result(new EventRoulette(() => Util.pick([10, 20, 30]), GameData.moneyToText));
+        const loss = yield* result(new EventRoulette(StationMinus.loss(gameData), GameData.moneyToText));
         yield 'end';
         yield 'end';
         gameData.turnPlayer.money -= loss;
         yield new EventMessage(GameData.moneyToText(loss) + '失った');
         yield 'end';
+    }
+
+    private static loss(gameData: GameData){
+        return () => Math.floor(Util.getRandomInt(10, 20+1) * gameData.factors.inflation / gameData.factors.season / gameData.factors.business);
     }
 }

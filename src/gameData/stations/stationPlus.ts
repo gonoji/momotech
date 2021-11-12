@@ -11,11 +11,15 @@ export class StationPlus extends Station{
     }
     *routine(gameData: GameData){
         yield new EventMessage('プラス駅に止まった');
-        const gain = yield* result(new EventRoulette(() => Util.pick([10, 20, 30]), GameData.moneyToText));
+        const gain = yield* result(new EventRoulette(StationPlus.gain(gameData), GameData.moneyToText));
         yield 'end';
         yield 'end';
         gameData.turnPlayer.money += gain;
         yield new EventMessage(GameData.moneyToText(gain) + '手に入れた');
         yield 'end';
+    }
+
+    private static gain(gameData: GameData){
+        return () => Util.getRandomInt(10, 20+1) * gameData.factors.inflation * gameData.factors.season * gameData.factors.business;
     }
 }
