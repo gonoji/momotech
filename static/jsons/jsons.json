@@ -5,7 +5,8 @@
         "files": [
             { "key": "images", "url": "images.json" },
             { "key": "texts", "url": "texts.json" },
-            { "key": "stations", "url": "stations.json", "type": "json" }
+            { "key": "stations", "url": "stations.json", "type": "json" },
+            { "key": "keyConfig", "url": "keyConfig.json", "type": "json" }
         ]
     }
 }
