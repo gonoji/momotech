@@ -1,5 +1,5 @@
 import { EventManager } from "../events/eventManager";
-import { routineTurn } from "../events/routineTurn";
+import { turn } from "../events/routineTurn";
 import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
@@ -23,7 +23,7 @@ export class GameScene extends Scene{
     create(){
         this.gameData.create();
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.eventManager = new EventManager(routineTurn(this.gameData));
+        this.eventManager = new EventManager(turn(this.gameData));
     }
     update(){
         KeyManager.update();

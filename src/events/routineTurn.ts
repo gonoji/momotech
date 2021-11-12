@@ -7,13 +7,13 @@ import { result } from "./event";
 import { GameData } from "../gameData/gameData";
 import { GameDate } from "../gameData/gameDate";
 
-export function* routineTurn(gameData: GameData): routine{
-    return routineTurnBody(gameData);
-}
-
-function* routineTurnBody(gameData: GameData): routine{
+export function* turn(gameData: GameData): routine{
     yield new EventMessage(dateToText(gameData.date) + ': ターン開始');
     yield 'end';
+    return turnBody(gameData);
+}
+
+function* turnBody(gameData: GameData): routine{
     const choose = new EventChoose(['サイコロ', 'カード']);
     yield choose;
     while(true){
@@ -23,17 +23,17 @@ function* routineTurnBody(gameData: GameData): routine{
             yield event;
             yield 'end';
             yield* gameData.turnPlayer.location.routine(gameData);
-            return routineTurnEnd(gameData);
+            return turnEnd(gameData);
         }
         yield 'wait';
     }
 }
 
-function* routineTurnEnd(gameData: GameData): routine{
+function* turnEnd(gameData: GameData): routine{
     yield new EventMessage(dateToText(gameData.date) + ': ターン終了');
     yield 'end';
     gameData.date.advance(gameData.players.length);
-    return routineTurn(gameData);
+    return turn(gameData);
 }
 
 function dateToText(date: GameDate){
