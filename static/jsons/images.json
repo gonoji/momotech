@@ -3,10 +3,10 @@
         "path": "static/images",
         "defaultType": "image",
         "files": [
-            { "key": "plus", "url": "masu_plus_128.png" },
-            { "key": "minus", "url": "masu_minus_128.png" },
-            { "key": "tate", "url": "road_tate.png" },
-            { "key": "yoko", "url": "road_yoko.png" },
+            { "key": "plus", "url": "plus.png" },
+            { "key": "minus", "url": "minus.png" },
+            { "key": "tate", "url": "tate.png" },
+            { "key": "yoko", "url": "yoko.png" },
             { "key":  "card", "url": "card.png" }
         ]
     }
