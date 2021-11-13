@@ -32,7 +32,7 @@ export class Field implements Exportable{
         this.importFromJson(name);
     }
 
-    static size = 128;
+    static size = 64;
     static at(x: number, y: number){
         return [x * Field.size, y * Field.size];
     }

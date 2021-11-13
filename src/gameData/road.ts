@@ -1,9 +1,10 @@
 import { SceneManager } from "../utils/sceneManager";
+import { Field } from "./field";
 import { Station } from "./stations/station";
 
 export type roadType = 'tate' | 'yoko';
 export class Road{
-    static size:number=Station.size;
+    static size: number = 64;
     private sprite: Phaser.GameObjects.Sprite;
     constructor(
         public x: number,

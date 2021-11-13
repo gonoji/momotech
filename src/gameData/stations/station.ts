@@ -10,7 +10,7 @@ import { GameData } from "../gameData";
 export type stationType = 'plus' | 'minus';
 
 export abstract class Station implements Exportable{
-    static size: number = 128;
+    static size: number = 64;
     private static id_max: number = 2147483647;
 
     private sprite: Phaser.GameObjects.Sprite;
@@ -24,6 +24,7 @@ export abstract class Station implements Exportable{
     ){
         if(id == -1) this.id = Util.getRandomInt(0, Station.id_max);
         this.sprite = SceneManager.scene.add.sprite(x, y, stationType).setDepth(Depth.of('field', 0));
+        this.sprite.setDisplaySize(Station.size, Station.size);
         this.nexts = { UP: null, DOWN: null, LEFT: null, RIGHT: null };
         [this.sprite.x, this.sprite.y] = Field.at(x, y);
     }
