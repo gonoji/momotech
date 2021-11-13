@@ -1,9 +1,9 @@
 import { Scene } from "../scenes/scene";
 import { KeyManager } from "./keyManager";
 
-export class SceneManager {
-    private static current: Phaser.Scene;
-    static init(scene: Phaser.Scene){
+export class SceneManager{
+    private static current: Scene;
+    static init(scene: Scene){
         this.current = scene;
         KeyManager.init(this.current);
     }
@@ -15,11 +15,5 @@ export class SceneManager {
     }
     static get scene(){
         return SceneManager.current;
-    }
-    static get sceneWidth(){
-        return Number(this.current.game.config.width.toString());
-    }
-    static get sceneHeight(){
-        return Number(this.current.game.config.height.toString());
     }
 }

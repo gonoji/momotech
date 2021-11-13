@@ -15,8 +15,8 @@ export class EventMessage implements GameEvent<void>{
     constructor(private text: string){
     }
     init(){
-        const width = SceneManager.sceneWidth;
-        const height = SceneManager.sceneHeight;
+        const width = SceneManager.scene.width;
+        const height = SceneManager.scene.height;
         this.message = SceneManager.scene.add.text(0.05 * width, 0.7 * height, '', {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
             .setDepth(Depth.of('dialog', 1));

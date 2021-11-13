@@ -13,12 +13,6 @@ export class GameScene extends Scene{
         super(`GameScene${numPlayers}`);
         this.gameData = new GameData(numPlayers);
     }
-    init(){
-        SceneManager.init(this);
-    }
-    preload(){
-
-    }
     create(){
         this.gameData.create();
         this.cameras.main.setBackgroundColor('0xeeeeee');

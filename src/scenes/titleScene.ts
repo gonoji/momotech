@@ -13,16 +13,13 @@ export class TitleScene extends Scene{
     constructor(){
         super('TitleScene');
     }
-    init(){
-        SceneManager.init(this);
-    }
     preload(){
         FileIO.preload();
     }
     create(){
         KeyManager.loadKeyConfig();
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, `Title[${TitleScene.num++}]`, this.fontStyle)
+        this.startText = this.add.text(SceneManager.scene.width / 2, SceneManager.scene.height / 2, `Title[${TitleScene.num++}]`, this.fontStyle)
             .setOrigin(0.5);
     }
     update(){

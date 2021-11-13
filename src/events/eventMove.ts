@@ -14,9 +14,9 @@ export class EventMove implements GameEvent<void>{
     constructor(private steps: number){
     }
     init(){
-        const x = SceneManager.sceneWidth;
-        const y = SceneManager.sceneHeight;
-        this.textStepsLeft = SceneManager.scene.add.text(x/2, y/2, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
+        const x = SceneManager.scene.width / 2;
+        const y = SceneManager.scene.height / 2;
+        this.textStepsLeft = SceneManager.scene.add.text(x, y, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
             .setDepth(Depth.of('dialog', 1));
     }
