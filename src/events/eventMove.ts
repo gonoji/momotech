@@ -3,7 +3,6 @@ import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
 import { SceneManager } from "../utils/sceneManager";
-import { Depth } from "../utils/depthManager";
 
 export class EventMove implements GameEvent<void>{
     private dirHistory: Direction.asType[] = [];

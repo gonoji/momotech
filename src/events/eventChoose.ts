@@ -1,7 +1,6 @@
 import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
-import { Depth } from "../utils/depthManager";
 
 export class EventChoose implements GameEvent<string>{
     private messages: Phaser.GameObjects.Text[];

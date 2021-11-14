@@ -1,4 +1,3 @@
-import { Depth } from "../utils/depthManager";
 import { Direction } from "../utils/direction";
 import { SceneManager } from "../utils/sceneManager";
 import { Card } from "./cards/card";

@@ -1,4 +1,3 @@
-import { Depth } from "../utils/depthManager";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { GameEvent } from "./event";
