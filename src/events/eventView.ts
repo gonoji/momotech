@@ -13,17 +13,28 @@ export class EventView implements GameEvent<typeof resume>{
      */
     constructor(private steps: number){
     }
-    init(){
+    init(data: GameData){
         const layer = SceneManager.layer('field');
-        this.focus = layer.add.circle(0, 0, 100).setStrokeStyle(10, 0xabcdef, 1);
+        const pos = data.turnPlayer.pos;
+        this.focus = layer.add.circle(pos.x, pos.y, 100)
+            .setStrokeStyle(10, 0xabcdef, 1)
+            .setDepth(15);
+        layer.cameras.main.startFollow(this.focus);
     }
     /**
      * @returns 通常フィールド移動に戻るときは `resume`、進むルートを確定させるときはそのルート（未実装）
      */
     update(data: GameData){
+        const speed = 5;
+        if(KeyManager.pressed('RIGHT')) this.focus.x += speed;
+        if(KeyManager.pressed( 'LEFT')) this.focus.x -= speed;
+        if(KeyManager.pressed( 'DOWN')) this.focus.y += speed;
+        if(KeyManager.pressed(   'UP')) this.focus.y -= speed;
+
         if(KeyManager.down('X')) return { result: resume };
     }
-    final(){
+    final(data: GameData){
+        data.turnPlayer.focus();
         this.focus.destroy();
     }
 }

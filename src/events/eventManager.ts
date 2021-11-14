@@ -9,29 +9,29 @@ export type command = GameEvent<unknown> | 'end';
 export class EventManager{
     private readonly events: Deque<GameEvent<unknown>>;
     private readonly routine: RoutineManager;
-    constructor(private readonly gameData: GameData){
+    constructor(data: GameData){
         this.events = new Deque<GameEvent<unknown>>();
-        this.routine = new RoutineManager(gameData);
-        this.advance();
+        this.routine = new RoutineManager(data);
+        this.advance(data);
     }
-    update(){
+    update(data: GameData){
         if(KeyManager.down('P')) this.events.print();
-        const done = this.events.front().update(this.gameData);
-        if(done) return this.advance(done.result);
+        const done = this.events.front().update(data);
+        if(done) return this.advance(data, done.result);
         return false;
     }
-    private advance(result?: unknown){
-        const command = this.routine.next(this.gameData, result);
+    private advance(data: GameData, result?: unknown){
+        const command = this.routine.next(data, result);
         console.log(command);
 
         if(command == null) return true;
         if(command == 'end'){
-            this.events.popFront().final();
-            return this.advance();
+            this.events.popFront().final(data);
+            return this.advance(data);
         }
         if(!this.events.includes(command)){
             this.events.pushFront(command);
-            command.init();
+            command.init(data);
         }
         return false;
     }

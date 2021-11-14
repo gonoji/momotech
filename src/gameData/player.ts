@@ -51,7 +51,10 @@ export class Player{
     }
 
     private updatePos(){
-        const [x, y] = Field.at(this.location.x, this.location.y);
+        const {x, y} = Field.at(this.location.x, this.location.y);
         this.sprite.setXY(x, y);
+    }
+    get pos(){
+        return { x: this.test.x, y: this.test.y };
     }
 }

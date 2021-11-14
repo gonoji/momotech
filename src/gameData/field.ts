@@ -34,7 +34,7 @@ export class Field implements Exportable{
 
     static size = 64;
     static at(x: number, y: number){
-        return [x * Field.size, y * Field.size];
+        return {x: x * Field.size, y: y * Field.size};
     }
 
     private importFromJson(name: string){

@@ -42,7 +42,7 @@ export class GameScene extends Scene{
         if(KeyManager.down('S') && KeyManager.pressed('SHIFT')){
             this.load.saveJSON(this.gameData.field);
         }
-        if(this.eventManager.update() || KeyManager.down('ESC')){
+        if(this.eventManager.update(this.gameData) || KeyManager.down('ESC')){
             this.gameData.final();
             SceneManager.start(new TitleScene());
         }
