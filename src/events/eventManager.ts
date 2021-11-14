@@ -21,7 +21,7 @@ export class EventManager{
         return false;
     }
     private advance(result?: unknown){
-        const command = this.routine.next(result);
+        const command = this.routine.next(this.gameData, result);
         console.log(command);
 
         if(command == null) return true;
