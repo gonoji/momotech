@@ -42,7 +42,10 @@ export class Field implements Exportable{
             const x = e.position.x;
             const y = e.position.y;
             switch(e.type){
-                default : this.add(new stations[e.type](x, y, 0, e.id));
+                case 'estate': 
+                    this.add(new stations[e.type](x, y, 0, e.id, e.estates)); 
+                    break;
+                default: this.add(new stations[e.type](x, y, 0, e.id));
             }
         });
         json.forEach((e: any) => {

@@ -1,6 +1,7 @@
 import { GameObjects } from "phaser";
 import { SceneManager } from "../utils/sceneManager";
 import { Card } from "./cards/card";
+import { Estate } from "./estates/estate";
 import { Field } from "./field";
 import { Frame } from "./frame"
 import { GameDate } from "./gameDate";
@@ -21,6 +22,7 @@ export class GameData{
         this.factors = new Factors(this.date);
     }
     create(){
+        Estate.create();
         this.field.create();
         this.frame.create();
         Card.create();
