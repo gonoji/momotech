@@ -2,6 +2,7 @@ import { Cameras, GameObjects } from "phaser";
 import { Field } from "../gameData/field";
 import { Player } from "../gameData/player";
 import { Station, stationType } from "../gameData/stations/station";
+import { StationMinus } from "../gameData/stations/stationMinus";
 import { StationPlus } from "../gameData/stations/stationPlus";
 import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
@@ -11,6 +12,7 @@ import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
 
 export class EditScene extends Scene{
+    private constructors = [StationPlus, StationMinus];
     private field : Field;
     private player : Player;
     private editStation : Station = null;
@@ -24,6 +26,7 @@ export class EditScene extends Scene{
         this.field = new Field();
     }
     init(){
+        super.init();
         SceneManager.add(new Layer('field'));
     }
     create(){
@@ -31,9 +34,9 @@ export class EditScene extends Scene{
         this.cameras.main.setBackgroundColor('0xeeeeee');
 
         const layer = SceneManager.scene('field');
-        this.editArea = layer.add.rectangle(128, 128, 128, 128, 0xffff00, 0.5)
+        this.editArea = layer.add.rectangle(Field.size, Field.size, Field.size, Field.size, 0xffff00, 0.5)
             .setVisible(false)
-            .setDepth(128);
+            .setDepth(100);
 
         this.field.add(new StationPlus(1,1));
         this.field.add(new StationPlus(5,1));
