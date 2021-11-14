@@ -6,7 +6,7 @@ import { Util } from "../../utils/util";
 import { Field } from "../field";
 import { GameData } from "../gameData";
 
-export type stationType = 'plus' | 'minus' | 'card';
+export type stationType = 'plus' | 'minus' | 'card' | 'estate';
 
 export abstract class Station implements Exportable{
     static size: number = 64;
