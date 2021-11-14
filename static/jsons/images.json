@@ -7,7 +7,8 @@
             { "key": "minus", "url": "minus.png" },
             { "key": "tate", "url": "tate.png" },
             { "key": "yoko", "url": "yoko.png" },
-            { "key":  "card", "url": "card.png" }
+            { "key": "card", "url": "card.png" },
+            { "key": "frame", "url": "frame.png" }
         ]
     }
 }

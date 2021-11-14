@@ -14,11 +14,10 @@ export class EventMove implements GameEvent<void>{
     constructor(private steps: number){
     }
     init(){
-        const x = SceneManager.scene.width / 2;
-        const y = SceneManager.scene.height / 2;
-        this.textStepsLeft = SceneManager.scene.add.text(x, y, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
+        const layer = SceneManager.scene('dialog');
+        this.textStepsLeft = layer.add.text(layer.width / 2, layer.height / 2, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
-            .setDepth(Depth.of('dialog', 1));
+            .setDepth(1);
     }
 
     update(gameData: GameData){

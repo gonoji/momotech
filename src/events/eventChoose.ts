@@ -9,10 +9,11 @@ export class EventChoose implements GameEvent<string>{
     constructor(private choices: string[]){
     }
     init(){
+        const layer = SceneManager.scene('dialog');
         this.messages = this.choices.map((choice, index) =>
-            SceneManager.scene.add.text(100, 100 + 60 * index, choice, {color: 'black', fontSize: '50px'})
+            layer.add.text(100, 100 + 60 * index, choice, {color: 'black', fontSize: '50px'})
                 .setPadding(0, 4, 0, 0)
-                .setDepth(Depth.of('dialog', 0))
+                .setDepth(0)
         );
     }
     update(){

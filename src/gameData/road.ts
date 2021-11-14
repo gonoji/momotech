@@ -1,6 +1,4 @@
 import { SceneManager } from "../utils/sceneManager";
-import { Field } from "./field";
-import { Station } from "./stations/station";
 
 export type roadType = 'tate' | 'yoko';
 export class Road{
@@ -11,7 +9,8 @@ export class Road{
         public y: number,
         public roadType: roadType
     ){
-        this.sprite = SceneManager.scene.add.sprite(x, y,roadType).setDepth(-10);
+        const layer = SceneManager.scene('field');
+        this.sprite = layer.add.sprite(x, y,roadType).setDepth(-10);
         this.calcPosition();
     }
     private calcPosition(){

@@ -16,12 +16,14 @@ export class Player{
     }
     create(initial: Station){
         this.location = initial;
+        const layer = SceneManager.scene('field');
+
         // 画像ロード周りが整備されるまで group {ellipse + text} で代用
         const size = 72;
-        this.sprite = SceneManager.scene.add.group()
-            .add(SceneManager.scene.add.ellipse(0, 0, size, size, 0x88ff00))
-            .add(SceneManager.scene.add.text(0, 0, `${this.id + 1}`, {color: 'black', fontSize: '50px'}).setOrigin(0.5))
-            .setDepth(Depth.of('field', 8));
+        this.sprite = layer.add.group()
+            .add(layer.add.ellipse(0, 0, size, size, 0x88ff00))
+            .add(layer.add.text(0, 0, `${this.id + 1}`, {color: 'black', fontSize: '50px'}).setOrigin(0.5))
+            .setDepth(8);
         this.updatePos();
     }
     final(){

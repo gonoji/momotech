@@ -11,10 +11,11 @@ export class EventRoulette<T> implements GameEvent<T>{
     }
 
     init(){
-        this.message = SceneManager.scene.add.text(SceneManager.scene.width / 2, SceneManager.scene.height / 2, '', {color: 'black', fontSize: '50px'})
+        const layer = SceneManager.scene('dialog');
+        this.message = layer.add.text(layer.width / 2, layer.height / 2, '', {color: 'black', fontSize: '50px'})
             .setOrigin(0.5)
             .setPadding(0, 10, 0, 0)
-            .setDepth(Depth.of('dialog', 0));
+            .setDepth(0);
     }
     update(){
         if(this.rolls){
