@@ -16,19 +16,18 @@ export class EventRoulette<T> implements GameEvent<T>{
             .setPadding(0, 10, 0, 0)
             .setDepth(0);
     }
+    /**
+     * @returns 選ばれた選択肢
+     */
     update(){
         if(this.rolls){
             this.choice = this.generateChoice();
             this.message.setText(this.toText(this.choice));
         }
         if(KeyManager.down('Z')){
-            if(!this.rolls) return true;
+            if(!this.rolls) return { result: this.choice };
             this.rolls = false;
         }
-        return false;
-    }
-    result(){
-        return this.choice;
     }
     final(){
         this.message.destroy();

@@ -4,7 +4,10 @@ import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
 import { SceneManager } from "../utils/sceneManager";
 
-export class EventMove implements GameEvent<void>{
+const routineStation = 'station' as const;
+const routineView = 'view' as const;
+
+export class EventMove implements GameEvent<typeof routineStation | typeof routineView>{
     private dirHistory: Direction.asType[] = [];
     private textStepsLeft: Phaser.GameObjects.Text;
     /** プレイヤーがフィールド上を移動するイベント
@@ -19,7 +22,9 @@ export class EventMove implements GameEvent<void>{
             .setOrigin(0.5)
             .setDepth(1);
     }
-
+    /**
+     * @returns 次のルーチン名
+     */
     update(gameData: GameData){
         for(const dir of Direction.asArray){
             if(KeyManager.down(dir)){
@@ -38,12 +43,10 @@ export class EventMove implements GameEvent<void>{
                 this.textStepsLeft.setText(`のこり${this.steps}マス`);
             }
         }
-        return this.steps <= 0;
-    }
-    result(){
+        if(this.steps == 0) return { result: routineStation };
+        if(KeyManager.down('C')) return { result: routineView };
     }
     final(){
         this.textStepsLeft.destroy();
     }
-
 }

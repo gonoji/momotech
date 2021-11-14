@@ -15,13 +15,16 @@ export class EventChoose implements GameEvent<string>{
                 .setDepth(0)
         );
     }
+    /**
+     * @returns 選ばれた選択肢
+     */
     update(){
         if(KeyManager.down('DOWN')) this.index = (this.index + 1) % this.choices.length;
         if(KeyManager.down('UP')) this.index = (this.index + this.choices.length - 1) % this.choices.length;
         this.messages.forEach((message, index) => {
             message.setColor(index == this.index? 'red': 'black');
         });
-        return KeyManager.down('Z');
+        if(KeyManager.down('Z')) return { result: this.choices[this.index] };
     }
     final(){
         for(const message of this.messages) message.destroy();

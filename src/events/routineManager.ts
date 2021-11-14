@@ -6,7 +6,6 @@ import { command } from "./eventManager";
 import { GameData } from "../gameData/gameData";
 import { GameEvent } from "./event";
 import { Card } from "../gameData/cards/card";
-import { Util } from "../utils/util";
 
 export type routine = Generator<command, routine, unknown>;
 export type subroutine<T> = Generator<command, T, unknown>;
@@ -17,8 +16,8 @@ export class RoutineManager{
         this.routine = this.init();
     }
 
-    next(): command{
-        const next = this.routine.next();
+    next(eventResult?: unknown): command{
+        const next = this.routine.next(eventResult);
         if(next.done){
             if(next.value){
                 this.routine = next.value;
@@ -42,14 +41,13 @@ export class RoutineManager{
     
     private *turnBody(): routine{
         const choose = new EventChoose(['サイコロ', 'カード']);
-        yield choose;
         while(true){
-            const next = yield* this.action(choose.result());
+            const choice = yield* RoutineManager.result(choose);
+            const next = yield* this.action(choice);
             if(next){
                 yield 'end';
                 return next;
             }
-            yield 'wait';
         }
     }
     
@@ -73,16 +71,22 @@ export class RoutineManager{
         return this.move(sum);
     }
     private *move(steps: number): routine{
-        yield new EventMove(steps);
-        yield 'end';
-        return this.station();
+        const move = new EventMove(steps);
+        while(true){
+            const next = yield* RoutineManager.result(move);
+            switch(next){
+            case 'station':
+                yield 'end';
+                return this.station();
+            case 'view':
+                yield new EventMessage('まだ実装してない');
+                yield 'end';
+            }
+        }
     }
+
     private *card(): routine{
-        const id = 'Dice3';
-        return this.useCard(id);
-    }
-    private *useCard(id: string): routine{
-        const ret = yield* Card.get(id).routine();
+        const ret = yield* Card.get('Dice3').routine();
         return this[ret]();
     }
     private *station(): routine{
@@ -96,7 +100,6 @@ export class RoutineManager{
     }
 
     static *result<T>(event: GameEvent<T>): subroutine<T>{
-        yield event;
-        return event.result();
+        return (yield event) as T;
     }
 }

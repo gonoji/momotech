@@ -7,14 +7,9 @@ export interface GameEvent<T>{
     init(): void;
 
     /** イベントの処理
-     * @returns イベントが終了するかどうか
+     * @returns イベントが終了する場合はその結果 `result` を持つオブジェクト、継続する場合はなし（`undefined`）
      */
-    update(gameData: GameData): boolean;
-
-    /** イベントの結果
-     * @returns イベントの結果
-     */
-    result(): T;
+    update(gameData: GameData): {result: T};
 
     /** イベントの終了処理
      */

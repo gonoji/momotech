@@ -4,7 +4,7 @@ import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
 import { RoutineManager } from "./routineManager";
 
-export type command = GameEvent<unknown> | 'end' | 'wait';
+export type command = GameEvent<unknown> | 'end';
 
 export class EventManager{
     private readonly events: Deque<GameEvent<unknown>>;
@@ -16,20 +16,23 @@ export class EventManager{
     }
     update(){
         if(KeyManager.down('P')) this.events.print();
-        return this.events.front().update(this.gameData) && this.advance();
+        const done = this.events.front().update(this.gameData);
+        if(done) return this.advance(done.result);
+        return false;
     }
-    private advance(){
-        const command = this.routine.next();
+    private advance(result?: unknown){
+        const command = this.routine.next(result);
         console.log(command);
 
         if(command == null) return true;
-        if(command == 'wait') return false;
         if(command == 'end'){
             this.events.popFront().final();
             return this.advance();
         }
-        this.events.pushFront(command);
-        command.init();
+        if(!this.events.includes(command)){
+            this.events.pushFront(command);
+            command.init();
+        }
         return false;
     }
 }
