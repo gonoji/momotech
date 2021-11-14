@@ -9,9 +9,9 @@ type estatesData = {
 export class Estate implements Exportable{
     private static data: estatesData;
     public station: StationEstate;
-    private name: string;
-    private price: number;
-    private profit: number;
+    readonly name: string;
+    readonly price: number;
+    readonly profit: number;
 
     static create(){
         Estate.data = FileIO.getJson('estates');
@@ -19,8 +19,8 @@ export class Estate implements Exportable{
 
     constructor(id: string){
         this.name = Estate.data[id].name;
-        this.price =Estate.data[id].price;
-        this.profit =Estate.data[id].profit;
+        this.price = Estate.data[id].price;
+        this.profit = Estate.data[id].profit;
     }
 
     final(){
