@@ -8,7 +8,7 @@ type cardsData = {
 };
 
 export abstract class Card{
-    private static data: cardsData;
+    public static data: cardsData;
     static create(){
         Card.data = FileIO.getJson('cards');
     }

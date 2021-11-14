@@ -21,6 +21,7 @@ export class GameScene extends Scene{
         const width = Math.floor(height * 4/3);
         SceneManager.add(new Layer('field', { x: margin, y: margin, w: width, h: height }));
         SceneManager.add(new Layer('dialog', { x: margin, y: margin, w: width, h: height }));
+        SceneManager.add(new Layer('property', {x: 2*margin+width, y: margin, w: Game.width-width-3*margin, h: height}));
     }
     create(){
         this.gameData.create();
