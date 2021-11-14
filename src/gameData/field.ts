@@ -3,8 +3,7 @@ import { Exportable } from "../utils/exportable";
 import { FileIO } from "../utils/fileIO";
 import { Road } from "./road";
 import { Station } from "./stations/station";
-import { StationMinus } from "./stations/stationMinus";
-import { StationPlus } from "./stations/stationPlus";
+import { stations } from "./stations/stations";
 
 export class Field implements Exportable{
     private _stations: Station[];
@@ -43,8 +42,7 @@ export class Field implements Exportable{
             const x = e.position.x;
             const y = e.position.y;
             switch(e.type){
-                case 'plus': this.add(new StationPlus(x, y, 0, e.id)); break;
-                case 'minus': this.add(new StationMinus(x, y, 0, e.id)); break;
+                default : this.add(new stations[e.type](x, y, 0, e.id));
             }
         });
         json.forEach((e: any) => {
