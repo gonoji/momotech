@@ -2,10 +2,10 @@ import { SceneManager } from "./sceneManager";
 
 export class FileIO{
     static preload(){
-        SceneManager.scene.load.pack('jsons', 'static/jsons/jsons.json');
+        SceneManager.scene().load.pack('jsons', 'static/jsons/jsons.json');
     }
     static getJson(name: string){
-        return SceneManager.scene.cache.json.get(name);
+        return SceneManager.scene().cache.json.get(name);
     }
     /*
     static getText(name: string){

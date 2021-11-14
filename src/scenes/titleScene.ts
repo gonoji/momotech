@@ -6,23 +6,17 @@ import { GameScene } from "./gameScene";
 import { Scene } from "./scene";
 
 export class TitleScene extends Scene{
-    private startText?: Phaser.GameObjects.Text // 追加
-    private fontStyle: Phaser.Types.GameObjects.Text.TextStyle = { color: 'red', fontSize: '70px' } // 追加
-    private static num: integer = 0;
-
     constructor(){
-        super('TitleScene');
-    }
-    init(){
-        SceneManager.init(this);
+        super('title');
     }
     preload(){
+        console.log(SceneManager.scene());
         FileIO.preload();
     }
     create(){
         KeyManager.loadKeyConfig();
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.startText = this.add.text(SceneManager.sceneWidth / 2, SceneManager.sceneHeight / 2, `Title[${TitleScene.num++}]`, this.fontStyle)
+        this.add.text(this.width / 2, this.height / 2, 'TitleScene', { color: 'red', fontSize: '70px' })
             .setOrigin(0.5);
     }
     update(){
@@ -30,11 +24,14 @@ export class TitleScene extends Scene{
         for(const numPlayer of [1, 2, 3, 4]){
             if(KeyManager.down(KeyManager.numberToKey(numPlayer))){
                 SceneManager.start(new GameScene(numPlayer));
-                return;
             }
         }
-        if(KeyManager.pressed('SHIFT')&&KeyManager.pressed('CTRL')&&KeyManager.down('E')){
+        if(KeyManager.pressed('SHIFT') && KeyManager.pressed('CTRL') && KeyManager.down('E')){
             SceneManager.start(new EditScene());
         }
-    }
+
+        if(KeyManager.down('S')){
+            SceneManager.log('TitleScene.update');
+        }
+   }
 }

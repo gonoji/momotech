@@ -7,7 +7,7 @@ import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { Util } from "../utils/util";
-import { Scene } from "./scene";
+import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
 
 export class EditScene extends Scene{
@@ -18,23 +18,28 @@ export class EditScene extends Scene{
     private editArea : GameObjects.Rectangle;
     private stationtype : stationType = 'plus';
     constructor(){
-        super(`EditScene`);
-    }
-    init(){
-        SceneManager.init(this);
+        super(`edit`);
     }
     preload(){
         this.field = new Field();
     }
+    init(){
+        SceneManager.add(new Layer('field'));
+    }
     create(){
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.editArea=SceneManager.scene.add.rectangle(128,128,128,128,0xffff00,0.5).setVisible(false).setDepth(128);
+
+        const layer = SceneManager.scene('field');
+        this.editArea = layer.add.rectangle(128, 128, 128, 128, 0xffff00, 0.5)
+            .setVisible(false)
+            .setDepth(128);
+
         this.field.add(new StationPlus(1,1));
-        //this.field.add(new StationPlus(3,1));
         this.field.add(new StationPlus(5,1));
         this.field.add(new StationPlus(3,3));
         this.field.add(new StationPlus(3,5));
         //this.field.connectStationWithID(this.field.stations[0].id,this.field.stations[1].id);
+
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
     }

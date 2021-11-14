@@ -3,7 +3,6 @@ import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
 import { SceneManager } from "../utils/sceneManager";
-import { Depth } from "../utils/depthManager";
 
 export class EventMove implements GameEvent<void>{
     private dirHistory: Direction.asType[] = [];
@@ -14,11 +13,10 @@ export class EventMove implements GameEvent<void>{
     constructor(private steps: number){
     }
     init(){
-        const x = SceneManager.sceneWidth;
-        const y = SceneManager.sceneHeight;
-        this.textStepsLeft = SceneManager.scene.add.text(x/2, y/2, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
+        const layer = SceneManager.scene('dialog');
+        this.textStepsLeft = layer.add.text(layer.width / 2, layer.height / 2, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
-            .setDepth(Depth.of('dialog', 1));
+            .setDepth(1);
     }
 
     update(gameData: GameData){
