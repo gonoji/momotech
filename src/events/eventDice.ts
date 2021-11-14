@@ -15,7 +15,7 @@ export class EventDice implements GameEvent<number>{
         this.rolls = true;
     }
     init(){
-        const layer = SceneManager.scene('dialog');
+        const layer = SceneManager.layer('dialog');
         this.message = layer.add.text(layer.width / 2, layer.height / 2, '', {color: 'black', fontSize: '50px'})
             .setOrigin(0.5)
             .setPadding(0, 10, 0, 0)

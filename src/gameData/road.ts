@@ -9,7 +9,7 @@ export class Road{
         public y: number,
         public roadType: roadType
     ){
-        const layer = SceneManager.scene('field');
+        const layer = SceneManager.layer('field');
         this.sprite = layer.add.sprite(x, y,roadType).setDepth(-10);
         this.calcPosition();
     }

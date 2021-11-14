@@ -1,43 +1,42 @@
-import { Scene } from "../scenes/scene";
+import { Layer, Scene } from "../scenes/scene";
 import { KeyManager } from "./keyManager";
 
 export class SceneManager{
-    private static currents: { [id: string]: Scene } = {};
+    private static current: Scene;
+    private static layers: { [id: string]: Layer } = {};
     static init(scene: Scene){
         KeyManager.init(scene);
-        this.currents[scene.id] = scene;
+        this.current = scene;
     }
     /** シーンを切り替える
      * @param scene 切り替え先のシーン
      */
     static start(scene: Scene){
-        // for(const id in this.currents) this.scenePlugin.remove(id);
+        for(const id in this.layers) this.scenePlugin.remove(id);
         this.scenePlugin.add(scene.id, scene);
         this.scenePlugin.start(scene);
-        this.currents[scene.id] = scene;
+        this.scenePlugin.remove(this.current.id);
+        this.current = scene;
     }
 
-    /** シーンを（レイヤーとして）追加する
-     * @param scene 追加するシーン
+    /** レイヤーを追加する
+     * @param layer 追加するレイヤー
      */
-    static add(scene: Scene){
-        this.scenePlugin.add(scene.id, scene);
-        this.scenePlugin.launch(scene);
-        this.currents[scene.id] = scene;
+    static add(layer: Layer){
+        this.scenePlugin.add(layer.id, layer);
+        this.scenePlugin.launch(layer);
+        this.layers[layer.id] = layer;
     }
 
-    static scene(id?: string): Scene{
-        if(!id) return Object.values(this.currents)[0];
-
-        const scene = this.currents[id];
-        if(!scene) throw new Error(`SceneManager.scene: シーン '${id}' が存在しません`);
-        return scene;
+    static get scene(){
+        return this.current;
+    }
+    static layer(id: string): Layer{
+        const layer = this.layers[id];
+        if(!layer) throw new Error(`SceneManager.scene: Layer '${id}' が存在しません`);
+        return layer;
     }
     private static get scenePlugin(){
-        return this.scene().scene;
-    }
-
-    static log(id: string){
-        console.log(id, this.currents);
+        return this.scene.scene;
     }
 }
