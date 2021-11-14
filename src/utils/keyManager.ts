@@ -11,6 +11,7 @@ type numberKey = typeof numberKeys[number];
 type KeyName = typeof keyNames[number];
 
 export class KeyManager {
+    private static loadKeyConfigFlag : boolean = false;
     static keys: { [key in KeyName]?: Phaser.Input.Keyboard.Key };
     static counts: { [key in KeyName]?: number };
     static replaceKeys : { key1 : KeyName, key2 : KeyName}[] = [];
@@ -54,9 +55,12 @@ export class KeyManager {
         return numberKeys.indexOf(key);
     }
     static loadKeyConfig(){
-        const json = FileIO.getJson('keyConfig');
-        json.forEach(element => {
-            this.replaceKey(element.key1,element.key2);
-        });
+        if(!KeyManager.loadKeyConfigFlag){
+            KeyManager.loadKeyConfigFlag = true;
+            const json = FileIO.getJson('keyConfig');
+            json.forEach(element => {
+                this.replaceKey(element.key1,element.key2);
+            });
+        }
     }
 }
