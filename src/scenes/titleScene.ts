@@ -10,7 +10,6 @@ export class TitleScene extends Scene{
         super('title');
     }
     preload(){
-        console.log(SceneManager.scene());
         FileIO.preload();
     }
     create(){
@@ -28,10 +27,6 @@ export class TitleScene extends Scene{
         }
         if(KeyManager.pressed('SHIFT') && KeyManager.pressed('CTRL') && KeyManager.down('E')){
             SceneManager.start(new EditScene());
-        }
-
-        if(KeyManager.down('S')){
-            SceneManager.log('TitleScene.update');
         }
    }
 }

@@ -13,7 +13,7 @@ export class EventMove implements GameEvent<void>{
     constructor(private steps: number){
     }
     init(){
-        const layer = SceneManager.scene('dialog');
+        const layer = SceneManager.layer('dialog');
         this.textStepsLeft = layer.add.text(layer.width / 2, layer.height / 2, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
             .setOrigin(0.5)

@@ -15,7 +15,7 @@ export class Player{
     }
     create(initial: Station){
         this.location = initial;
-        const layer = SceneManager.scene('field');
+        const layer = SceneManager.layer('field');
 
         // 画像ロード周りが整備されるまで group {ellipse + text} で代用
         const size = 72;

@@ -33,7 +33,7 @@ export class EditScene extends Scene{
         // -------------カメラの設定----------------------------
         this.cameras.main.setBackgroundColor('0xeeeeee');
 
-        const layer = SceneManager.scene('field');
+        const layer = SceneManager.layer('field');
         this.editArea = layer.add.rectangle(Field.size, Field.size, Field.size, Field.size, 0xffff00, 0.5)
             .setVisible(false)
             .setDepth(100);

@@ -27,8 +27,7 @@ export class GameScene extends Scene{
         this.cameras.main.setBackgroundColor('0xeeeeee');
         this.eventManager = new EventManager(this.gameData);
 
-        SceneManager.scene('game').add.sprite(0, 0, 'frame').setOrigin(0).setScale(2/3);
-        SceneManager.log('create');
+        SceneManager.scene.add.sprite(0, 0, 'frame').setOrigin(0).setScale(2/3);
     }
     update(){
         KeyManager.update();
@@ -47,7 +46,5 @@ export class GameScene extends Scene{
             this.gameData.final();
             SceneManager.start(new TitleScene());
         }
-
-        if(KeyManager.down('L')) SceneManager.log('update');
     }
 }

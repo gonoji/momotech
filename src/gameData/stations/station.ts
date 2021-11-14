@@ -23,7 +23,7 @@ export abstract class Station implements Exportable{
     ){
         if(id == -1) this.id = Util.getRandomInt(0, Station.id_max);
 
-        const layer = SceneManager.scene('field');
+        const layer = SceneManager.layer('field');
         this.sprite = layer.add.sprite(x, y, stationType).setDepth(0);
         this.sprite.setDisplaySize(Station.size, Station.size);
         this.nexts = { UP: null, DOWN: null, LEFT: null, RIGHT: null };
