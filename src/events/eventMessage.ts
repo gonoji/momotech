@@ -1,7 +1,6 @@
 import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
-import { Depth } from "../utils/depthManager";
 
 export class EventMessage implements GameEvent<void>{
     private message: Phaser.GameObjects.Text;
@@ -15,15 +14,14 @@ export class EventMessage implements GameEvent<void>{
     constructor(private text: string){
     }
     init(){
-        const width = SceneManager.sceneWidth;
-        const height = SceneManager.sceneHeight;
-        this.message = SceneManager.scene.add.text(0.05 * width, 0.7 * height, '', {color: 'black', fontSize: '50px'})
+        const layer = SceneManager.scene('dialog');
+        this.message = layer.add.text(0.05 * layer.width, 0.7 * layer.height, '', {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
-            .setDepth(Depth.of('dialog', 1));
-        this.box = SceneManager.scene.add.rectangle(0.5 * width, 0.8 * height, 0.95 * width, 0.3 * height, 0x000088, 0.5)
+            .setDepth(1);
+        this.box = layer.add.rectangle(0.5 * layer.width, 0.8 * layer.height, 0.95 * layer.width, 0.3 * layer.height, 0x000088, 0.5)
             .setStrokeStyle(4, 0x080808)
             .setOrigin(0.5)
-            .setDepth(Depth.of('dialog', 0));
+            .setDepth(0);
     }
     update(){
         if(this.index < this.text.length){

@@ -7,7 +7,7 @@ import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { Util } from "../utils/util";
-import { Scene } from "./scene";
+import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
 
 export class EditScene extends Scene{
@@ -18,30 +18,27 @@ export class EditScene extends Scene{
     private editArea : GameObjects.Rectangle;
     private stationtype : stationType = 'plus';
     constructor(){
-        super(`EditScene`);
-    }
-    init(){
-        SceneManager.init(this);
+        super(`edit`);
     }
     preload(){
         this.field = new Field();
     }
+    init(){
+        SceneManager.add(new Layer('field'));
+    }
     create(){
         // -------------カメラの設定----------------------------
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.cameras.main.setPosition(45, 45);
-        this.cameras.main.setSize(1320, 990);
-        //遠くにする。もしくはignoreでこの画像以外すべてのオブジェクトを指定する。
-        const frame =SceneManager.scene.add.sprite(20000, 20000, 'frame');
-        this.cameras.main.ignore(frame);
-        const subCamera = this.cameras.add(0, 0, 1920, 1080, false, 'sub').setBackgroundColor('0x00ff00');
-        subCamera.startFollow(frame);
-        //カメラの優先度が配列順になっているっぽい(後から追加したものが上に来る)ので優先度を変更
-        this.cameras.cameras = this.cameras.cameras.reverse();
-        // -----------------------------------------------------
 
-        this.editArea = SceneManager.scene.add.rectangle(Field.size,Field.size,Field.size,Field.size,0xffff00,0.5).setVisible(false).setDepth(128);
+        const layer = SceneManager.scene('field');
+        this.editArea = layer.add.rectangle(128, 128, 128, 128, 0xffff00, 0.5)
+            .setVisible(false)
+            .setDepth(128);
+
         this.field.add(new StationPlus(1,1));
+        this.field.add(new StationPlus(5,1));
+        this.field.add(new StationPlus(3,3));
+        this.field.add(new StationPlus(3,5));
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
     }
