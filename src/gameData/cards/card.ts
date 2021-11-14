@@ -1,5 +1,6 @@
-import { subroutine } from "../../events/routineManager";
+import { routine } from "../../events/routineManager";
 import { FileIO } from "../../utils/fileIO";
+import { GameData } from "../gameData";
 import { cards } from "./cards";
 
 type cardsData = {
@@ -11,7 +12,7 @@ export abstract class Card{
     static create(){
         Card.data = FileIO.getJson('cards');
     }
-    static get(id: string){
+    static get(id: string): Card{
         return new cards[id](id);
     }
 
@@ -30,6 +31,6 @@ export abstract class Card{
         return Card.data[this.id].description;
     }
 
-    abstract routine(): subroutine<'turnBody'|'station'|'turnEnd'>;
+    abstract routine(data: GameData): routine;
 
 }

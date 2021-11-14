@@ -8,7 +8,6 @@ export class Layer extends Phaser.Scene{
         super({key: id});
     }
     init(){
-        console.log(`${this.id} init`);
         if(!this.area){
             this.area = {
                 x: 0,

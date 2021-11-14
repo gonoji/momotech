@@ -10,7 +10,7 @@ export class Player{
     readonly cards: Card[] = [];
 
     private sprite: Phaser.GameObjects.Group;
-
+    private test: Phaser.GameObjects.Ellipse;
     constructor(readonly id: number){
     }
     create(initial: Station){
@@ -20,7 +20,7 @@ export class Player{
         // 画像ロード周りが整備されるまで group {ellipse + text} で代用
         const size = 72;
         this.sprite = layer.add.group()
-            .add(layer.add.ellipse(0, 0, size, size, 0x88ff00))
+            .add(this.test = layer.add.ellipse(0, 0, size, size, 0x88ff00))
             .add(layer.add.text(0, 0, `${this.id + 1}`, {color: 'black', fontSize: '50px'}).setOrigin(0.5))
             .setDepth(8);
         this.updatePos();
@@ -46,8 +46,15 @@ export class Player{
         return true; // todo: 要石があったらfalseに
     }
 
+    focus(){
+        SceneManager.layer('field').cameras.main.startFollow(this.test);
+    }
+
     private updatePos(){
-        const [x, y] = Field.at(this.location.x, this.location.y);
+        const {x, y} = Field.at(this.location.x, this.location.y);
         this.sprite.setXY(x, y);
+    }
+    get pos(){
+        return { x: this.test.x, y: this.test.y };
     }
 }

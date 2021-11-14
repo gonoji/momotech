@@ -23,16 +23,19 @@ export class EventMessage implements GameEvent<void>{
             .setOrigin(0.5)
             .setDepth(0);
     }
+    /**
+     * @returns なし
+     */
     update(){
         if(this.index < this.text.length){
             if(KeyManager.down('Z')){
                 this.index = this.text.length;
-                return false;
+                return;
             }
             else this.index += 0.5;
         }
         this.message.setText(this.text.substr(0, this.index));
-        return KeyManager.down('Z');
+        if(KeyManager.down('Z')) return { result: undefined };
     }
     result(){
     }

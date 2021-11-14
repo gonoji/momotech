@@ -4,19 +4,14 @@ export interface GameEvent<T>{
 
     /** イベントの初期化
      */
-    init(): void;
+    init(data: GameData): void;
 
     /** イベントの処理
-     * @returns イベントが終了するかどうか
+     * @returns イベントが終了する場合はその結果 `result` を持つオブジェクト、継続する場合はなし（`undefined`）
      */
-    update(gameData: GameData): boolean;
-
-    /** イベントの結果
-     * @returns イベントの結果
-     */
-    result(): T;
+    update(data: GameData): {result: T};
 
     /** イベントの終了処理
      */
-    final(): void;
+    final(data: GameData): void;
 }

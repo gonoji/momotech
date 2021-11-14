@@ -21,6 +21,9 @@ export class EventDice implements GameEvent<number>{
             .setPadding(0, 10, 0, 0)
             .setDepth(0);
     }
+    /**
+     * @returns 出目の和
+     */
     update(){
         if(this.rolls){
             for(const i in this.dices){
@@ -29,13 +32,9 @@ export class EventDice implements GameEvent<number>{
             this.message.setText(this.dices.join(' '));
         }
         if(KeyManager.down('Z')){
-            if(!this.rolls) return true;
+            if(!this.rolls) return { result: this.dices.reduce((x, y) => x + y) };
             this.rolls = false;
         }
-        return;
-    }
-    result(){
-        return this.dices.reduce((x, y) => x + y);
     }
     final(){
         this.message.destroy();

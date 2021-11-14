@@ -4,32 +4,35 @@ import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
 import { RoutineManager } from "./routineManager";
 
-export type command = GameEvent<unknown> | 'end' | 'wait';
+export type command = GameEvent<unknown> | 'end';
 
 export class EventManager{
     private readonly events: Deque<GameEvent<unknown>>;
     private readonly routine: RoutineManager;
-    constructor(private readonly gameData: GameData){
+    constructor(data: GameData){
         this.events = new Deque<GameEvent<unknown>>();
-        this.routine = new RoutineManager(gameData);
-        this.advance();
+        this.routine = new RoutineManager(data);
+        this.advance(data);
     }
-    update(){
+    update(data: GameData){
         if(KeyManager.down('P')) this.events.print();
-        return this.events.front().update(this.gameData) && this.advance();
+        const done = this.events.front().update(data);
+        if(done) return this.advance(data, done.result);
+        return false;
     }
-    private advance(){
-        const command = this.routine.next();
+    private advance(data: GameData, result?: unknown){
+        const command = this.routine.next(data, result);
         console.log(command);
 
         if(command == null) return true;
-        if(command == 'wait') return false;
         if(command == 'end'){
-            this.events.popFront().final();
-            return this.advance();
+            this.events.popFront().final(data);
+            return this.advance(data);
         }
-        this.events.pushFront(command);
-        command.init();
+        if(!this.events.includes(command)){
+            this.events.pushFront(command);
+            command.init(data);
+        }
         return false;
     }
 }

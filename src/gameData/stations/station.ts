@@ -27,7 +27,9 @@ export abstract class Station implements Exportable{
         this.sprite = layer.add.sprite(x, y, stationType).setDepth(0);
         this.sprite.setDisplaySize(Station.size, Station.size);
         this.nexts = { UP: null, DOWN: null, LEFT: null, RIGHT: null };
-        [this.sprite.x, this.sprite.y] = Field.at(x, y);
+        const pos = Field.at(x, y);
+        this.sprite.x = pos.x;
+        this.sprite.y = pos.y;
     }
 
     toJSON () {

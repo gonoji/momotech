@@ -6,97 +6,123 @@ import { command } from "./eventManager";
 import { GameData } from "../gameData/gameData";
 import { GameEvent } from "./event";
 import { Card } from "../gameData/cards/card";
-import { Util } from "../utils/util";
+import { EventView } from "./eventView";
+import { GameDate } from "../gameData/gameDate";
 
 export type routine = Generator<command, routine, unknown>;
 export type subroutine<T> = Generator<command, T, unknown>;
 
 export class RoutineManager{
     private routine: routine;
-    constructor(private readonly gameData: GameData){
-        this.routine = this.init();
+    constructor(data: GameData){
+        this.routine = Routine.init(data);
     }
 
-    next(): command{
-        const next = this.routine.next();
+    next(data: GameData, eventResult?: unknown): command{
+        const next = this.routine.next(eventResult);
         if(next.done){
             if(next.value){
                 this.routine = next.value;
-                return this.next();
+                return this.next(data);
             }
         }
         return next.value as command;
     }
+}
 
-    private *init(){
+export class Routine{
+    private constructor(){
+    }
+    
+    static *init(data: GameData){
         yield new EventMessage('ゲーム開始');
         yield 'end';
-        return this.turn();
+        return this.turnStart(data);
     }
 
-    private *turn(): routine{
-        yield new EventMessage(this.dateToText() + ': ターン開始');
+    private static *turnStart(data: GameData): routine{
+        data.turnPlayer.focus();
+        yield new EventMessage(this.dateToText(data.date) + ': ターン開始');
         yield 'end';
-        return this.turnBody();
+        return this.turnBody(data);
     }
     
-    private *turnBody(): routine{
+    private static *turnBody(data: GameData): routine{
         const choose = new EventChoose(['サイコロ', 'カード']);
-        yield choose;
         while(true){
-            const next = yield* this.action(choose.result());
+            const choice = yield* Routine.result(choose);
+            const next = yield* this.action(data, choice);
             if(next){
-                yield 'end';
+                yield 'end'; // choose
                 return next;
             }
-            yield 'wait';
         }
     }
     
-    private *turnEnd(): routine{
-        yield new EventMessage(this.dateToText() + ': ターン終了');
+    private static *turnEnd(data: GameData): routine{
+        yield new EventMessage(this.dateToText(data.date) + ': ターン終了');
         yield 'end';
-        this.gameData.date.advance(this.gameData.players.length);
-        return this.turn();
+        data.date.advance(data.players.length);
+        return this.turnStart(data);
     }
         
-    private *action(choice: string): routine{
+    private static *action(data: GameData, choice: string): routine{
         switch(choice){
-            case 'サイコロ': return yield* this.dice();
-            case 'カード': return yield* this.card();
+            case 'サイコロ': return yield* this.dice(data);
+            case 'カード': return yield* this.card(data);
         }
     }
     
-    private *dice(): routine{
-        const sum = yield* RoutineManager.result(new EventDice(1));
+    private static *dice(data: GameData): routine{
+        const sum = yield* Routine.result(new EventDice(1));
         yield 'end';
-        return this.move(sum);
+        return this.move(data, sum);
     }
-    private *move(steps: number): routine{
-        yield new EventMove(steps);
-        yield 'end';
-        return this.station();
+    static *move(data: GameData, steps: number): routine{
+        const move = new EventMove(steps);
+        while(true){
+            const result = yield* Routine.result(move);
+            switch(result){
+            case 'station':
+                yield 'end'; // move
+                return this.station(data);
+            case 'view':
+                const next = yield* this.view(data, move.stepsLeft);
+                if(next){
+                    yield 'end'; // move
+                    return next;
+                }
+                continue;
+            default:
+                const _: never = result;
+            }
+        }
     }
-    private *card(): routine{
-        const id = 'Dice3';
-        return this.useCard(id);
-    }
-    private *useCard(id: string): routine{
-        const ret = yield* Card.get(id).routine();
-        return this[ret]();
-    }
-    private *station(): routine{
-        yield* this.gameData.turnPlayer.location.routine(this.gameData);
-        return this.turnEnd();
+    private static *view(data: GameData, steps: number): routine{
+        const result = yield* Routine.result(new EventView(steps));
+        switch(result){
+        case 'resume':
+            yield 'end'; // view
+            return null;
+        default:
+            const _: never = result;
+        }
     }
 
-    private dateToText(){
-        const date = this.gameData.date;
+    private static *card(data: GameData): routine{
+        return yield* Card.get('Dice3').routine(data);
+    }
+
+    private static *station(data: GameData): routine{
+        yield* data.turnPlayer.location.routine(data);
+        return this.turnEnd(data);
+    }
+
+    private static dateToText(date: GameDate){
         return `${date.year} 年 ${date.month} 月 ${date.week + 1} 週`;
     }
 
     static *result<T>(event: GameEvent<T>): subroutine<T>{
-        yield event;
-        return event.result();
+        return (yield event) as T;
     }
 }
