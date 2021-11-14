@@ -16,6 +16,7 @@ export class EventMove implements GameEvent<void>{
         const layer = SceneManager.scene('dialog');
         this.textStepsLeft = layer.add.text(layer.width / 2, layer.height / 2, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
+            .setOrigin(0.5)
             .setDepth(1);
     }
 

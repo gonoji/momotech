@@ -35,10 +35,10 @@ export class GameScene extends Scene{
         this.gameData.update();
         
         if(KeyManager.pressed('PLUS')){
-            this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*1.05);
+            this.cameras.main.setZoom(this.cameras.main.zoom*1.05);
         }
         if(KeyManager.pressed('MINUS')){
-            this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*0.95);
+            this.cameras.main.setZoom(this.cameras.main.zoom*0.95);
         }
         if(KeyManager.down('S') && KeyManager.pressed('SHIFT')){
             this.load.saveJSON(this.gameData.field);

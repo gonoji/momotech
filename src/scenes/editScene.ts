@@ -1,7 +1,8 @@
-import { GameObjects } from "phaser";
+import { Cameras, GameObjects } from "phaser";
 import { Field } from "../gameData/field";
 import { Player } from "../gameData/player";
 import { Station, stationType } from "../gameData/stations/station";
+import { StationMinus } from "../gameData/stations/stationMinus";
 import { StationPlus } from "../gameData/stations/stationPlus";
 import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
@@ -11,6 +12,7 @@ import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
 
 export class EditScene extends Scene{
+    private constructors = [StationPlus, StationMinus];
     private field : Field;
     private player : Player;
     private editStation : Station = null;
@@ -24,22 +26,22 @@ export class EditScene extends Scene{
         this.field = new Field();
     }
     init(){
+        super.init();
         SceneManager.add(new Layer('field'));
     }
     create(){
+        // -------------カメラの設定----------------------------
         this.cameras.main.setBackgroundColor('0xeeeeee');
 
         const layer = SceneManager.scene('field');
-        this.editArea = layer.add.rectangle(128, 128, 128, 128, 0xffff00, 0.5)
+        this.editArea = layer.add.rectangle(Field.size, Field.size, Field.size, Field.size, 0xffff00, 0.5)
             .setVisible(false)
-            .setDepth(128);
+            .setDepth(100);
 
         this.field.add(new StationPlus(1,1));
         this.field.add(new StationPlus(5,1));
         this.field.add(new StationPlus(3,3));
         this.field.add(new StationPlus(3,5));
-        //this.field.connectStationWithID(this.field.stations[0].id,this.field.stations[1].id);
-
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
     }
@@ -48,23 +50,23 @@ export class EditScene extends Scene{
         if(KeyManager.down('CTRL')){
             this.editFlag = Util.xor(this.editFlag,true);
             this.editArea.setVisible(this.editFlag);
-            this.editArea.setPosition(this.player.location.x * 128, this.player.location.y * 128);
+            this.editArea.setPosition(this.player.location.x * Field.size, this.player.location.y * Field.size);
         }
         if(this.editFlag){
             for(const key of Direction.asArray){
                 if(KeyManager.down(key)){
                     switch(key){
-                        case 'UP' : this.editArea.setPosition(this.editArea.x, this.editArea.y - 128);break;
-                        case 'DOWN' : this.editArea.setPosition(this.editArea.x, this.editArea.y + 128);break;
-                        case 'LEFT' : this.editArea.setPosition(this.editArea.x - 128, this.editArea.y );break;
-                        case 'RIGHT' : this.editArea.setPosition(this.editArea.x + 128, this.editArea.y );break;
+                        case 'UP' : this.editArea.setPosition(this.editArea.x, this.editArea.y - Field.size);break;
+                        case 'DOWN' : this.editArea.setPosition(this.editArea.x, this.editArea.y + Field.size);break;
+                        case 'LEFT' : this.editArea.setPosition(this.editArea.x - Field.size, this.editArea.y );break;
+                        case 'RIGHT' : this.editArea.setPosition(this.editArea.x + Field.size, this.editArea.y );break;
                     }
                 }
             }
             if(KeyManager.down('Z')){
-                const sta = this.field.getStationByPosition(this.editArea.x/128, this.editArea.y/128);
+                const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
                 if(sta == null){
-                    const s : Station = new StationPlus(this.editArea.x/128, this.editArea.y/128);
+                    const s : Station = new StationPlus(this.editArea.x /Field.size, this.editArea.y / Field.size);
                     this.field.add(s);
                     for(const key of Direction.asArray){
                         const nearSta = this.field.getNearestStation(s,key);
@@ -80,7 +82,7 @@ export class EditScene extends Scene{
                 }
             }
             if(KeyManager.down('DELETE')){
-                const sta = this.field.getStationByPosition(this.editArea.x/128, this.editArea.y/128);
+                const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
                 if(sta != null && sta != this.player.location){
                     this.field.removeStationByID(sta.id);
                 }
@@ -89,13 +91,13 @@ export class EditScene extends Scene{
             for(const key of Direction.asArray){
                 if(KeyManager.down(key)){
                     if(KeyManager.pressed('SHIFT')){
-                        const sta = this.field.getNearestStation(this.player.location,key);
+                        const sta = this.field.getNearestStation(this.player.location, key);
                         if(sta != null){
                             console.log(sta.id+" " +this.player.location.id);
                             if(sta.nexts[Direction.opposite(key)] == null){
-                                this.field.connectStationWithID(this.player.location.id,sta.id);
+                                this.field.connectStationWithID(this.player.location.id, sta.id);
                             }else if(sta.nexts[Direction.opposite(key)] == this.player.location){
-                                this.field.disconnectStationWithID(this.player.location.id,sta.id);
+                                this.field.disconnectStationWithID(this.player.location.id, sta.id);
                             }
                         }
                     }else{
@@ -105,10 +107,10 @@ export class EditScene extends Scene{
             }
         }
         if(KeyManager.pressed('PLUS')){
-            this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*1.05);
+            this.cameras.main.setZoom(this.cameras.main.zoom*1.05);
         }
         if(KeyManager.pressed('MINUS')){
-            this.cameras.getCamera('').setZoom(this.cameras.getCamera('').zoom*0.95);
+            this.cameras.main.setZoom(this.cameras.main.zoom*0.95);
         }
         if(KeyManager.down('S')&&KeyManager.pressed('SHIFT')){
             this.load.saveJSON(this.field);
