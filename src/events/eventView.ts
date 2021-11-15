@@ -14,6 +14,7 @@ const resume = 'resume' as const;
 export class EventView implements GameEvent<typeof resume>{
     private focus: Phaser.GameObjects.Arc;
     private canGoList: Station[];
+    private canGoMark: Phaser.GameObjects.Arc[] = [];
     /** フィールドを見渡すイベント
      * @param steps 進むマス数
      */
@@ -27,7 +28,12 @@ export class EventView implements GameEvent<typeof resume>{
             .setDepth(15);
         layer.cameras.main.startFollow(this.focus);
         this.canGoList = this.canGo(data);
-        console.log(this.canGoList.map(station=>station.id));//
+        for(const i in this.canGoList){
+            const pos = Field.at(this.canGoList[i].x, this.canGoList[i].y);
+            this.canGoMark[i] = layer.add.circle(pos.x, pos.y, 50)
+                .setStrokeStyle(10, 0x00ff00)
+        }
+        
     }
     /**
      * @returns 通常フィールド移動に戻るときは `resume`、進むルートを確定させるときはそのルート（未実装）
@@ -44,6 +50,7 @@ export class EventView implements GameEvent<typeof resume>{
     final(data: GameData){
         data.turnPlayer.focus();
         this.focus.destroy();
+        this.canGoMark.forEach(mark=>mark.destroy());
     }
 
     canGo(data: GameData){
