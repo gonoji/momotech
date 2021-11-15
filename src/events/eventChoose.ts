@@ -2,10 +2,10 @@ import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 
-export class EventChoose implements GameEvent<string>{
+export class EventChoose<T extends string> implements GameEvent<T>{
     private messages: Phaser.GameObjects.Text[];
     private index: number = 0;
-    constructor(private choices: string[]){
+    constructor(private readonly choices: readonly T[]){
     }
     init(){
         const layer = SceneManager.layer('dialog');
@@ -28,8 +28,5 @@ export class EventChoose implements GameEvent<string>{
     }
     final(){
         for(const message of this.messages) message.destroy();
-    }
-    result(){
-        return this.choices[this.index];
     }
 }
