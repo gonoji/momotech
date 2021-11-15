@@ -87,9 +87,29 @@ function* view(data: GameData, steps: number): routine{
 }
 
 function* card(data: GameData): routine{
-    yield new EventMessage('まだ実装してない');
+    const eventUseCard = new EventUseCard(data.turnPlayer);
+    while(true){
+        const card = yield* execute(eventUseCard);
+        if(card){
+            yield new EventMessage('このカードを使いますか？');
+            const choices = ['はい', 'いいえ'] as const;
+            const choice = yield* execute(new EventChoose(choices));
+            yield 'end';
+            yield 'end';
+            if(choice == 'はい'){
+                yield 'end'; // eventUseCard
+                return useCard(data, card);
+            }
+            continue;
+        }
+        yield 'end'; // eventUseCard
+        return null;
+    }
+}
+function* useCard(data: GameData, card: Card): routine{
+    yield new EventMessage(`${card.name} を使った`);
     yield 'end';
-    return null;
+    return yield* card.routine(data);
 }
 
 function* station(data: GameData): routine{
