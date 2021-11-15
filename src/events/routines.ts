@@ -96,20 +96,17 @@ function* card(data: GameData): subroutine<routine>{
     const eventUseCard = new EventUseCard(data.turnPlayer);
     while(true){
         const card = yield* execute(eventUseCard);
-        if(card){
-            yield new EventMessage('このカードを使いますか？');
-            const choices = ['はい', 'いいえ'] as const;
-            const choice = yield* execute(new EventChoose(choices));
+        if(!card){
             yield 'end';
-            yield 'end';
-            if(choice == 'はい'){
-                yield 'end'; // eventUseCard
-                return useCard(data, card);
-            }
-            continue;
+            return null;
         }
+        yield new EventMessage('このカードを使いますか？');
+        const yes = yield* askYesNo();
+        yield 'end';
+        if(!yes) continue;
+
         yield 'end'; // eventUseCard
-        return null;
+        return useCard(data, card);
     }
 }
 function* useCard(data: GameData, card: Card): routine{
@@ -126,6 +123,11 @@ function* station(data: GameData): routine{
 
 function dateToText(date: GameDate){
     return `${date.year} 年 ${date.month} 月 ${date.week + 1} 週`;
+}
+
+export function* askYesNo(): subroutine<boolean>{
+    const choice = yield* execute(new EventChoose(['はい', 'いいえ'] as const));
+    return choice == 'はい';
 }
 
 export function* execute<T>(event: GameEvent<T>): subroutine<T>{
