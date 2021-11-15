@@ -51,4 +51,7 @@ export class EventMove implements GameEvent<typeof routineStation | typeof routi
     get stepsLeft(){
         return this.steps - this.dirHistory.length;
     }
+    get from(){
+        return Direction.opposite(this.dirHistory[this.dirHistory.length-1])
+    }
 }

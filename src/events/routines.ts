@@ -1,5 +1,6 @@
 import { GameData } from "../gameData/gameData";
 import { GameDate } from "../gameData/gameDate";
+import { Direction } from "../utils/direction";
 import { GameEvent } from "./event";
 import { EventChoose } from "./eventChoose";
 import { EventDice } from "./eventDice";
@@ -62,7 +63,7 @@ export function* move(data: GameData, steps: number): routine{
             yield 'end'; // eventMove
             return station(data);
         case 'view':
-            const next = yield* view(data, eventMove.stepsLeft);
+            const next = yield* view(data, eventMove.stepsLeft, eventMove.from);
             if(next){
                 yield 'end'; // eventMove
                 return next;
@@ -73,8 +74,8 @@ export function* move(data: GameData, steps: number): routine{
         }
     }
 }
-function* view(data: GameData, steps: number): subroutine<routine>{
-    const result = yield* execute(new EventView(steps));
+function* view(data: GameData, steps: number, from: Direction.asType): subroutine<routine>{
+    const result = yield* execute(new EventView(steps, from));
     switch(result){
     case 'resume':
         yield 'end';
