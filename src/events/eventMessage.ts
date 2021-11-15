@@ -1,10 +1,11 @@
 import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
+import { Window } from "../utils/window";
 
 export class EventMessage implements GameEvent<void>{
     private message: Phaser.GameObjects.Text;
-    private box: Phaser.GameObjects.Rectangle;
+    private window: Window;
     private index = 0;
 
     /** メッセージを表示するイベント
@@ -15,13 +16,10 @@ export class EventMessage implements GameEvent<void>{
     }
     init(){
         const layer = SceneManager.layer('dialog');
+        this.window = new Window(0.5 * layer.width, 0.8 * layer.height, 0.95 * layer.width, 0.3 * layer.height);
         this.message = layer.add.text(0.05 * layer.width, 0.7 * layer.height, '', {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
             .setDepth(1);
-        this.box = layer.add.rectangle(0.5 * layer.width, 0.8 * layer.height, 0.95 * layer.width, 0.3 * layer.height, 0x000088, 0.5)
-            .setStrokeStyle(4, 0x080808)
-            .setOrigin(0.5)
-            .setDepth(0);
     }
     /**
      * @returns なし
@@ -40,7 +38,7 @@ export class EventMessage implements GameEvent<void>{
     result(){
     }
     final(){
+        this.window.final();
         this.message.destroy();
-        this.box.destroy();
     }
 }
