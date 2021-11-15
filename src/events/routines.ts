@@ -7,6 +7,7 @@ import { EventChoose } from "./eventChoose";
 import { EventDice } from "./eventDice";
 import { EventMessage } from "./eventMessage";
 import { EventMove } from "./eventMove";
+import { EventUseCard } from "./eventUseCard";
 import { EventView } from "./eventView";
 import { routine, subroutine } from "./routineManager";
 
@@ -87,10 +88,35 @@ function* view(data: GameData, steps: number, from: Direction.asType): subroutin
 }
 
 function* card(data: GameData): subroutine<routine>{
-    return Card.get('Dice5').routine(data);
-    yield new EventMessage('まだ実装してない');
+    if(data.turnPlayer.cards.length == 0){
+        yield new EventMessage('カードを 1 枚も持っていない！');
+        yield 'end';
+        return null;
+    }
+    const eventUseCard = new EventUseCard(data.turnPlayer);
+    while(true){
+        const card = yield* execute(eventUseCard);
+        if(card){
+            yield new EventMessage('このカードを使いますか？');
+            const choices = ['はい', 'いいえ'] as const;
+            const choice = yield* execute(new EventChoose(choices));
+            yield 'end';
+            yield 'end';
+            if(choice == 'はい'){
+                yield 'end'; // eventUseCard
+                return useCard(data, card);
+            }
+            continue;
+        }
+        yield 'end'; // eventUseCard
+        return null;
+    }
+}
+function* useCard(data: GameData, card: Card): routine{
+    data.turnPlayer.cards.splice(data.turnPlayer.cards.indexOf(card));
+    yield new EventMessage(`${card.name} を使った`);
     yield 'end';
-    return null;
+    return yield* card.routine(data);
 }
 
 function* station(data: GameData): routine{
