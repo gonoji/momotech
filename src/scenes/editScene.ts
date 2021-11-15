@@ -37,10 +37,10 @@ export class EditScene extends Scene{
             .setVisible(false)
             .setDepth(100);
 
-        this.field.add(new StationPlus(1, 1));
-        this.field.add(new StationPlus(5, 1));
-        this.field.add(new StationPlus(3, 3));
-        this.field.add(new StationPlus(3, 5));
+        this.field.add(new StationPlus(null, 1, 1));
+        this.field.add(new StationPlus(null, 5, 1));
+        this.field.add(new StationPlus(null, 3, 3));
+        this.field.add(new StationPlus(null, 3, 5));
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
     }
@@ -65,7 +65,7 @@ export class EditScene extends Scene{
             if(KeyManager.down('Z')){
                 const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
                 if(sta == null){
-                    const s: Station = new stations[Object.keys(stations)[this.editStationNum]](this.editArea.x /Field.size, this.editArea.y / Field.size);
+                    const s: Station = new stations[Object.keys(stations)[this.editStationNum]](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
                     this.field.add(s);
                     for(const key of Direction.asArray){
                         const nearSta = this.field.getNearestStation(s,key);

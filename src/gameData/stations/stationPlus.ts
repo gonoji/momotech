@@ -3,11 +3,11 @@ import { EventRoulette } from "../../events/eventRoulette";
 import { execute } from "../../events/routines";
 import { Util } from "../../utils/util";
 import { GameData } from "../gameData";
-import { Station } from "./station";
+import { Station, stationData } from "./station";
 
 export class StationPlus extends Station{
-    constructor(x: number, y: number, z: number = 0, id: number = -1){
-        super(x, y, z, 'plus', id);
+    constructor(data: stationData, x: number = 0, y: number = 0, z: number = 0, id: number = -1){
+        super(data,x, y, z, 'plus', id);
     }
     *routine(gameData: GameData){
         yield new EventMessage('プラス駅に止まった');
