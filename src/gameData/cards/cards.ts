@@ -1,5 +1,6 @@
 import { CardAdvance1, CardAdvance2, CardAdvance3, CardAdvance30, CardAdvance4, CardAdvance5, CardAdvance6, CardAdvance7 } from "./cardAdvance";
 import { CardDice2, CardDice3, CardDice4, CardDice5 } from "./cardDice";
+import { CardReroll } from "./cardReroll";
 
 export const cards = {
     'Dice2': CardDice2,
@@ -14,4 +15,5 @@ export const cards = {
     'Advance6': CardAdvance6,
     'Advance7': CardAdvance7,
     'Advance30': CardAdvance30,
+    'Reroll': CardReroll,
 } as const;
