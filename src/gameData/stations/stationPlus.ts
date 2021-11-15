@@ -20,6 +20,6 @@ export class StationPlus extends Station{
     }
 
     private static gain(gameData: GameData){
-        return () => Util.getRandomInt(10, 20+1) * gameData.factors.inflation * gameData.factors.season * gameData.factors.business;
+        return () => Math.floor(Util.getRandomInt(10, 20+1) * gameData.factors.inflation * gameData.factors.season * gameData.factors.business);
     }
 }
