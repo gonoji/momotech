@@ -1,6 +1,7 @@
 import { Card } from "../gameData/cards/card";
 import { GameData } from "../gameData/gameData";
 import { GameDate } from "../gameData/gameDate";
+import { Direction } from "../utils/direction";
 import { GameEvent } from "./event";
 import { EventChoose } from "./eventChoose";
 import { EventDice } from "./eventDice";
@@ -43,14 +44,14 @@ function* turnEnd(data: GameData): routine{
     return turnStart(data);
 }
 
-function* action(data: GameData, choice: typeof choicesTurn[number]): routine{
+function* action(data: GameData, choice: typeof choicesTurn[number]): subroutine<routine>{
     switch(choice){
         case 'サイコロ': return yield* dice(data);
         case 'カード': return yield* card(data);
     }
 }
 
-function* dice(data: GameData): routine{
+function* dice(data: GameData): subroutine<routine>{
     const sum = yield* execute(new EventDice(1));
     yield 'end';
     return move(data, sum);
@@ -64,7 +65,7 @@ export function* move(data: GameData, steps: number): routine{
             yield 'end'; // eventMove
             return station(data);
         case 'view':
-            const next = yield* view(data, eventMove.stepsLeft);
+            const next = yield* view(data, eventMove.stepsLeft, eventMove.from);
             if(next){
                 yield 'end'; // eventMove
                 return next;
@@ -75,8 +76,8 @@ export function* move(data: GameData, steps: number): routine{
         }
     }
 }
-function* view(data: GameData, steps: number): routine{
-    const result = yield* execute(new EventView(steps));
+function* view(data: GameData, steps: number, from: Direction.asType): subroutine<routine>{
+    const result = yield* execute(new EventView(steps, from));
     switch(result){
     case 'resume':
         yield 'end';
@@ -109,7 +110,7 @@ function* card(data: GameData): routine{
 function* useCard(data: GameData, card: Card): routine{
     yield new EventMessage(`${card.name} を使った`);
     yield 'end';
-    return yield* card.routine(data);
+    return card.routine(data);
 }
 
 function* station(data: GameData): routine{

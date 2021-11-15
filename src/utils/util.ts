@@ -11,7 +11,7 @@ export namespace Util{
      * @returns [`lb`, `ub`) 中のランダムな実数
      */
      export function getRandomDouble(lb: number, ub: number){
-        return Math.random() * (lb - ub) + lb;
+        return Math.random() * (ub - lb) + lb;
     }
 
     /** 排他的論理和をとる
