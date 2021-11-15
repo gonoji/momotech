@@ -1,8 +1,10 @@
 import { Direction } from "../utils/direction";
 import { Exportable } from "../utils/exportable";
 import { FileIO } from "../utils/fileIO";
+import { estateData } from "./estates/estate";
 import { Road } from "./road";
-import { Station } from "./stations/station";
+import { Station, stationData } from "./stations/station";
+import { StationEstate, stationEstateData } from "./stations/stationEstate";
 import { stations } from "./stations/stations";
 
 export class Field implements Exportable{
@@ -38,14 +40,13 @@ export class Field implements Exportable{
 
     private importFromJson(name: string){
         const json = FileIO.getJson(name);
-        json.forEach((e: any) => {
-            const x = e.position.x;
-            const y = e.position.y;
+        json.forEach((e: stationData & stationEstateData) => {
+            console.log(e);
             switch(e.type){
                 case 'estate': 
-                    this.add(new stations[e.type](x, y, 0, e.id, e.estates)); 
+                    this.add(new stations[e.type](e)); 
                     break;
-                default: this.add(new stations[e.type](x, y, 0, e.id));
+                default: this.add(new stations[e.type](e));
             }
         });
         json.forEach((e: any) => {
@@ -100,7 +101,19 @@ export class Field implements Exportable{
         }
 
     }
-
+    /**
+     * @param x scene座標でのx
+     * @param y scene座標でのy
+     * @returns 
+     */
+    getStationByCoordinate(x : number, y : number) : Station{
+        return this.getStationByPosition( x / Station.size , y / Station.size);
+    }
+    /**
+     * @param x size倍する前のx
+     * @param y size倍する前のy
+     * @returns 
+     */
     getStationByPosition(x : number, y : number) : Station{
         return this.stations.find(station => station.x == x && station.y == y);
     }

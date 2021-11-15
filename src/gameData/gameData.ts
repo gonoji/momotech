@@ -22,7 +22,6 @@ export class GameData{
         this.factors = new Factors(this.date);
     }
     create(){
-        Estate.create();
         this.field.create();
         this.frame.create();
         Card.create();

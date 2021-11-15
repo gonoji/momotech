@@ -2,25 +2,26 @@ import { Exportable } from "../../utils/exportable";
 import { FileIO } from "../../utils/fileIO";
 import { StationEstate } from "../stations/stationEstate";
 
-type estatesData = {
-    [id: string]: { name: string, price: number, profit: number }
+export type estateData = {
+     name: string, price: number, profit: number, isAgri: boolean
 };
 
 export class Estate implements Exportable{
-    private static data: estatesData;
     public station: StationEstate;
     readonly name: string;
     readonly price: number;
     readonly profit: number;
+    readonly isAgri: boolean;
 
-    static create(){
-        Estate.data = FileIO.getJson('estates');
-    }
-
-    constructor(id: string){
-        this.name = Estate.data[id].name;
-        this.price = Estate.data[id].price;
-        this.profit = Estate.data[id].profit;
+    constructor(public data: estateData){
+        this.name = data.name;
+        this.price = data.price;
+        this.profit = data.profit;
+        this.isAgri = data.isAgri;
+        console.log(this.name);
+        console.log(this.price);
+        console.log(this.profit);
+        console.log(this.isAgri);
     }
 
     final(){
