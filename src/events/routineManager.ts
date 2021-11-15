@@ -1,6 +1,6 @@
 import { command } from "./eventManager";
 import { GameData } from "../gameData/gameData";
-import { init } from "./routines"
+import { init } from "./routines";
 
 export type routine = Generator<command, routine, unknown>;
 export type subroutine<T> = Generator<command, T, unknown>;

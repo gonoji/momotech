@@ -16,8 +16,9 @@ export class EventMessage implements GameEvent<void>{
     }
     init(){
         const layer = SceneManager.layer('dialog');
-        this.window = new Window(0.5 * layer.width, 0.8 * layer.height, 0.95 * layer.width, 0.3 * layer.height);
-        this.message = layer.add.text(0.05 * layer.width, 0.7 * layer.height, '', {color: 'black', fontSize: '50px'})
+        const margin = 30;
+        this.window = Window.lower();
+        this.message = layer.add.text(2*margin, 0.7 * layer.height, '', {color: 'black', fontSize: '50px'})
             .setPadding(0, 10, 0, 0)
             .setDepth(1);
     }
