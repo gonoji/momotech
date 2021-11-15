@@ -4,7 +4,6 @@ import { SceneManager } from "../utils/sceneManager";
 import { Window } from "../utils/window";
 
 export class EventMessage implements GameEvent<void>{
-    private message: Phaser.GameObjects.Text;
     private window: Window;
     private index = 0;
 
@@ -18,9 +17,6 @@ export class EventMessage implements GameEvent<void>{
         const layer = SceneManager.layer('dialog');
         const margin = 30;
         this.window = Window.lower();
-        this.message = layer.add.text(2*margin, 0.7 * layer.height, '', {color: 'black', fontSize: '50px'})
-            .setPadding(0, 10, 0, 0)
-            .setDepth(1);
     }
     /**
      * @returns なし
@@ -33,13 +29,12 @@ export class EventMessage implements GameEvent<void>{
             }
             else this.index += 0.5;
         }
-        this.message.setText(this.text.substr(0, this.index));
+        this.window.text = this.text.substr(0, this.index).split('\n');
         if(KeyManager.down('Z')) return { result: undefined };
     }
     result(){
     }
     final(){
         this.window.final();
-        this.message.destroy();
     }
 }
