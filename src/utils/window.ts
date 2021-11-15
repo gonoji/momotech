@@ -4,19 +4,20 @@ export class Window{
     private readonly box: Phaser.GameObjects.Rectangle;
     readonly messages: Phaser.GameObjects.Text[];
     static margin = 16;
-    static fontSize = 32;
 
     /** 位置・サイズを指定してウィンドウを作成
      * @param x ウィンドウ左上の `x` 座標（負値を指定すると、画面右端が基準になる）
      * @param y ウィンドウ左上の `y` 座標（負値を指定すると、画面下端が基準になる）
      * @param w ウィンドウの幅（負値を指定すると、画面右端からの距離）
      * @param texts ウィンドウに表示する行ごとのテキスト、またはその行数
+     * @param fornSize フォントの大きさ
      */
     constructor(
         x: number,
         y: number,
         w: number,
-        texts: readonly string[] | number
+        texts: readonly string[] | number,
+        private readonly fontSize: number = 32
     ){
         if(typeof texts == 'number') texts = Array(texts).fill('');
         const h = this.yText(texts.length) + Window.margin;
@@ -27,7 +28,7 @@ export class Window{
         
         const wFrame = 4;
         this.messages = texts.map((text, line) => layer.add
-            .text(x + Window.margin, y + this.yText(line) + wFrame, text, { fontSize: `${Window.fontSize}px`, color: 'black' })
+            .text(x + Window.margin, y + this.yText(line) + wFrame, text, { fontSize: `${this.fontSize}px`, color: 'black' })
             .setPadding(0, Window.margin, 0, 0)
             .setDepth(1)
         );
@@ -43,7 +44,7 @@ export class Window{
     }
 
     private yText(line: number){
-        return line * (Window.fontSize + Window.margin);
+        return line * (this.fontSize + Window.margin);
     }
 
     /** 表示するテキストを設定する
