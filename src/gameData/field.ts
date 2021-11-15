@@ -41,7 +41,6 @@ export class Field implements Exportable{
     private importFromJson(name: string){
         const json = FileIO.getJson(name);
         json.forEach((e: stationData & stationEstateData) => {
-            console.log(e);
             switch(e.type){
                 case 'estate': 
                     this.add(new stations[e.type](e)); 

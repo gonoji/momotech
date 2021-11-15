@@ -67,8 +67,6 @@ export abstract class Station implements Exportable{
     }
     setNext(dir: Direction.asType, other: Station){
         this.nexts[dir] = other;
-        console.log(this.data);
-        console.log(other.id);
         this.data.nexts[dir] = other.id;
         other.nexts[Direction.opposite(dir)] = this;
         other.data.nexts[Direction.opposite(dir)] = this.id;

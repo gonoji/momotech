@@ -18,10 +18,6 @@ export class Estate implements Exportable{
         this.price = data.price;
         this.profit = data.profit;
         this.isAgri = data.isAgri;
-        console.log(this.name);
-        console.log(this.price);
-        console.log(this.profit);
-        console.log(this.isAgri);
     }
 
     final(){
