@@ -1,6 +1,5 @@
 import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
-import { SceneManager } from "../utils/sceneManager";
 import { Window } from "../utils/window";
 
 export class EventMessage implements GameEvent<void>{
@@ -14,8 +13,6 @@ export class EventMessage implements GameEvent<void>{
     constructor(private text: string){
     }
     init(){
-        const layer = SceneManager.layer('dialog');
-        const margin = 30;
         this.window = Window.lower();
     }
     /**
@@ -29,10 +26,8 @@ export class EventMessage implements GameEvent<void>{
             }
             else this.index += 0.5;
         }
-        this.window.text = this.text.substr(0, this.index).split('\n');
+        this.window.setTexts(this.text.substr(0, this.index).split('\n'));
         if(KeyManager.down('Z')) return { result: undefined };
-    }
-    result(){
     }
     final(){
         this.window.final();

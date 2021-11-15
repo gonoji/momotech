@@ -2,7 +2,7 @@ import { SceneManager } from "./sceneManager";
 
 export class Window{
     private readonly box: Phaser.GameObjects.Rectangle;
-    private readonly _texts: Phaser.GameObjects.Text[];
+    readonly messages: Phaser.GameObjects.Text[];
     static margin = 16;
     static fontSize = 32;
 
@@ -16,7 +16,7 @@ export class Window{
         x: number,
         y: number,
         w: number,
-        texts: string[] | number
+        texts: readonly string[] | number
     ){
         if(typeof texts == 'number') texts = Array(texts).fill('');
         const h = this.yText(texts.length) + Window.margin;
@@ -26,18 +26,20 @@ export class Window{
         if(y < 0) y += layer.height - h;
         
         const wFrame = 4;
-        this.box = layer.add
-            .rectangle(x - wFrame, y - wFrame, w + 2*wFrame, h + 2*wFrame, 0x000088, 0.5)
-            .setStrokeStyle(wFrame, 0x080808)
-            .setOrigin(0);
-        this._texts = texts.map((text, line) => layer.add
+        this.messages = texts.map((text, line) => layer.add
             .text(x + Window.margin, y + this.yText(line) + wFrame, text, { fontSize: `${Window.fontSize}px`, color: 'black' })
             .setPadding(0, Window.margin, 0, 0)
+            .setDepth(1)
         );
+        const messagesWidth = Math.max(...this.messages.map(message => message.displayWidth));
+        this.box = layer.add
+            .rectangle(x - wFrame, y - wFrame, Math.max(w, messagesWidth + 2*Window.margin) + 2*wFrame, h + 2*wFrame, 0x000088, 0.5)
+            .setStrokeStyle(wFrame, 0x080808)
+            .setOrigin(0);
     }
     final(){
         this.box.destroy();
-        this._texts.forEach(text => text.destroy());
+        this.messages.forEach(text => text.destroy());
     }
 
     private yText(line: number){
@@ -47,11 +49,12 @@ export class Window{
     /** 表示するテキストを設定する
      * @param texts 表示するテキスト
      */
-    set text(texts: string[]){
-        if(texts.length > this._texts.length) throw new Error('表示するテキストの行数が多すぎます');
-        texts.forEach((text, line) => this._texts[line].setText(text));
+    setTexts(texts: string[]){
+        if(texts.length > this.messages.length) throw new Error('表示するテキストの行数が多すぎます');
+        texts.forEach((text, line) => this.messages[line].setText(text));
     }
 
+    /** 画面下に表示される、3 行のテキストボックス */
     static lower(){
         const margin = 30;
         return new Window(margin, -margin, -margin, 3);
