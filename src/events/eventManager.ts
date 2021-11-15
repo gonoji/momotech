@@ -22,17 +22,26 @@ export class EventManager{
     }
     private advance(data: GameData, result?: unknown){
         const command = this.routine.next(data, result);
-        console.log(command);
 
-        if(command == null) return true;
+        if(command == null){
+            console.log('END');
+            return true;
+        }
         if(command == 'end'){
+            console.log('end');
             this.events.popFront().final(data);
             return this.advance(data);
         }
+        if(command == this.events.front()){
+            console.log('wait');
+            return false;
+        }
         if(!this.events.includes(command)){
+            console.log('start', command);
             this.events.pushFront(command);
             command.init(data);
+            return false;
         }
-        return false;
+        throw new Error(`EventManager: 'remove' is not implemented`);
     }
 }

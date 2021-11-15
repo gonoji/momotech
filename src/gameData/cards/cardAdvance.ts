@@ -1,6 +1,4 @@
-import { EventDice } from "../../events/eventDice";
-import { EventMove } from "../../events/eventMove";
-import { routine, Routine } from "../../events/routineManager";
+import { move } from "../../events/routines";
 import { GameData } from "../gameData";
 import { Card } from "./card";
 
@@ -9,7 +7,7 @@ class CardAdvance extends Card{
         super(id);
     }
     *routine(data: GameData){
-        return Routine.move(data, this.numAdvances);
+        return move(data, this.numAdvances);
     }
 }
 
