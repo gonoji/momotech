@@ -87,7 +87,12 @@ function* view(data: GameData, steps: number, from: Direction.asType): subroutin
     }
 }
 
-function* card(data: GameData): routine{
+function* card(data: GameData): subroutine<routine>{
+    if(data.turnPlayer.cards.length == 0){
+        yield new EventMessage('カードを 1 枚も持っていない！');
+        yield 'end';
+        return null;
+    }
     const eventUseCard = new EventUseCard(data.turnPlayer);
     while(true){
         const card = yield* execute(eventUseCard);
@@ -108,9 +113,10 @@ function* card(data: GameData): routine{
     }
 }
 function* useCard(data: GameData, card: Card): routine{
+    data.turnPlayer.cards.splice(data.turnPlayer.cards.indexOf(card));
     yield new EventMessage(`${card.name} を使った`);
     yield 'end';
-    return card.routine(data);
+    return yield* card.routine(data);
 }
 
 function* station(data: GameData): routine{
