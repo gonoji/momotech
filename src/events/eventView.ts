@@ -18,7 +18,7 @@ export class EventView implements GameEvent<typeof resume>{
     /** フィールドを見渡すイベント
      * @param steps 進むマス数
      */
-    constructor(private steps: number){
+    constructor(private steps: number, private from?: Direction.asType){
     }
     init(data: GameData){
         const layer = SceneManager.layer('field');
@@ -55,7 +55,8 @@ export class EventView implements GameEvent<typeof resume>{
 
     canGo(data: GameData){
         let possibleDest: {[id: number]: from} = {};
-        possibleDest[data.turnPlayer.location.id] = 'CENTER';
+        possibleDest[data.turnPlayer.location.id] = this.from ?? 'CENTER';
+
         for(let i = 1; i <= this.steps; i++){
             const nextPossibleDest: {[id: number]: from} = {};
             for(const id in possibleDest){

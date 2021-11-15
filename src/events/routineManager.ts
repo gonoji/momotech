@@ -8,6 +8,8 @@ import { GameEvent } from "./event";
 import { Card } from "../gameData/cards/card";
 import { EventView } from "./eventView";
 import { GameDate } from "../gameData/gameDate";
+import { Direction } from "../utils/direction";
+
 
 export type routine = Generator<command, routine, unknown>;
 export type subroutine<T> = Generator<command, T, unknown>;
@@ -87,7 +89,7 @@ export class Routine{
                 yield 'end'; // move
                 return this.station(data);
             case 'view':
-                const next = yield* this.view(data, move.stepsLeft);
+                const next = yield* this.view(data, move.stepsLeft, move.from);
                 if(next){
                     yield 'end'; // move
                     return next;
@@ -98,8 +100,8 @@ export class Routine{
             }
         }
     }
-    private static *view(data: GameData, steps: number): routine{
-        const result = yield* Routine.result(new EventView(steps));
+    private static *view(data: GameData, steps: number, from?: Direction.asType): routine{
+        const result = yield* Routine.result(new EventView(steps, from));
         switch(result){
         case 'resume':
             yield 'end'; // view
