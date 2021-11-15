@@ -1,6 +1,6 @@
 import { EventMessage } from "../../events/eventMessage";
 import { EventRoulette } from "../../events/eventRoulette";
-import { Routine } from "../../events/routineManager";
+import { execute } from "../../events/routines";
 import { Util } from "../../utils/util";
 import { GameData } from "../gameData";
 import { Station } from "./station";
@@ -13,7 +13,7 @@ export class StationCard extends Station{
     }
     *routine(gameData: GameData){
         yield new EventMessage('カード駅に止まった');
-        const id = yield* Routine.result(new EventRoulette(StationCard.getCard(gameData), (id) => Card.data[id].name));
+        const id = yield* execute(new EventRoulette(StationCard.getCard(gameData), (id) => Card.data[id].name));
         yield 'end';
         yield 'end';
         gameData.turnPlayer.cards.push(Card.get(id));
