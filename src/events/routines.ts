@@ -1,3 +1,4 @@
+import { Card } from "../gameData/cards/card";
 import { GameData } from "../gameData/gameData";
 import { GameDate } from "../gameData/gameDate";
 import { Direction } from "../utils/direction";
@@ -86,6 +87,7 @@ function* view(data: GameData, steps: number, from: Direction.asType): subroutin
 }
 
 function* card(data: GameData): subroutine<routine>{
+    return Card.get('Dice5').routine(data);
     yield new EventMessage('まだ実装してない');
     yield 'end';
     return null;

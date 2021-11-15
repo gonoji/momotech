@@ -2,25 +2,23 @@ import { GameData } from "../gameData/gameData";
 import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
-import { SceneManager } from "../utils/sceneManager";
+import { Window } from "../utils/window";
 
 const routineStation = 'station' as const;
 const routineView = 'view' as const;
 
 export class EventMove implements GameEvent<typeof routineStation | typeof routineView>{
     private dirHistory: Direction.asType[] = [];
-    private textStepsLeft: Phaser.GameObjects.Text;
+    private window: Window;
     /** プレイヤーがフィールド上を移動するイベント
      * @param steps 何マス進むか
      */
     constructor(private readonly steps: number){
     }
     init(){
-        const layer = SceneManager.layer('dialog');
-        this.textStepsLeft = layer.add.text(layer.width / 2, layer.height / 2, `のこり${this.steps}マス`, {color: 'black', fontSize: '50px'})
-            .setPadding(0, 10, 0, 0)
-            .setOrigin(0.5)
-            .setDepth(1);
+        const margin = 30;
+        this.window = new Window(margin, margin, 0, [EventMove.stepsText(10)]);
+        this.window.setTexts([EventMove.stepsText(this.stepsLeft)]);
     }
     /**
      * @returns 次のルーチン名
@@ -38,20 +36,24 @@ export class EventMove implements GameEvent<typeof routineStation | typeof routi
                         this.dirHistory.push(dir);
                     }
                 }
-                this.textStepsLeft.setText(`のこり${this.stepsLeft}マス`);
+                this.window.setTexts([EventMove.stepsText(this.stepsLeft)]);
             }
         }
         if(this.stepsLeft == 0) return { result: routineStation };
         if(KeyManager.down('C')) return { result: routineView };
     }
     final(){
-        this.textStepsLeft.destroy();
+        this.window.final();
+    }
+
+    static stepsText(steps: number){
+        return `残り ${steps < 10? ' ': ''}${steps} マス`;
     }
 
     get stepsLeft(){
         return this.steps - this.dirHistory.length;
     }
     get from(){
-        return Direction.opposite(this.dirHistory[this.dirHistory.length-1])
+        return Direction.opposite(this.dirHistory[this.dirHistory.length-1]);
     }
 }
