@@ -11,20 +11,21 @@ import { EventUseCard } from "./eventUseCard";
 import { EventView } from "./eventView";
 import { routine, subroutine } from "./routineManager";
 
-export function* init(data: GameData){
+export function* init(data: GameData): routine{
     yield new EventMessage('ゲーム開始');
     yield 'end';
     return turnStart(data);
 }
 
 function* turnStart(data: GameData): routine{
-    data.turnPlayer.focus();
+    yield* data.routineTurnStart();
     yield new EventMessage(dateToText(data.date) + ': ターン開始');
     yield 'end';
     return turnBody(data);
 }
 
 const choicesTurn = ['サイコロ', 'カード'] as const;
+
 function* turnBody(data: GameData): routine{
     const eventChoose = new EventChoose(choicesTurn);
     while(true){

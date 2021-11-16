@@ -4,6 +4,7 @@ import { Exportable } from "../utils/exportable";
 import { FileIO } from "../utils/fileIO";
 import { GameData } from "./gameData";
 import { Road } from "./road";
+import { SpiritRock } from "./spiritRock";
 import { Station, stationData } from "./stations/station";
 import { stationEstateData } from "./stations/stationEstate";
 import { stations } from "./stations/stations";
@@ -11,6 +12,7 @@ import { stations } from "./stations/stations";
 export class Field implements Exportable{
     private _stations: Station[] = [];
     private roads: Road[] = [];
+    private spiritRocks: SpiritRock[] = [];
 
     create(name: string = 'stations'){
         this._stations = [];
@@ -23,6 +25,14 @@ export class Field implements Exportable{
         for(const station of this.stations) station.final();        
     }
 
+    *routineTurnStart(data: GameData): subroutine<void>{
+        for(const spiritRock of this.spiritRocks){
+            yield* spiritRock.weather(this);
+        }
+        data.turnPlayer.focus();
+    }
+    removeSpiritRock(spiritRock: SpiritRock){
+        this.spiritRocks.splice(this.spiritRocks.indexOf(spiritRock));
     }
 
     static size = 64;

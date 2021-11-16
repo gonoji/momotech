@@ -1,4 +1,5 @@
 import { GameObjects } from "phaser";
+import { subroutine } from "../events/routineManager";
 import { SceneManager } from "../utils/sceneManager";
 import { Card } from "./cards/card";
 import { Estate } from "./estates/estate";
@@ -35,6 +36,10 @@ export class GameData{
     final(){
         this.field.final();
         this.frame.final();
+    }
+
+    *routineTurnStart(): subroutine<void>{
+        yield* this.field.routineTurnStart(this);
     }
 
     get turnPlayer(){
