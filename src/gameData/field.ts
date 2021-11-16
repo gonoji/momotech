@@ -41,14 +41,9 @@ export class Field implements Exportable{
     private importFromJson(name: string){
         const json = FileIO.getJson(name);
         json.forEach((e: stationData & stationEstateData) => {
-            switch(e.type){
-                case 'estate': 
-                    this.add(new stations[e.type](e)); 
-                    break;
-                default: this.add(new stations[e.type](e));
-            }
+            this.add(new stations[e.type](e));
         });
-        json.forEach((e: any) => {
+        json.forEach((e: stationData) => {
             if(e.nexts.up != null){
                 this.connectStationWithID(e.nexts.up, e.id);
             }
