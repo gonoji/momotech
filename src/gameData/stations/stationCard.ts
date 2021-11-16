@@ -13,15 +13,16 @@ export class StationCard extends Station{
     }
     *routine(gameData: GameData){
         yield new EventMessage('カード駅に止まった');
-        const id = yield* execute(new EventRoulette(StationCard.getCard(gameData), (id) => Card.data[id].name));
+        const id = yield* execute(new EventRoulette(StationCard.getCard, id => Card.data.get(id).name));
         yield 'end';
         yield 'end';
-        gameData.turnPlayer.cards.push(Card.get(id));
-        yield new EventMessage(Card.data[id].name + 'を手に入れた');
+        const card = Card.get(id);
+        gameData.turnPlayer.cards.push(card);
+        yield new EventMessage(card.name + 'を手に入れた');
         yield 'end';
     }
 
-    private static getCard(gameData: GameData){
-        return () => Util.pick(Object.keys(cards));
+    private static getCard(){
+        return Util.pick(Object.keys(cards));
     }
 }
