@@ -9,16 +9,16 @@ import { EventMessage } from "../events/eventMessage";
 import { EventMove } from "../events/eventMove";
 import { EventUseCard } from "../events/eventUseCard";
 import { EventView } from "../events/eventView";
-import { RoutineClass, Routines } from "./routineManager";
+import { Routine, Routines } from "./routineManager";
 
-export class RoutineInit extends RoutineClass<Routines>{
+export class RoutineInit extends Routine<Routines>{
     *routine(data: GameData){
         yield new EventMessage('ゲーム開始');
         yield 'end';
         return new RoutineTurnStart(data);
     }
 }
-class RoutineTurnStart extends RoutineClass<Routines>{
+class RoutineTurnStart extends Routine<Routines>{
     *routine(data: GameData){
         yield* data.routineTurnStart();
         data.turnPlayer.focus();
@@ -28,7 +28,7 @@ class RoutineTurnStart extends RoutineClass<Routines>{
     }
 }
 const choicesTurn = ['サイコロ', 'カード'] as const;
-class RoutineTurn extends RoutineClass<Routines>{
+class RoutineTurn extends Routine<Routines>{
     *routine(data: GameData){
         const eventChoose = new EventChoose(choicesTurn);
         while(true){
@@ -47,7 +47,7 @@ class RoutineTurn extends RoutineClass<Routines>{
         }
     }
 }
-class RoutineTurnEnd extends RoutineClass<Routines>{
+class RoutineTurnEnd extends Routine<Routines>{
     *routine(data: GameData){
         yield new EventMessage(dateToText(data.date) + ': ターン終了');
         yield 'end';
@@ -56,7 +56,7 @@ class RoutineTurnEnd extends RoutineClass<Routines>{
     }
 }
 
-export class RoutineDice extends RoutineClass<RoutineMove | null>{
+export class RoutineDice extends Routine<RoutineMove | null>{
     constructor(data: GameData, private readonly forced: boolean){ // todo
         super(data);
     }
@@ -67,7 +67,7 @@ export class RoutineDice extends RoutineClass<RoutineMove | null>{
     }
 }
 
-export class RoutineMove extends RoutineClass<RoutineStation>{
+export class RoutineMove extends Routine<RoutineStation>{
     constructor(data: GameData, private readonly steps: number){
         super(data);
     }
@@ -93,7 +93,7 @@ export class RoutineMove extends RoutineClass<RoutineStation>{
     }
 }
 
-class RoutineView extends RoutineClass<null>{
+class RoutineView extends Routine<null>{
     constructor(data: GameData, private readonly steps: number, private readonly from: Direction.asType){
         super(data);
     }
@@ -109,7 +109,7 @@ class RoutineView extends RoutineClass<null>{
     }
 }
 
-class RoutineCard extends RoutineClass<RoutineUseCard | null>{
+class RoutineCard extends Routine<RoutineUseCard | null>{
     *routine(data: GameData){
         if(data.turnPlayer.cards.length == 0){
             yield new EventMessage('カードを 1 枚も持っていない！');
@@ -133,7 +133,7 @@ class RoutineCard extends RoutineClass<RoutineUseCard | null>{
         }
     }
 }
-class RoutineUseCard extends RoutineClass<Routines>{
+class RoutineUseCard extends Routine<Routines>{
     constructor(data: GameData, private readonly card: Card){
         super(data);
     }
@@ -145,7 +145,7 @@ class RoutineUseCard extends RoutineClass<Routines>{
     }
 }
 
-export class RoutineStation extends RoutineClass<RoutineTurnEnd>{
+export class RoutineStation extends Routine<RoutineTurnEnd>{
     *routine(data: GameData){
         yield* data.turnPlayer.location.routine(data);
         return new RoutineTurnEnd(data);
