@@ -1,15 +1,12 @@
-import { GameObjects } from "phaser";
 import { subroutine } from "../events/routineManager";
-import { SceneManager } from "../utils/sceneManager";
 import { Card } from "./cards/card";
-import { Estate } from "./estates/estate";
-import { Field } from "./field";
+import { Field, FieldInGame } from "./field";
 import { Frame } from "./frame"
 import { GameDate } from "./gameDate";
 import { Player } from "./player";
 
 export class GameData{
-    readonly field: Field;
+    readonly field: FieldInGame;
     readonly players: Player[];
     readonly date: GameDate;
     readonly factors: Factors;

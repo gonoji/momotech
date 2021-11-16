@@ -1,3 +1,4 @@
+import { EventMessage } from "../events/eventMessage";
 import { subroutine } from "../events/routineManager";
 import { Direction } from "../utils/direction";
 import { Exportable } from "../utils/exportable";
@@ -9,14 +10,31 @@ import { Station, stationData } from "./stations/station";
 import { stationEstateData } from "./stations/stationEstate";
 import { stations } from "./stations/stations";
 
-export class Field implements Exportable{
-    private _stations: Station[] = [];
-    private roads: Road[] = [];
-    private spiritRocks: SpiritRock[] = [];
+export interface FieldBase{
+    readonly stations: Station[];
+    create(): void;
+    update(): void;
+    final(): void;
+}
+export interface FieldInGame extends FieldBase{
+    routineTurnStart(data: GameData): subroutine<void>;
+}
+export interface FieldInEdit extends FieldBase, Exportable{
+    getStationByCoordinate(x: number, y: number): Station;
+    getStationByPosition(x: number, y: number): Station;
+    getNearestStation(current: Station, dir: Direction.asType): Station;
+    connectStationWithID(id1: number, id2: number): void;
+    disconnectStationWithID(id1: number, id2: number): void;
+    removeStationByID(id: number): void;
+}
 
-    create(name: string = 'stations'){
-        this._stations = [];
-        this.importFromJson(name);
+export class Field implements FieldInGame, FieldInEdit{
+    readonly stations: Station[] = [];
+    private readonly roads: Road[] = [];
+    private readonly spiritRocks: SpiritRock[] = [];
+
+    create(){
+        this.importFromJson('stations');
     }
     update(){
         for(const station of this.stations) station.update();
@@ -25,27 +43,9 @@ export class Field implements Exportable{
         for(const station of this.stations) station.final();        
     }
 
-    *routineTurnStart(data: GameData): subroutine<void>{
-        for(const spiritRock of this.spiritRocks){
-            yield* spiritRock.weather(this);
-        }
-        data.turnPlayer.focus();
-    }
-    removeSpiritRock(spiritRock: SpiritRock){
-        this.spiritRocks.splice(this.spiritRocks.indexOf(spiritRock));
-    }
-
     static size = 64;
     static at(x: number, y: number){
         return {x: x * Field.size, y: y * Field.size};
-    }
-    get stations(){
-        return this._stations;
-    }
-
-    add(s: Station){
-        this._stations.push(s);
-        return this;
     }
 
     private importFromJson(name: string){
@@ -53,9 +53,9 @@ export class Field implements Exportable{
         json.forEach((e: stationData & stationEstateData) => {
             switch(e.type){
                 case 'estate': 
-                    this.add(new stations[e.type](e)); 
+                    this.stations.push(new stations[e.type](e)); 
                     break;
-                default: this.add(new stations[e.type](e));
+                default: this.stations.push(new stations[e.type](e));
             }
         });
         json.forEach((e: stationData) => {
@@ -67,53 +67,36 @@ export class Field implements Exportable{
             }
         });
     }
-    connectStationWithID(id1: number, id2: number){
-        const s1 = this.getStationByID(id1);
-        const s2 = this.getStationByID(id2);
-        this.addUpDownStation(s1, s2);
-        this.addLeftRightStation(s1, s2);
-    }
-
-    disconnectStationWithID(id1: number, id2: number){
-        const station1 = this.getStationByID(id1);
-        const station2 = this.getStationByID(id2);
-        if(station1 != null && station2 != null){
-            this.removeUpDownStation(station1, station2);
-            this.removeLeftRightStation(station1, station2);
-        }else{
-            if(station1 == null)
-                console.log("Non-existent ID : " + id1);
-            if(station2 == null)
-                console.log("Non-existent ID : " + id2);
-        }
-    }
-
     private getStationByID(id: number){
         return this.stations.find(station => station.id == id);
     }
-    removeStationByID(id: number){
-        for(let i = 0;  i < this._stations.length; i++){
-            const sta : Station = this._stations[i]; 
-            if(sta.id == id){  
-                for(const key of Direction.asArray){
-                    if(sta.nexts[key] != null){
-                        if(sta.nexts[key] != null){
-                            this.removeLeftRightStation(sta.nexts[key], sta);
-                            this.removeUpDownStation(sta.nexts[key], sta);
-                        }
-                    }
-                }
-                sta.final();
-                this._stations.splice(i, 1);
-                return ;
+
+    /*--- FieldInGame ---*/
+
+    *routineTurnStart(data: GameData): subroutine<void>{
+        yield* this.weatheringSpiritRocks();
+        data.turnPlayer.focus();
+    }
+    private *weatheringSpiritRocks(){
+        for(const spiritRock of this.spiritRocks){
+            if(spiritRock.weather()){
+                spiritRock.focus();
+                this.removeSpiritRocks(spiritRock);
+                yield new EventMessage('要石が消えた');
+                yield 'end';
             }
         }
-
     }
+    private removeSpiritRocks(spiritRock: SpiritRock){
+        this.spiritRocks.splice(this.spiritRocks.indexOf(spiritRock));
+        spiritRock.final();
+    }
+
+    /*--- FieldInEdit ---*/
+
     /**
      * @param x scene座標でのx
      * @param y scene座標でのy
-     * @returns 
      */
     getStationByCoordinate(x: number, y: number){
         return this.getStationByPosition( x / Station.size , y / Station.size);
@@ -121,7 +104,6 @@ export class Field implements Exportable{
     /**
      * @param x size倍する前のx
      * @param y size倍する前のy
-     * @returns 
      */
     getStationByPosition(x: number, y: number){
         return this.stations.find(station => station.x == x && station.y == y);
@@ -134,26 +116,57 @@ export class Field implements Exportable{
             dist: Number.MAX_SAFE_INTEGER
         };
         this.stations.forEach(s => {
-            const look = this.look(current, s);
-            if(look?.dir == dir && look.dist < nearest.dist){
+            const looked = look(current, s);
+            if(looked?.dir == dir && looked.dist < nearest.dist){
                 nearest.station = s;
-                nearest.dist = look.dist;
+                nearest.dist = looked.dist;
             }
         });
         return nearest.station;
+
+        // from から 4 方向を見て、to が見えたらその方向と距離を返す
+        function look(from: Station, to: Station){
+            const v = { x: to.x - from.x, y: to.y - from.y };
+            if(v.y == 0){
+                if(v.x > 0) return { dir: 'RIGHT', dist:  v.x };
+                if(v.x < 0) return { dir: 'LEFT',  dist: -v.x };
+            }
+            if(v.x == 0){
+                if(v.y > 0) return { dir: 'DOWN', dist:  v.y };
+                if(v.y < 0) return { dir: 'UP',   dist: -v.y };
+            }
+            return null;
+        }
     }
-    // from から 4 方向を見て、to が見えたらその方向と距離を返す
-    private look(from: Station, to: Station){
-        const v = { x: to.x - from.x, y: to.y - from.y };
-        if(v.y == 0){
-            if(v.x > 0) return { dir: 'RIGHT', dist:  v.x };
-            if(v.x < 0) return { dir: 'LEFT',  dist: -v.x };
+
+    connectStationWithID(id1: number, id2: number){
+        const s1 = this.getStationByID(id1);
+        const s2 = this.getStationByID(id2);
+        this.addUpDownStation(s1, s2);
+        this.addLeftRightStation(s1, s2);
+    }
+    disconnectStationWithID(id1: number, id2: number){
+        const station1 = this.getStationByID(id1);
+        const station2 = this.getStationByID(id2);
+        if(station1 != null && station2 != null){
+            this.removeUpDownStation(station1, station2);
+            this.removeLeftRightStation(station1, station2);
+        }else{
+            if(station1 == null) console.log(`station #${id1} not found`);
+            if(station2 == null) console.log(`station #${id2} not found`);
         }
-        if(v.x == 0){
-            if(v.y > 0) return { dir: 'DOWN', dist:  v.y };
-            if(v.y < 0) return { dir: 'UP',   dist: -v.y };
+    }
+    removeStationByID(id: number){
+        const station = this.getStationByID(id);
+        if(!station) return;
+        for(const key of Direction.asArray){
+            if(station.nexts[key]){
+                this.removeLeftRightStation(station.nexts[key], station);
+                this.removeUpDownStation(station.nexts[key], station);
+            }
         }
-        return null;
+        station.final();
+        this.stations.splice(this.stations.indexOf(station), 1);
     }
 
     private addUpDownStation(up: Station, down: Station){
@@ -177,7 +190,7 @@ export class Field implements Exportable{
         }
     }
 
-    removeUpDownStation(up: Station, down: Station){
+    private removeUpDownStation(up: Station, down: Station){
         if(up == null || down == null) return;
         if(up.x != down.x) return;
         if(up.y > down.y) [up, down] = [down, up];
@@ -191,7 +204,7 @@ export class Field implements Exportable{
             }
         }
     }
-    removeLeftRightStation(left: Station, right: Station){
+    private removeLeftRightStation(left: Station, right: Station){
         if(left == null || right == null) return;
         if(left.y != right.y) return;
         if(right.x < left.x) [left, right] = [right, left];
@@ -206,7 +219,7 @@ export class Field implements Exportable{
         }
     }
     toJSON(){
-        return this._stations;
+        return this.stations;
     }
 }
 
