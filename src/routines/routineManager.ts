@@ -1,4 +1,4 @@
-import { command, EventManager } from "./eventManager";
+import { command, EventManager } from "../events/eventManager";
 import { GameData } from "../gameData/gameData";
 import { Routine } from "./routines";
 
@@ -22,7 +22,6 @@ export class RoutineManager{
     }
     next(data: GameData, eventResult?: unknown){
         const next = this.routine.generator.next(eventResult);
-        console.log('>', next.value);
         if(next.done == true){
             this.routine = next.value;
             this.next(data);

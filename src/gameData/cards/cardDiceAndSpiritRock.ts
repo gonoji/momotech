@@ -1,9 +1,9 @@
-import { Routine } from "../../events/routines";
+import { Routine } from "../../routines/routines";
 import { GameData } from "../gameData";
 import { Card } from "./card";
 import { GameEvent } from "../../events/event";
 import { Station } from "../stations/station";
-import { routine, subroutine } from "../../events/routineManager";
+import { routine, subroutine } from "../../routines/routineManager";
 import { EventMessage } from "../../events/eventMessage";
 
 export class CardDiceAndSpiritRock extends Card{

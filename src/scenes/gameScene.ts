@@ -4,7 +4,7 @@ import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
-import { RoutineManager } from "../events/routineManager";
+import { RoutineManager } from "../routines/routineManager";
 
 export class GameScene extends Scene{
     private routineManager: RoutineManager;

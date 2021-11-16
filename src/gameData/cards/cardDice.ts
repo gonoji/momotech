@@ -1,5 +1,5 @@
 import { EventDice } from "../../events/eventDice";
-import { Routine } from "../../events/routines";
+import { Routine } from "../../routines/routines";
 import { GameData } from "../gameData";
 import { Card } from "./card";
 

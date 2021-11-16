@@ -2,13 +2,13 @@ import { Card } from "../gameData/cards/card";
 import { GameData } from "../gameData/gameData";
 import { GameDate } from "../gameData/gameDate";
 import { Direction } from "../utils/direction";
-import { GameEvent } from "./event";
-import { EventChoose } from "./eventChoose";
-import { EventDice } from "./eventDice";
-import { EventMessage } from "./eventMessage";
-import { EventMove } from "./eventMove";
-import { EventUseCard } from "./eventUseCard";
-import { EventView } from "./eventView";
+import { GameEvent } from "../events/event";
+import { EventChoose } from "../events/eventChoose";
+import { EventDice } from "../events/eventDice";
+import { EventMessage } from "../events/eventMessage";
+import { EventMove } from "../events/eventMove";
+import { EventUseCard } from "../events/eventUseCard";
+import { EventView } from "../events/eventView";
 import { routine, subroutine } from "./routineManager";
 
 export namespace Routine{

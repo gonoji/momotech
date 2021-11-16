@@ -1,7 +1,7 @@
 import { EventDice } from "../../events/eventDice";
 import { EventMessage } from "../../events/eventMessage";
-import { subroutine } from "../../events/routineManager";
-import { Routine } from "../../events/routines";
+import { subroutine } from "../../routines/routineManager";
+import { Routine } from "../../routines/routines";
 import { GameData } from "../gameData";
 import { Card } from "./card";
 

@@ -1,6 +1,6 @@
 import { EventMessage } from "../../events/eventMessage";
 import { EventRoulette } from "../../events/eventRoulette";
-import { Routine } from "../../events/routines";
+import { Routine } from "../../routines/routines";
 import { Util } from "../../utils/util";
 import { GameData } from "../gameData";
 import { Station, stationData } from "./station";

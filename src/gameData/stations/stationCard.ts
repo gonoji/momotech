@@ -5,7 +5,7 @@ import { GameData } from "../gameData";
 import { Station, stationData } from "./station";
 import { cards } from "../cards/cards";
 import { Card } from "../cards/card";
-import { Routine } from "../../events/routines";
+import { Routine } from "../../routines/routines";
 
 export class StationCard extends Station{
     constructor(data : stationData, x: number = 0, y: number = 0, z: number = 0, id: number = -1){

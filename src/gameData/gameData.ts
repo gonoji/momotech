@@ -1,4 +1,4 @@
-import { subroutine } from "../events/routineManager";
+import { subroutine } from "../routines/routineManager";
 import { Card } from "./cards/card";
 import { Field, FieldInGame } from "./field";
 import { Frame } from "./frame"

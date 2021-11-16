@@ -1,4 +1,4 @@
-import { routine, subroutine } from "../../events/routineManager";
+import { routine, subroutine } from "../../routines/routineManager";
 import { FileIO } from "../../utils/fileIO";
 import { GameData } from "../gameData";
 import { cards } from "./cards";
