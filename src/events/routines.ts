@@ -31,22 +31,10 @@ export namespace Routine{
         const eventChoose = new EventChoose(choicesTurn);
         while(true){
             const choice = yield* execute(eventChoose);
-            switch(choice){
-            case 'サイコロ': {
-                const next = yield* dice(data);
-                if(!next) continue;
-                yield 'end'; // eventChoose
-                return yield* next;
-            }
-            case 'カード': {
-                const next = yield* card(data);
-                if(!next) continue;
-                yield 'end'; // eventChoose
-                return yield* next;
-            }
-            default:
-                const _: never = choice;
-            }
+            const next = yield* action(data, choice);
+            if(!next) continue;
+            yield 'end'; // eventChoose
+            return yield* next;
         }
     }());}
 
@@ -59,38 +47,37 @@ export namespace Routine{
 
     function action(data: GameData, choice: typeof choicesTurn[number]): subroutine<subroutine>{
         switch(choice){
-            case 'サイコロ': return dice(data);
+            case 'サイコロ': return dice(data, false);
             case 'カード': return card(data);
         }
     }
 
-    function* dice(data: GameData): subroutine<subroutine>{
+    export function* dice(data: GameData, forced: boolean): subroutine<subroutine>{
         const sum = yield* execute(new EventDice(1));
         yield 'end';
-        return move(data, sum);
+        return yield* move(data, sum);
     }
 
-    export function* move(data: GameData, steps: number): subroutine<NonNullable<routine>>{
+    export function* move(data: GameData, steps: number): subroutine<subroutine>{
         const eventMove = new EventMove(steps);
         while(true){
             const result = yield* execute(eventMove);
             switch(result){
             case 'station':
                 yield 'end'; // eventMove
-                return yield* station(data);
+                return station(data);
             case 'view':
                 const next = yield* view(data, eventMove.stepsLeft, eventMove.from);
-                if(next){
-                    yield 'end'; // eventMove
-                    return next;
-                }
-                continue;
+                if(!next) continue;
+                yield 'end'; // eventMove
+                yield* next;
+                return station(data);
             default:
                 const _: never = result;
             }
         }
     }
-    function* view(data: GameData, steps: number, from: Direction.asType): subroutine{
+    function* view(data: GameData, steps: number, from: Direction.asType): subroutine<subroutine>{
         const result = yield* execute(new EventView(steps, from));
         switch(result){
         case 'resume':
@@ -130,7 +117,7 @@ export namespace Routine{
         return yield* card.subroutine(data);
     }
     
-    function* station(data: GameData): subroutine{
+    export function* station(data: GameData): subroutine{
         yield* data.turnPlayer.location.subroutine(data);
         return Routine.turnEnd(data);
     }

@@ -18,7 +18,7 @@ export class SpiritRock{
     }
 
     focus(){
-        SceneManager.layer('field').cameras.main.setScroll(this.sprite.x, this.sprite.y);
+        SceneManager.layer('field').cameras.main.startFollow(this.sprite);
     }
     weather(){
         return --this.duration == 0;

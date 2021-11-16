@@ -18,6 +18,8 @@ export interface FieldBase{
 }
 export interface FieldInGame extends FieldBase{
     routineTurnStart(data: GameData): subroutine<void>;
+    putSpiritRock(location: Station): void;
+    removeSpiritRock(spiritRock: SpiritRock): void;
 }
 export interface FieldInEdit extends FieldBase, Exportable{
     getStationByCoordinate(x: number, y: number): Station;
@@ -81,13 +83,16 @@ export class Field implements FieldInGame, FieldInEdit{
         for(const spiritRock of this.spiritRocks){
             if(spiritRock.weather()){
                 spiritRock.focus();
-                this.removeSpiritRocks(spiritRock);
+                this.removeSpiritRock(spiritRock);
                 yield new EventMessage('要石が消えた');
                 yield 'end';
             }
         }
     }
-    private removeSpiritRocks(spiritRock: SpiritRock){
+    putSpiritRock(location: Station){
+        this.spiritRocks.push(new SpiritRock(location));
+    }
+    removeSpiritRock(spiritRock: SpiritRock){
         this.spiritRocks.splice(this.spiritRocks.indexOf(spiritRock));
         spiritRock.final();
     }

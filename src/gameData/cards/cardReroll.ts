@@ -8,7 +8,7 @@ import { Card } from "./card";
 export class CardReroll extends Card{
     *subroutine(data: GameData){
         const dice = yield* this.roll();
-        return yield* Routine.move(data, dice);
+        return yield* yield* Routine.move(data, dice);
     }
     private *roll(): subroutine<number>{
         const dice = yield* Routine.execute(new EventDice(1));

@@ -7,7 +7,7 @@ class CardAdvance extends Card{
         super(id);
     }
     *subroutine(data: GameData){
-        return yield* Routine.move(data, this.numAdvances);
+        return yield* yield* Routine.move(data, this.numAdvances);
     }
 }
 
