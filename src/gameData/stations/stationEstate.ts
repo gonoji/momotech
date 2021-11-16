@@ -10,8 +10,8 @@ export type stationEstateData = {
     }
   };
 export class StationEstate extends Station{
-    public estates: Estate[];
-    public estateData: stationEstateData;
+    estates: Estate[];
+    estateData: stationEstateData;
     constructor(data: stationEstateData & stationData, x: number = 0, y: number = 0, z: number = 0, id: number = -1, estates : any = {}){
         super(data, x, y, z, 'estate', id);
         this.estates = [];
@@ -29,7 +29,7 @@ export class StationEstate extends Station{
             this.estates.push(new Estate(data.estates[key]));
         }
     }
-    *subroutine(gameData: GameData){
+    *routine(){
         yield new EventMessage('物件駅に止まった');
         yield 'end';
         yield new EventMessage(`この駅の物件は\n${this.estates.join(' ')}\nです。`);

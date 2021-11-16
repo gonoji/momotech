@@ -1,6 +1,6 @@
 import { command, EventManager } from "../events/eventManager";
 import { GameData } from "../gameData/gameData";
-import { Routine, RoutineInit } from "./routines";
+import { RoutineInit } from "./routines";
 
 export type subroutine<T = routine> = Generator<command, T>;
 export class routine{
@@ -8,11 +8,10 @@ export class routine{
     }
 }
 
-type new_routine = Generator<command, new_routine>;
-type new_subroutine<T> = Generator<command, T>;
+export type new_subroutine<T> = Generator<command, T>;
 
-export abstract class RoutineClass implements new_routine{
-    private readonly generator: Generator<command, RoutineClass>;
+export abstract class RoutineClass<T> implements new_subroutine<T>{
+    private readonly generator: Generator<command, T>;
     protected abstract routine(data: GameData): typeof this.generator;
     constructor(data: GameData){
         this.generator = this.routine(data);
@@ -20,7 +19,7 @@ export abstract class RoutineClass implements new_routine{
     next(args?: unknown){
         return this.generator.next(args);
     }
-    return(value: RoutineClass){
+    return(value: T){
         return this.generator.return(value);
     }
     throw(e: any){
@@ -30,9 +29,10 @@ export abstract class RoutineClass implements new_routine{
         return this.generator[Symbol.iterator]();
     }
 }
+export type Routines = RoutineClass<Routines>;
 
 export class RoutineManager{
-    private routine: RoutineClass;
+    private routine: RoutineClass<Routines>;
     private eventManager: EventManager;
     constructor(data: GameData){
         this.eventManager = new EventManager();

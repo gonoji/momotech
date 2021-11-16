@@ -9,84 +9,96 @@ import { EventMessage } from "../events/eventMessage";
 import { EventMove } from "../events/eventMove";
 import { EventUseCard } from "../events/eventUseCard";
 import { EventView } from "../events/eventView";
-import { routine, RoutineClass, subroutine } from "./routineManager";
+import { RoutineClass, Routines } from "./routineManager";
 
-export class RoutineInit extends RoutineClass{
+export class RoutineInit extends RoutineClass<Routines>{
     *routine(data: GameData){
         yield new EventMessage('ゲーム開始');
         yield 'end';
-        return null;
+        return new RoutineTurnStart(data);
     }
 }
-
-export namespace Routine{
-    export function init(data: GameData){ return new routine(function*(){
-        yield new EventMessage('ゲーム開始');
-        yield 'end';
-        return turnStart(data);
-    }());}
-    
-    function turnStart(data: GameData){ return new routine(function*(){
+class RoutineTurnStart extends RoutineClass<Routines>{
+    *routine(data: GameData){
         yield* data.routineTurnStart();
         data.turnPlayer.focus();
         yield new EventMessage(dateToText(data.date) + ': ターン開始');
         yield 'end';
-        return turnBody(data);
-    }());}
-    
-    const choicesTurn = ['サイコロ', 'カード'] as const;
-    function turnBody(data: GameData){ return new routine(function*(){
+        return new RoutineTurn(data);
+    }
+}
+const choicesTurn = ['サイコロ', 'カード'] as const;
+class RoutineTurn extends RoutineClass<Routines>{
+    *routine(data: GameData){
         const eventChoose = new EventChoose(choicesTurn);
         while(true){
             const choice = yield* execute(eventChoose);
-            const next = yield* action(data, choice);
+            const action = RoutineTurn.action(data, choice);
+            const next = yield* action;
             if(!next) continue;
             yield 'end'; // eventChoose
             return yield* next;
         }
-    }());}
-
-    export function turnEnd(data: GameData){ return new routine(function*(){
+    }
+    private static action(data: GameData, choice: typeof choicesTurn[number]){
+        switch(choice){
+            case 'サイコロ': return new RoutineDice(data, false);
+            case 'カード': return new RoutineCard(data);
+        }
+    }
+}
+class RoutineTurnEnd extends RoutineClass<Routines>{
+    *routine(data: GameData){
         yield new EventMessage(dateToText(data.date) + ': ターン終了');
         yield 'end';
         data.date.advance(data.players.length);
-        return turnStart(data);
-    }());}
-
-    function action(data: GameData, choice: typeof choicesTurn[number]): subroutine<subroutine>{
-        switch(choice){
-            case 'サイコロ': return dice(data, false);
-            case 'カード': return card(data);
-        }
+        return new RoutineTurnStart(data);
     }
+}
 
-    export function* dice(data: GameData, forced: boolean): subroutine<subroutine>{
-        const sum = yield* execute(new EventDice(1));
+export class RoutineDice extends RoutineClass<RoutineMove | null>{
+    constructor(data: GameData, private readonly forced: boolean){ // todo
+        super(data);
+    }
+    *routine(data: GameData){
+        const dice = yield* execute(new EventDice(1));
         yield 'end';
-        return yield* move(data, sum);
+        return new RoutineMove(data, dice);
     }
+}
 
-    export function* move(data: GameData, steps: number): subroutine<subroutine>{
-        const eventMove = new EventMove(steps);
+export class RoutineMove extends RoutineClass<RoutineStation>{
+    constructor(data: GameData, private readonly steps: number){
+        super(data);
+    }
+    *routine(data: GameData){
+        const move = new EventMove(this.steps);
         while(true){
-            const result = yield* execute(eventMove);
+            const result = yield* execute(move);
             switch(result){
             case 'station':
                 yield 'end'; // eventMove
-                return station(data);
+                return new RoutineStation(data);
             case 'view':
-                const next = yield* view(data, eventMove.stepsLeft, eventMove.from);
-                if(!next) continue;
-                yield 'end'; // eventMove
-                yield* next;
-                return station(data);
+                const next = yield* new RoutineView(data, move.stepsLeft, move.from);
+                continue;
+                // if(!next) continue;
+                // yield 'end'; // eventMove
+                // yield* next;
+                // return new RoutineStation(data);
             default:
                 const _: never = result;
             }
         }
     }
-    function* view(data: GameData, steps: number, from: Direction.asType): subroutine<subroutine>{
-        const result = yield* execute(new EventView(steps, from));
+}
+
+class RoutineView extends RoutineClass<null>{
+    constructor(data: GameData, private readonly steps: number, private readonly from: Direction.asType){
+        super(data);
+    }
+    *routine(data: GameData){
+        const result = yield* execute(new EventView(this.steps, this.from));
         switch(result){
         case 'resume':
             yield 'end';
@@ -95,8 +107,10 @@ export namespace Routine{
             const _: never = result;
         }
     }
-    
-    function* card(data: GameData): subroutine<subroutine>{
+}
+
+class RoutineCard extends RoutineClass<RoutineUseCard | null>{
+    *routine(data: GameData){
         if(data.turnPlayer.cards.length == 0){
             yield new EventMessage('カードを 1 枚も持っていない！');
             yield 'end';
@@ -115,31 +129,38 @@ export namespace Routine{
             if(!yes) continue;
 
             yield 'end'; // useCard
-            return useCard(data, card);
+            return new RoutineUseCard(data, card);
         }
     }
-    export function* useCard(data: GameData, card: Card): subroutine{
-        data.turnPlayer.cards.splice(data.turnPlayer.cards.indexOf(card));
-        yield new EventMessage(`${card.name} を使った`);
+}
+class RoutineUseCard extends RoutineClass<Routines>{
+    constructor(data: GameData, private readonly card: Card){
+        super(data);
+    }
+    *routine(data: GameData){
+        data.turnPlayer.cards.splice(data.turnPlayer.cards.indexOf(this.card), 1);
+        yield new EventMessage(`${this.card.name} を使った`);
         yield 'end';
-        return yield* card.subroutine(data);
+        return yield* this.card.routine(data);
     }
-    
-    export function* station(data: GameData): subroutine{
-        yield* data.turnPlayer.location.subroutine(data);
-        return Routine.turnEnd(data);
-    }
-    
-    export function* askYesNo(): subroutine<boolean>{
-        const choice = yield* execute(new EventChoose(['はい', 'いいえ'] as const));
-        yield 'end';
-        return choice == 'はい';
-    }
-    export function* execute<T>(event: GameEvent<T>): subroutine<T>{
-        return (yield event) as T;
-    }
+}
 
-    function dateToText(date: GameDate){
-        return `${date.year} 年 ${date.month} 月 ${date.week + 1} 週`;
+export class RoutineStation extends RoutineClass<RoutineTurnEnd>{
+    *routine(data: GameData){
+        yield* data.turnPlayer.location.routine(data);
+        return new RoutineTurnEnd(data);
     }
+}
+
+export function* execute<T>(event: GameEvent<T>){
+    return (yield event) as T;
+}
+export function* askYesNo(){
+    const choice = yield* execute(new EventChoose(['はい', 'いいえ'] as const));
+    yield 'end';
+    return choice == 'はい';
+}
+
+function dateToText(date: GameDate){
+    return `${date.year} 年 ${date.month} 月 ${date.week + 1} 週`;
 }

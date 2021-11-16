@@ -1,14 +1,13 @@
-import { Routine } from "../../routines/routines";
 import { GameData } from "../gameData";
 import { Card } from "./card";
 import { GameEvent } from "../../events/event";
 import { Station } from "../stations/station";
-import { routine, subroutine } from "../../routines/routineManager";
 import { EventMessage } from "../../events/eventMessage";
+import { RoutineDice } from "../../routines/routines";
 
 export class CardDiceAndSpiritRock extends Card{
-    *subroutine(data: GameData): subroutine<routine>{
-        const station = yield* yield* Routine.dice(data, true);
+    *routine(data: GameData){
+        const station = yield* yield* new RoutineDice(data, true);
         yield new EventPutSpiritRock(data.turnPlayer.location);
         yield 'end';
         yield new EventMessage('要石を置いた');
