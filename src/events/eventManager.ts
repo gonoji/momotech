@@ -2,35 +2,26 @@ import { GameData } from "../gameData/gameData";
 import { Deque } from "../utils/deque";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
-import { RoutineManager } from "./routineManager";
 
 export type command = GameEvent<unknown> | 'end';
 
 export class EventManager{
     private readonly events: Deque<GameEvent<unknown>>;
-    private readonly routine: RoutineManager;
-    constructor(data: GameData){
+    constructor(){
         this.events = new Deque<GameEvent<unknown>>();
-        this.routine = new RoutineManager(data);
-        this.advance(data);
     }
     update(data: GameData){
         if(KeyManager.down('P')) this.events.print();
-        const done = this.events.front().update(data);
-        if(done) return this.advance(data, done.result);
-        return false;
+        return this.events.front().update(data);
     }
-    private advance(data: GameData, result?: unknown){
-        const command = this.routine.next(data, result);
-
-        if(command == null){
-            console.log('END');
-            return true;
-        }
+    /**
+     * @returns 再度ルーチンを進めてイベントを更新する必要があるかどうか
+     */
+    next(data: GameData, command: command){
         if(command == 'end'){
             console.log('end');
             this.events.popFront().final(data);
-            return this.advance(data);
+            return true;
         }
         if(command == this.events.front()){
             console.log('wait');

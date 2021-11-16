@@ -1,13 +1,13 @@
 import { Game } from "../game";
-import { EventManager } from "../events/eventManager";
 import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
+import { RoutineManager } from "../events/routineManager";
 
 export class GameScene extends Scene{
-    private eventManager: EventManager;
+    private routineManager: RoutineManager;
     private gameData: GameData;
     
     constructor(numPlayers: number){
@@ -26,14 +26,14 @@ export class GameScene extends Scene{
     create(){
         this.gameData.create();
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.eventManager = new EventManager(this.gameData);
-
+        this.routineManager = new RoutineManager(this.gameData);
         SceneManager.scene.add.sprite(0, 0, 'frame').setOrigin(0).setScale(2/3);
     }
     update(){
         KeyManager.update();
         this.gameData.update();
-        
+        this.routineManager.update(this.gameData);
+
         if(KeyManager.pressed('PLUS')){
             this.cameras.main.setZoom(this.cameras.main.zoom*1.05);
         }
@@ -43,7 +43,7 @@ export class GameScene extends Scene{
         if(KeyManager.down('S') && KeyManager.pressed('SHIFT')){
             this.load.saveJSON(this.gameData.field);
         }
-        if(this.eventManager.update(this.gameData) || KeyManager.down('ESC')){
+        if(KeyManager.down('ESC')){
             this.gameData.final();
             SceneManager.start(new TitleScene());
         }

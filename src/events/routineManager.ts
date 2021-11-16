@@ -1,24 +1,34 @@
-import { command } from "./eventManager";
+import { command, EventManager } from "./eventManager";
 import { GameData } from "../gameData/gameData";
-import { init } from "./routines";
+import { Routine } from "./routines";
 
-export type routine = Generator<command, routine, unknown>;
-export type subroutine<T> = Generator<command, T, unknown>;
+export type subroutine<T = routine> = Generator<command, T, unknown>;
+export class routine{
+    constructor(readonly generator: subroutine<routine>){
+    }
+}
 
 export class RoutineManager{
     private routine: routine;
+    private eventManager: EventManager;
     constructor(data: GameData){
-        this.routine = init(data);
+        this.eventManager = new EventManager();
+        this.routine = Routine.init(data);
+        this.next(data);
     }
-
-    next(data: GameData, eventResult?: unknown): command{
-        const next = this.routine.next(eventResult);
-        if(next.done){
-            if(next.value){
-                this.routine = next.value;
-                return this.next(data);
-            }
+    update(data: GameData){
+        const done = this.eventManager.update(data);
+        if(done) this.next(data, done.result);
+    }
+    next(data: GameData, eventResult?: unknown){
+        const next = this.routine.generator.next(eventResult);
+        console.log('>', next.value);
+        if(next.done == true){
+            this.routine = next.value;
+            this.next(data);
         }
-        return next.value as command;
+        else if(this.eventManager.next(data, next.value)){
+            this.next(data);
+        }
     }
 }
