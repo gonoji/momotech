@@ -1,6 +1,6 @@
 import { EventMessage } from "../../events/eventMessage";
 import { EventRoulette } from "../../events/eventRoulette";
-import { execute } from "../../events/routines";
+import { Routine } from "../../events/routines";
 import { Util } from "../../utils/util";
 import { GameData } from "../gameData";
 import { Station, stationData } from "./station";
@@ -9,9 +9,9 @@ export class StationPlus extends Station{
     constructor(data: stationData, x: number = 0, y: number = 0, z: number = 0, id: number = -1){
         super(data,x, y, z, 'plus', id);
     }
-    *routine(gameData: GameData){
+    *subroutine(gameData: GameData){
         yield new EventMessage('プラス駅に止まった');
-        const gain = yield* execute(new EventRoulette(StationPlus.gain(gameData), GameData.moneyToText));
+        const gain = yield* Routine.execute(new EventRoulette(StationPlus.gain(gameData), GameData.moneyToText));
         yield 'end';
         yield 'end';
         gameData.turnPlayer.money += gain;
