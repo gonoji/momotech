@@ -7,11 +7,11 @@ import { estateData} from "../estates/estate";
 
 export type stationEstateData = {
     estates: {
-        [id: number]: estateData;
+        [id: string]: estateData;
     }
   };
 export class StationEstate extends Station{
-    public estates: Estate[];
+    private estates: Estate[];
     public estateData: stationEstateData;
     constructor(data: stationEstateData & stationData, x: number = 0, y: number = 0, z: number = 0, id: number = -1, estates : any = {}){
         super(data, x, y, z, 'estate', id);
@@ -21,14 +21,15 @@ export class StationEstate extends Station{
         }
         if(data != null){
             this.estateData = data;
-            for(let key in Object.keys(data.estates)){
-                this.estates.push(new Estate(data.estates[key]));
+            for(let v of Object.values(data.estates)){
+                this.estates.push(new Estate(v));
             }
         }
         
         for(let key in Object.keys(estates)){
             this.estates.push(new Estate(data.estates[key]));
-        }
+        }this.addEstate(new Estate({name: "po", price: 100, profit: 10, isAgri: true}));
+        this.addEstate(new Estate({name: "pi", price: 100, profit: 10, isAgri: true}));
     }
     *routine(gameData: GameData): subroutine<void> {
         yield new EventMessage('物件駅に止まった');
@@ -41,6 +42,10 @@ export class StationEstate extends Station{
     }
     toJSON(){
         return {...this.data, ...this.estateData};
+    }
+    addEstate(estate: Estate){
+        this.estateData.estates[estate.id] = estate.data;
+        this.estates.push(estate);
     }
 
 }
