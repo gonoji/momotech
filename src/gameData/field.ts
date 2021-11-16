@@ -12,6 +12,7 @@ import { stations } from "./stations/stations";
 
 export interface FieldBase{
     readonly stations: Station[];
+    readonly spiritRocks: SpiritRock[];
     create(): void;
     update(): void;
     final(): void;
@@ -32,9 +33,9 @@ export interface FieldInEdit extends FieldBase, Exportable{
 
 export class Field implements FieldInGame, FieldInEdit{
     readonly stations: Station[] = [];
+    readonly spiritRocks: SpiritRock[] = [];
     private readonly roads: Road[] = [];
-    private readonly spiritRocks: SpiritRock[] = [];
-
+    
     create(){
         this.importFromJson('stations');
     }

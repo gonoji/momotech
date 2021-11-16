@@ -3,22 +3,22 @@ import { Direction } from "../../utils/direction";
 import { Exportable } from "../../utils/exportable";
 import { SceneManager } from "../../utils/sceneManager";
 import { Util } from "../../utils/util";
-import { Field } from "../field";
+import { Field, FieldInGame } from "../field";
 import { GameData } from "../gameData";
 
 export type stationType = 'plus' | 'minus' | 'card' | 'estate';
 export type stationData = {
-    id : number,
-    type : string,
-    position : {
-        x : number,
-        y : number
+    id: number,
+    type: string,
+    position: {
+        x: number,
+        y: number
     },
-    nexts : {
-        up : number,
-        down : number,
-        right : number,
-        left : number
+    nexts: {
+        up: number,
+        down: number,
+        right: number,
+        left: number
     }
 };
 export abstract class Station implements Exportable{
@@ -55,15 +55,16 @@ export abstract class Station implements Exportable{
         this.sprite.y = pos.y;
         this.id = this.data.id;
     }
-
-    toJSON (): any{
-        return this.data;
-    }
     update(){
 
     }
     final(){
         this.sprite.destroy();
+    }
+
+    passable(dir: Direction.asType, field: FieldInGame){
+        const dest = this.nexts[dir];
+        return dest && !field.spiritRocks.find(rock => rock.station == dest);
     }
     setNext(dir: Direction.asType, other: Station){
         this.nexts[dir] = other;
@@ -76,6 +77,9 @@ export abstract class Station implements Exportable{
         this.data.nexts[dir] = null;
         other.nexts[Direction.opposite(dir)] = null;
         other.data.nexts[Direction.opposite(dir)] = null;
+    }
+    toJSON(): object{
+        return this.data;
     }
 
     abstract subroutine(gameData: GameData): subroutine<void>;

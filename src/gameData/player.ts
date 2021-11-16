@@ -1,7 +1,7 @@
 import { Direction } from "../utils/direction";
 import { SceneManager } from "../utils/sceneManager";
 import { Card } from "./cards/card";
-import { Field } from "./field";
+import { Field, FieldInGame } from "./field";
 import { Station } from "./stations/station";
 
 export class Player{
@@ -41,9 +41,6 @@ export class Player{
             return true;
         }
         return false;
-    }
-    canMove(dir: Direction.asType){
-        return true; // todo: 要石があったらfalseに
     }
 
     focus(){

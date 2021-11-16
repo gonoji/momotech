@@ -6,7 +6,7 @@ import { Station } from "./stations/station";
 export class SpiritRock{
     private sprite: Phaser.GameObjects.Text;
     private duration: number;
-    constructor(station: Station){
+    constructor(readonly station: Station){
         const pos = Field.at(station.x, station.y);
         this.sprite = SceneManager.layer('field').add.text(pos.x, pos.y, '要', { fontSize: '80px', color: 'black' })
             .setOrigin(0.5)

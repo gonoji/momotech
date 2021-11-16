@@ -23,16 +23,16 @@ export class EventMove implements GameEvent<typeof routineStation | typeof routi
     /**
      * @returns 次のルーチン名
      */
-    update(gameData: GameData){
+    update(data: GameData){
         for(const dir of Direction.asArray){
             if(KeyManager.down(dir)){
                 if(dir == Direction.opposite(this.dirHistory[this.dirHistory.length-1])){ // 来た道を戻っている
-                    if(gameData.turnPlayer.moveTo(dir)){
+                    if(data.turnPlayer.moveTo(dir)){
                         this.dirHistory.pop();
                     }
                 }
-                else if(gameData.turnPlayer.canMove(dir)){ // 来た道以外に進んでいて、要石がない
-                    if(gameData.turnPlayer.moveTo(dir)){
+                else if(data.turnPlayer.location.passable(dir, data.field)){ // 来た道以外に進んでいて、要石がない
+                    if(data.turnPlayer.moveTo(dir)){
                         this.dirHistory.push(dir);
                     }
                 }

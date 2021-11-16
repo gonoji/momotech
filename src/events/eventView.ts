@@ -38,7 +38,7 @@ export class EventView implements GameEvent<typeof resume>{
     /**
      * @returns 通常フィールド移動に戻るときは `resume`、進むルートを確定させるときはそのルート（未実装）
      */
-    update(data: GameData){
+    update(){
         const speed = 5;
         if(KeyManager.pressed('RIGHT')) this.focus.x += speed;
         if(KeyManager.pressed( 'LEFT')) this.focus.x -= speed;
@@ -60,15 +60,15 @@ export class EventView implements GameEvent<typeof resume>{
         for(let i = 1; i <= this.steps; i++){
             const nextPossibleDest: {[id: number]: from} = {};
             for(const id in possibleDest){
-                const next = data.field.stations[id].nexts;
+                const station = data.field.stations[id];
                 for(const dir of Direction.asArray){
-                    if(next[dir] == null) continue;
-                    if(dir == possibleDest[id]) continue;
-                    if(nextPossibleDest[next[dir].id] != undefined){
-                        nextPossibleDest[next[dir].id] = 'CENTER';
+                    if(!station.passable(dir, data.field) || dir == possibleDest[id]) continue;
+                    const destID = station.nexts[dir].id;
+                    if(nextPossibleDest[destID] != undefined){
+                        nextPossibleDest[destID] = 'CENTER';
                     }
                     else{
-                        nextPossibleDest[next[dir].id] = Direction.opposite(dir);    
+                        nextPossibleDest[destID] = Direction.opposite(dir);    
                     }
                 }               
             }
