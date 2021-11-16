@@ -9,7 +9,15 @@ import { EventMessage } from "../events/eventMessage";
 import { EventMove } from "../events/eventMove";
 import { EventUseCard } from "../events/eventUseCard";
 import { EventView } from "../events/eventView";
-import { routine, subroutine } from "./routineManager";
+import { routine, RoutineClass, subroutine } from "./routineManager";
+
+export class RoutineInit extends RoutineClass{
+    *routine(data: GameData){
+        yield new EventMessage('ゲーム開始');
+        yield 'end';
+        return null;
+    }
+}
 
 export namespace Routine{
     export function init(data: GameData){ return new routine(function*(){
