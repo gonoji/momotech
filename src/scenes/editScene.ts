@@ -1,7 +1,7 @@
 import { GameObjects } from "phaser";
-import { Field } from "../gameData/field";
+import { Field, FieldInEdit } from "../gameData/field";
 import { Player } from "../gameData/player";
-import { Station, stationType } from "../gameData/stations/station";
+import { Station } from "../gameData/stations/station";
 import { StationPlus } from "../gameData/stations/stationPlus";
 import { stations } from "../gameData/stations/stations";
 import { Direction } from "../utils/direction";
@@ -12,7 +12,7 @@ import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
 
 export class EditScene extends Scene{
-    private field: Field;
+    private field: FieldInEdit;
     private player: Player;
     private editStationNum: number = 0;
     private editFlag: boolean = false;
@@ -37,10 +37,10 @@ export class EditScene extends Scene{
             .setVisible(false)
             .setDepth(100);
 
-        this.field.add(new StationPlus(null, 1, 1));
-        this.field.add(new StationPlus(null, 5, 1));
-        this.field.add(new StationPlus(null, 3, 3));
-        this.field.add(new StationPlus(null, 3, 5));
+        this.field.stations.push(new StationPlus(null, 1, 1));
+        this.field.stations.push(new StationPlus(null, 5, 1));
+        this.field.stations.push(new StationPlus(null, 3, 3));
+        this.field.stations.push(new StationPlus(null, 3, 5));
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
     }
@@ -66,7 +66,7 @@ export class EditScene extends Scene{
                 const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
                 if(sta == null){
                     const s: Station = new stations[Object.keys(stations)[this.editStationNum]](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
-                    this.field.add(s);
+                    this.field.stations.push(s);
                     for(const key of Direction.asArray){
                         const nearSta = this.field.getNearestStation(s,key);
                         if(nearSta != null){

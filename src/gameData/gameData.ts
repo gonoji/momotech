@@ -1,14 +1,12 @@
-import { GameObjects } from "phaser";
-import { SceneManager } from "../utils/sceneManager";
+import { subroutine } from "../events/routineManager";
 import { Card } from "./cards/card";
-import { Estate } from "./estates/estate";
-import { Field } from "./field";
+import { Field, FieldInGame } from "./field";
 import { Frame } from "./frame"
 import { GameDate } from "./gameDate";
 import { Player } from "./player";
 
 export class GameData{
-    readonly field: Field;
+    readonly field: FieldInGame;
     readonly players: Player[];
     readonly date: GameDate;
     readonly factors: Factors;
@@ -35,6 +33,10 @@ export class GameData{
     final(){
         this.field.final();
         this.frame.final();
+    }
+
+    *routineTurnStart(): subroutine<void>{
+        yield* this.field.routineTurnStart(this);
     }
 
     get turnPlayer(){
