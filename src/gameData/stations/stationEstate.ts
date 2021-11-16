@@ -1,9 +1,8 @@
 import { EventMessage } from "../../events/eventMessage";
-import { subroutine } from "../../events/routineManager";
 import { Estate } from "../estates/estate";
 import { GameData } from "../gameData";
 import { Station, stationData } from "./station";
-import { estateData} from "../estates/estate";
+import { estateData } from "../estates/estate";
 
 export type stationEstateData = {
     estates: {
@@ -30,17 +29,13 @@ export class StationEstate extends Station{
             this.estates.push(new Estate(data.estates[key]));
         }
     }
-    *routine(gameData: GameData): subroutine<void> {
+    *subroutine(gameData: GameData){
         yield new EventMessage('物件駅に止まった');
         yield 'end';
-        let message : string = 'この駅の物件は\r\n';
-        this.estates.forEach(e => {message += e.name + " "});
-        message += '\r\nです。';
-        yield new EventMessage(message);
+        yield new EventMessage(`この駅の物件は\n${this.estates.join(' ')}\nです。`);
         yield 'end';
     }
     toJSON(){
         return {...this.data, ...this.estateData};
     }
-
 }

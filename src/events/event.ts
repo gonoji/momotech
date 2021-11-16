@@ -1,6 +1,6 @@
 import { GameData } from "../gameData/gameData";
 
-export interface GameEvent<T>{
+export interface GameEvent<T = unknown>{
 
     /** イベントの初期化
      */

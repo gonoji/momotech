@@ -1,5 +1,5 @@
 import { EventDice } from "../../events/eventDice";
-import { execute, move } from "../../events/routines";
+import { Routine } from "../../events/routines";
 import { GameData } from "../gameData";
 import { Card } from "./card";
 
@@ -7,10 +7,10 @@ class CardDice extends Card{
     constructor(id: string, private readonly numDices: number){
         super(id);
     }
-    *routine(data: GameData){
-        const sum = yield* execute(new EventDice(this.numDices));
+    *subroutine(data: GameData){
+        const sum = yield* Routine.execute(new EventDice(this.numDices));
         yield 'end';
-        return move(data, sum);
+        return yield* Routine.move(data, sum);
     }
 }
 

@@ -78,5 +78,5 @@ export abstract class Station implements Exportable{
         other.data.nexts[Direction.opposite(dir)] = null;
     }
 
-    abstract routine(gameData: GameData): subroutine<void>;
+    abstract subroutine(gameData: GameData): subroutine<void>;
 }
