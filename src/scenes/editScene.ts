@@ -10,6 +10,7 @@ import { SceneManager } from "../utils/sceneManager";
 import { Util } from "../utils/util";
 import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
+import InputText from 'phaser3-rex-plugins/plugins/inputtext.js';
 
 export class EditScene extends Scene{
     private field: Field;
@@ -43,6 +44,36 @@ export class EditScene extends Scene{
         this.field.add(new StationPlus(null, 3, 5));
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
+
+        
+        var printText = this.add.text(400, 400, '', {
+            fontSize: '20px',
+        }).setOrigin(0.5).setFixedSize(100, 100).setColor('#00ff00');
+        var inputText = new InputText(layer,400, 200, 10, 10, {
+            type: 'textarea',
+            text: 'hello world',
+            fontSize: '18px',});
+        layer.add.existing(inputText);
+        inputText.resize(100, 100)
+            .setOrigin(0.5)
+            .setFontColor('#000000')
+            .on('textchange', function (inputText) {
+                printText.text = inputText.text;
+            })
+            .on('focus', function (inputText) {
+                console.log('On focus');
+            })
+            .on('blur', function (inputText) {
+                console.log('On blur');
+            })
+            .on('click', function (inputText) {
+                console.log('On click');
+            })
+            .on('dblclick', function (inputText) {
+                console.log('On dblclick');
+            })
+
+        printText.text = inputText.text;
     }
     update(){
         KeyManager.update();
@@ -123,3 +154,4 @@ export class EditScene extends Scene{
     }
 }
 
+// https://rexrainbow.github.io/phaser3-rex-notes/docs/site/inputtext/

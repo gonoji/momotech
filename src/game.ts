@@ -17,6 +17,9 @@ window.addEventListener('load', () => {
         height: Game.height, // 画面高さ
         parent: 'game',      // DOM上の親
         type: Phaser.AUTO,   // canvasかwebGLかを自動選択
-        scene                // 利用するSceneクラス
+        scene,                // 利用するSceneクラス
+        dom: {
+            createContainer: true
+        }
     });
 });
