@@ -27,7 +27,7 @@ export class EventView implements GameEvent<typeof resume>{
             .setStrokeStyle(10, 0xabcdef, 1)
             .setDepth(15);
         layer.cameras.main.startFollow(this.focus);
-        this.canGoList = this.canGo(data);
+        this.canGoList = data.field.canGo(data.turnPlayer.location, this.steps, this.from);
         for(const i in this.canGoList){
             const pos = Field.at(this.canGoList[i].x, this.canGoList[i].y);
             this.canGoMark[i] = layer.add.circle(pos.x, pos.y, 50)
@@ -52,31 +52,4 @@ export class EventView implements GameEvent<typeof resume>{
         this.focus.destroy();
         this.canGoMark.forEach(mark=>mark.destroy());
     }
-
-    canGo(data: GameData){
-        let possibleDest: {[id: number]: from} = {};
-        possibleDest[data.turnPlayer.location.id] = this.from ?? 'CENTER';
-
-        for(let i = 1; i <= this.steps; i++){
-            const nextPossibleDest: {[id: number]: from} = {};
-            for(const id in possibleDest){
-                const station = data.field.stations[id];
-                for(const dir of Direction.asArray){
-                    if(!station.passable(dir, data.field) || dir == possibleDest[id]) continue;
-                    const destID = station.nexts[dir].id;
-                    if(nextPossibleDest[destID] != undefined){
-                        nextPossibleDest[destID] = 'CENTER';
-                    }
-                    else{
-                        nextPossibleDest[destID] = Direction.opposite(dir);    
-                    }
-                }               
-            }
-            possibleDest = nextPossibleDest;
-        }
-        return Object.keys(possibleDest).map(id => data.field.stations[id]);
-    }
-
 }
-
-type from = Direction.asType | 'CENTER';

@@ -19,6 +19,7 @@ export interface FieldBase{
 }
 export interface FieldInGame extends FieldBase{
     routineMonthStart(data: GameData): subroutine<void>;
+    canGo(start: Station, steps: number, from?: Direction.asType): Station[];
     putSpiritRock(location: Station): void;
     removeSpiritRock(spiritRock: SpiritRock): void;
 }
@@ -90,6 +91,32 @@ export class Field implements FieldInGame, FieldInEdit{
             }
         }
     }
+
+    canGo(start: Station, steps: number, from?: Direction.asType){
+        type typeFrom = Direction.asType | 'CENTER';
+        let possibleDest: {[id: number]: typeFrom} = {};
+        possibleDest[start.id] = from ?? 'CENTER';
+
+        for(let i = 1; i <= steps; i++){
+            const nextPossibleDest: {[id: number]: typeFrom} = {};
+            for(const id in possibleDest){
+                const station = this.stations[id];
+                for(const dir of Direction.asArray){
+                    if(!station.passable(dir, this) || dir == possibleDest[id]) continue;
+                    const destID = station.nexts[dir].id;
+                    if(nextPossibleDest[destID] != undefined){
+                        nextPossibleDest[destID] = 'CENTER';
+                    }
+                    else{
+                        nextPossibleDest[destID] = Direction.opposite(dir);    
+                    }
+                }               
+            }
+            possibleDest = nextPossibleDest;
+        }
+        return Object.keys(possibleDest).map(id => this.stations[id]);
+    }
+
     putSpiritRock(location: Station){
         this.spiritRocks.push(new SpiritRock(location));
     }
