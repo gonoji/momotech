@@ -11,8 +11,8 @@ export abstract class Routine<T> implements subroutine<T>{
     constructor(data: GameData){
         this.generator = this.routine(data);
     }
-    next(args?: unknown){
-        return this.generator.next(args);
+    next(...args: [] | [unknown]){
+        return this.generator.next(...args);
     }
     return(value: T){
         return this.generator.return(value);
@@ -24,11 +24,11 @@ export abstract class Routine<T> implements subroutine<T>{
         return this.generator[Symbol.iterator]();
     }
 
-    static *execute<T>(event: GameEvent<T>){
+    static *execute<T>(event: GameEvent<T>): subroutine<T>{
         return (yield event) as T;
     }
     static *askYesNo(){
-        const choice = yield* Routine.execute(new EventChoose(['はい', 'いいえ'] as const));
+        const choice = yield* Routine.execute(new EventChoose(['はい'], 'いいえ'));
         yield 'end';
         return choice == 'はい';
     }

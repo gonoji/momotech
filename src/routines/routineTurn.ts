@@ -22,6 +22,7 @@ class RoutineTurn extends Routine<Routines>{
         const eventChoose = new EventChoose(choicesTurn);
         while(true){
             const choice = yield* Routine.execute(eventChoose);
+            console.log(choice);
             const action = RoutineTurn.action(data, choice);
             const next = yield* action;
             if(!next) continue;
