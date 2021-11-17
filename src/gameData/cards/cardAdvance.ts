@@ -1,4 +1,4 @@
-import { Routine } from "../../events/routines";
+import { RoutineMove } from "../../routines/routineMove";
 import { GameData } from "../gameData";
 import { Card } from "./card";
 
@@ -6,8 +6,8 @@ class CardAdvance extends Card{
     constructor(id: string, private readonly numAdvances: number){
         super(id);
     }
-    *subroutine(data: GameData){
-        return yield* yield* Routine.move(data, this.numAdvances);
+    *routine(data: GameData){
+        return yield* yield* new RoutineMove(data, this.numAdvances);
     }
 }
 

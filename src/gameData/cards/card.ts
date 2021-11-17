@@ -1,4 +1,4 @@
-import { routine, subroutine } from "../../events/routineManager";
+import { Routines, subroutine } from "../../routines/routine";
 import { FileIO } from "../../utils/fileIO";
 import { GameData } from "../gameData";
 import { cards } from "./cards";
@@ -46,5 +46,5 @@ export abstract class Card{
         return Card.data.get(this.id).description;
     }
 
-    abstract subroutine(data: GameData): subroutine;
+    abstract routine(data: GameData): subroutine<Routines>;
 }

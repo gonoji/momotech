@@ -1,4 +1,4 @@
-import { subroutine } from "../../events/routineManager";
+import { subroutine } from "../../routines/routine";
 import { Direction } from "../../utils/direction";
 import { Exportable } from "../../utils/exportable";
 import { SceneManager } from "../../utils/sceneManager";
@@ -82,5 +82,5 @@ export abstract class Station implements Exportable{
         return this.data;
     }
 
-    abstract subroutine(gameData: GameData): subroutine<void>;
+    abstract routine(gameData: GameData): subroutine<void>;
 }

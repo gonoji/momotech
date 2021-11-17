@@ -5,13 +5,13 @@ import { GameData } from "../gameData";
 import { Station, stationData } from "./station";
 import { cards } from "../cards/cards";
 import { Card } from "../cards/card";
-import { Routine } from "../../events/routines";
+import { Routine } from "../../routines/routine";
 
 export class StationCard extends Station{
     constructor(data : stationData, x: number = 0, y: number = 0, z: number = 0, id: number = -1){
         super(data,x, y, z, 'card', id);
     }
-    *subroutine(gameData: GameData){
+    *routine(gameData: GameData){
         yield new EventMessage('カード駅に止まった');
         const id = yield* Routine.execute(new EventRoulette(StationCard.getCard, id => Card.data.get(id).name));
         yield 'end';

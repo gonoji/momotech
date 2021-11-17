@@ -1,4 +1,4 @@
-import { subroutine } from "../events/routineManager";
+import { subroutine } from "../routines/routine";
 import { Card } from "./cards/card";
 import { Field, FieldInGame } from "./field";
 import { Frame } from "./frame"
@@ -35,8 +35,8 @@ export class GameData{
         this.frame.final();
     }
 
-    *routineTurnStart(): subroutine<void>{
-        yield* this.field.routineTurnStart(this);
+    *routineMonthStart(): subroutine<void>{
+        yield* this.field.routineMonthStart(this);
     }
 
     get turnPlayer(){
