@@ -1,4 +1,4 @@
-import { RoutineMove } from "../../routines/routines";
+import { RoutineMove } from "../../routines/routineMove";
 import { GameData } from "../gameData";
 import { Card } from "./card";
 

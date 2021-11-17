@@ -1,5 +1,5 @@
 import { EventMessage } from "../events/eventMessage";
-import { subroutine } from "../routines/routineManager";
+import { subroutine } from "../routines/routine";
 import { Direction } from "../utils/direction";
 import { Exportable } from "../utils/exportable";
 import { FileIO } from "../utils/fileIO";
@@ -18,7 +18,7 @@ export interface FieldBase{
     final(): void;
 }
 export interface FieldInGame extends FieldBase{
-    routineTurnStart(data: GameData): subroutine<void>;
+    routineMonthStart(data: GameData): subroutine<void>;
     putSpiritRock(location: Station): void;
     removeSpiritRock(spiritRock: SpiritRock): void;
 }
@@ -76,7 +76,7 @@ export class Field implements FieldInGame, FieldInEdit{
 
     /*--- FieldInGame ---*/
 
-    *routineTurnStart(data: GameData): subroutine<void>{
+    *routineMonthStart(data: GameData): subroutine<void>{
         yield* this.weatheringSpiritRocks();
         data.turnPlayer.focus();
     }

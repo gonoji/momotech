@@ -1,6 +1,6 @@
 import { EventMessage } from "../../events/eventMessage";
 import { EventRoulette } from "../../events/eventRoulette";
-import { execute } from "../../routines/routines";
+import { Routine } from "../../routines/routine";
 import { Util } from "../../utils/util";
 import { GameData } from "../gameData";
 import { Station, stationData } from "./station";
@@ -11,7 +11,7 @@ export class StationMinus extends Station{
     }
     *routine(gameData: GameData){
         yield new EventMessage('マイナス駅に止まった');
-        const loss = yield* execute(new EventRoulette(StationMinus.loss(gameData), GameData.moneyToText));
+        const loss = yield* Routine.execute(new EventRoulette(StationMinus.loss(gameData), GameData.moneyToText));
         yield 'end';
         yield 'end';
         gameData.turnPlayer.money -= loss;

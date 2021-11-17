@@ -3,7 +3,7 @@ import { Card } from "./card";
 import { GameEvent } from "../../events/event";
 import { Station } from "../stations/station";
 import { EventMessage } from "../../events/eventMessage";
-import { RoutineDice } from "../../routines/routines";
+import { RoutineDice } from "../../routines/routineDice";
 
 export class CardDiceAndSpiritRock extends Card{
     *routine(data: GameData){

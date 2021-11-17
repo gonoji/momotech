@@ -1,29 +1,7 @@
-import { command, EventManager } from "../events/eventManager";
+import { EventManager } from "../events/eventManager";
 import { GameData } from "../gameData/gameData";
-import { RoutineInit } from "./routines";
-
-export type subroutine<T> = Generator<command, T>;
-
-export abstract class Routine<T> implements subroutine<T>{
-    private readonly generator: Generator<command, T>;
-    protected abstract routine(data: GameData): typeof this.generator;
-    constructor(data: GameData){
-        this.generator = this.routine(data);
-    }
-    next(args?: unknown){
-        return this.generator.next(args);
-    }
-    return(value: T){
-        return this.generator.return(value);
-    }
-    throw(e: any){
-        return this.generator.throw(e);
-    }
-    [Symbol.iterator](){
-        return this.generator[Symbol.iterator]();
-    }
-}
-export type Routines = Routine<Routines>;
+import { Routine, Routines } from "./routine";
+import { RoutineInit } from "./routineInit";
 
 export class RoutineManager{
     private routine: Routine<Routines>;
