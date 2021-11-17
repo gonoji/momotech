@@ -9,7 +9,7 @@ class CardDice extends Card{
         super(id);
     }
     *routine(data: GameData){
-        const sum = yield* Routine.execute(new EventDice(this.numDices));
+        const sum = yield* Routine.execute(new EventDice(this.numDices, false));
         yield 'end';
         return yield* new RoutineMove(data, sum);
     }

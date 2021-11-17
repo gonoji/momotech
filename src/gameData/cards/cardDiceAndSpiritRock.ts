@@ -7,7 +7,7 @@ import { RoutineDice } from "../../routines/routineDice";
 
 export class CardDiceAndSpiritRock extends Card{
     *routine(data: GameData){
-        const station = yield* yield* new RoutineDice(data, true);
+        const station = yield* yield* new RoutineDice(data, false);
         yield new EventPutSpiritRock(data.turnPlayer.location);
         yield 'end';
         yield new EventMessage('要石を置いた');
