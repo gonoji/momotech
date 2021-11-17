@@ -1,8 +1,8 @@
 import { GameObjects } from "phaser";
+import { Game } from "../game";
 import { Field, FieldInEdit } from "../gameData/field";
 import { Player } from "../gameData/player";
 import { Station } from "../gameData/stations/station";
-import { StationPlus } from "../gameData/stations/stationPlus";
 import { stations } from "../gameData/stations/stations";
 import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
@@ -10,6 +10,8 @@ import { SceneManager } from "../utils/sceneManager";
 import { Util } from "../utils/util";
 import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
+import { StationEstate } from "../gameData/stations/stationEstate";
+import { InteractiveWindow } from "../utils/window";
 
 export class EditScene extends Scene{
     private field: FieldInEdit;
@@ -17,6 +19,10 @@ export class EditScene extends Scene{
     private editStationNum: number = 0;
     private editFlag: boolean = false;
     private editArea: GameObjects.Sprite;
+    public interactiveWindow : InteractiveWindow;
+    estateEditFlag: boolean = false;
+
+
     constructor(){
         super(`edit`);
     }
@@ -26,6 +32,9 @@ export class EditScene extends Scene{
     init(){
         super.init();
         SceneManager.add(new Layer('field'));
+        const height = Game.height;
+        const width = Math.floor(height * 4/3);
+        SceneManager.add(new Layer('dialog', { x: 0, y: 0, w: width, h: height }));
     }
     create(){
         this.cameras.main.setBackgroundColor('0xeeeeee');
@@ -36,20 +45,34 @@ export class EditScene extends Scene{
             .setDisplaySize(Field.size, Field.size)
             .setVisible(false)
             .setDepth(100);
-
-        this.field.stations.push(new StationPlus(null, 1, 1));
-        this.field.stations.push(new StationPlus(null, 5, 1));
-        this.field.stations.push(new StationPlus(null, 3, 3));
-        this.field.stations.push(new StationPlus(null, 3, 5));
+        this.field.create();
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
+        this.player.focus();
+
+        this.interactiveWindow = InteractiveWindow.side();
+        this.interactiveWindow.setVisible(false);
+        
+        
     }
     update(){
         KeyManager.update();
+        if(this.estateEditFlag){
+            if(KeyManager.down('ESC')){
+                this.estateEditFlag = false;
+                this.interactiveWindow.removeData();
+            }
+            return;
+        }
         if(KeyManager.down('CTRL')){
             this.editFlag = Util.xor(this.editFlag, true);
             this.editArea.setVisible(this.editFlag);
             this.editArea.setPosition(this.player.location.x * Field.size, this.player.location.y * Field.size);
+            this.interactiveWindow.removeData();
+            const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size); 
+            if(sta != null && sta.type == 'estate'){
+                this.interactiveWindow.setData(this, sta as StationEstate);
+            }
         }
         if(this.editFlag){
             for(const key of Direction.asArray){
@@ -60,6 +83,13 @@ export class EditScene extends Scene{
                         case 'LEFT': this.editArea.setPosition(this.editArea.x - Field.size, this.editArea.y );break;
                         case 'RIGHT': this.editArea.setPosition(this.editArea.x + Field.size, this.editArea.y );break;
                     }
+                    
+                    const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
+                    if(sta != null && sta.type == 'estate'){
+                        this.interactiveWindow.setData(this, sta as StationEstate);
+                    }else{
+                        this.interactiveWindow.removeData();
+                    }
                 }
             }
             if(KeyManager.down('Z')){
@@ -67,6 +97,9 @@ export class EditScene extends Scene{
                 if(sta == null){
                     const s: Station = new stations[Object.keys(stations)[this.editStationNum]](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
                     this.field.stations.push(s);
+                    if(s.type == 'estate'){
+                        this.interactiveWindow.setData(this, s as StationEstate);
+                    }
                     for(const key of Direction.asArray){
                         const nearSta = this.field.getNearestStation(s,key);
                         if(nearSta != null){
@@ -83,9 +116,12 @@ export class EditScene extends Scene{
                 this.editStationNum = (this.editStationNum + 1) % Object.keys(stations).length;
                 this.editArea.setTexture(Object.keys(stations)[this.editStationNum]);
             }
-            else if(KeyManager.down('DELETE')){
+            else if(KeyManager.down('X')){
                 const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
                 if(sta != null && sta != this.player.location){
+                    if(sta.type == 'estate'){
+                        this.interactiveWindow.removeData();
+                    }
                     this.field.removeStationByID(sta.id);
                 }
             }
@@ -122,4 +158,3 @@ export class EditScene extends Scene{
         }
     }
 }
-

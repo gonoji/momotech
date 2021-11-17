@@ -10,17 +10,10 @@ export type stationType = 'plus' | 'minus' | 'card' | 'estate';
 export type stationData = {
     id: number,
     type: string,
-    position: {
-        x: number,
-        y: number
-    },
-    nexts: {
-        up: number,
-        down: number,
-        right: number,
-        left: number
-    }
+    position: { x: number, y: number },
+    nexts: { [dir in Direction.asType]: number };
 };
+
 export abstract class Station implements Exportable{
     static size: number = 64;
     private static id_max: number = 2147483647;
@@ -32,18 +25,19 @@ export abstract class Station implements Exportable{
         public x: number = 0,
         public y: number = 0,
         public z: number = 0,
-        readonly stationType: stationType = 'plus',
+        readonly type: stationType = 'plus',
         public id: number = -1
     ){
         if(this.data == null){
             this.data = {
                 id: this.id,
-                type: this.stationType,
-                position: {x: x, y: y},
-                nexts: {up: null, down: null, right: null, left: null} 
+                type: this.type,
+                position: {x, y},
+                nexts: { UP: null, DOWN: null, LEFT: null, RIGHT: null }
             }
             if(id == -1) this.data.id = Util.getRandomInt(0, Station.id_max);
         }
+
         const layer = SceneManager.layer('field');
         this.sprite = layer.add.sprite(0, 0, this.data.type).setDepth(0);
         this.sprite.setDisplaySize(Station.size, Station.size);

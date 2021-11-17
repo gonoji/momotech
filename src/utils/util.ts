@@ -27,4 +27,15 @@ export namespace Util{
      export function pick<T>(array: T[]){
         return array[Util.getRandomInt(0, array.length)];
     }
+
+    /** ランダムなIDを取得する
+     * @returns ランダムな文字列
+     */
+     export function getRandomStringID(length: number){
+        let id = '';
+        for(let i = 0; i < length; i++){
+            id += pick<String>('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split(''));
+        }
+        return id;
+    }
 }

@@ -53,6 +53,7 @@ export class Field implements FieldInGame, FieldInEdit{
 
     private importFromJson(name: string){
         const json = FileIO.getJson(name);
+
         json.forEach((e: stationData & stationEstateData) => {
             switch(e.type){
                 case 'estate': 
@@ -62,11 +63,11 @@ export class Field implements FieldInGame, FieldInEdit{
             }
         });
         json.forEach((e: stationData) => {
-            if(e.nexts.up != null){
-                this.connectStationWithID(e.nexts.up, e.id);
+            if(e.nexts.UP != null){
+                this.connectStationWithID(e.nexts.UP, e.id);
             }
-            if(e.nexts.left != null){
-                this.connectStationWithID(e.nexts.left, e.id);
+            if(e.nexts.LEFT != null){
+                this.connectStationWithID(e.nexts.LEFT, e.id);
             }
         });
     }
