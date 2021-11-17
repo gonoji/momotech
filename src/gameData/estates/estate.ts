@@ -7,14 +7,13 @@ export type estateData = {
 };
 
 export class Estate implements Exportable{
-    public station: StationEstate;
-    readonly name: string;
-    readonly price: number;
-    readonly profit: number;
-    readonly isAgri: boolean;
+    public name: string;
+    public price: number;
+    public profit: number;
+    public isAgri: boolean;
     public readonly id: string;
 
-    constructor(public data: estateData){
+    constructor(public data: estateData, public station: StationEstate){
         this.name = data.name;
         this.price = data.price;
         this.profit = data.profit;

@@ -9,6 +9,7 @@
 ## 参考
 - [Docs](https://photonstorm.github.io/phaser3-docs/)
 - [Phaser.tsチュートリアル](https://magazine.halake.com/entry/phaser-ts-rpg-simple1?utm_source=feed)
+- [テキスト入力プラグイン](https://rexrainbow.github.io/phaser3-rex-notes/docs/site/inputtext/)
 
 ## 詳細
 https://hackmd.io/7j9vigYaTLWDEGgCuyzUvQ

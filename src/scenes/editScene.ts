@@ -1,4 +1,5 @@
 import { GameObjects } from "phaser";
+import { Game } from "../game";
 import { Field } from "../gameData/field";
 import { Player } from "../gameData/player";
 import { Station, stationType } from "../gameData/stations/station";
@@ -10,7 +11,8 @@ import { SceneManager } from "../utils/sceneManager";
 import { Util } from "../utils/util";
 import { Layer, Scene } from "./scene";
 import { TitleScene } from "./titleScene";
-import InputText from 'phaser3-rex-plugins/plugins/inputtext.js';
+import { StationEstate } from "../gameData/stations/stationEstate";
+import { InteractiveWindow } from "../utils/window";
 
 export class EditScene extends Scene{
     private field: Field;
@@ -18,6 +20,9 @@ export class EditScene extends Scene{
     private editStationNum: number = 0;
     private editFlag: boolean = false;
     private editArea: GameObjects.Sprite;
+    private interactiveWindow : InteractiveWindow;
+
+
     constructor(){
         super(`edit`);
     }
@@ -27,6 +32,9 @@ export class EditScene extends Scene{
     init(){
         super.init();
         SceneManager.add(new Layer('field'));
+        const height = Game.height;
+        const width = Math.floor(height * 4/3);
+        SceneManager.add(new Layer('dialog', { x: 0, y: 0, w: width, h: height }));
     }
     create(){
         this.cameras.main.setBackgroundColor('0xeeeeee');
@@ -44,36 +52,12 @@ export class EditScene extends Scene{
         this.field.add(new StationPlus(null, 3, 5));
         this.player = new Player(0);
         this.player.create(this.field.stations[0]);
+        this.player.focus();
 
+        this.interactiveWindow = InteractiveWindow.side();
+        this.interactiveWindow.setVisible(false);
         
-        var printText = this.add.text(400, 400, '', {
-            fontSize: '20px',
-        }).setOrigin(0.5).setFixedSize(100, 100).setColor('#00ff00');
-        var inputText = new InputText(layer,400, 200, 10, 10, {
-            type: 'textarea',
-            text: 'hello world',
-            fontSize: '18px',});
-        layer.add.existing(inputText);
-        inputText.resize(100, 100)
-            .setOrigin(0.5)
-            .setFontColor('#000000')
-            .on('textchange', function (inputText) {
-                printText.text = inputText.text;
-            })
-            .on('focus', function (inputText) {
-                console.log('On focus');
-            })
-            .on('blur', function (inputText) {
-                console.log('On blur');
-            })
-            .on('click', function (inputText) {
-                console.log('On click');
-            })
-            .on('dblclick', function (inputText) {
-                console.log('On dblclick');
-            })
-
-        printText.text = inputText.text;
+        
     }
     update(){
         KeyManager.update();
@@ -91,6 +75,13 @@ export class EditScene extends Scene{
                         case 'LEFT': this.editArea.setPosition(this.editArea.x - Field.size, this.editArea.y );break;
                         case 'RIGHT': this.editArea.setPosition(this.editArea.x + Field.size, this.editArea.y );break;
                     }
+                    
+                    const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
+                    if(sta != null && sta.stationType == 'estate'){
+                        this.interactiveWindow.setData(sta as StationEstate);
+                    }else{
+                        this.interactiveWindow.removeData();
+                    }
                 }
             }
             if(KeyManager.down('Z')){
@@ -98,6 +89,9 @@ export class EditScene extends Scene{
                 if(sta == null){
                     const s: Station = new stations[Object.keys(stations)[this.editStationNum]](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
                     this.field.add(s);
+                    if(s.stationType == 'estate'){
+                        this.interactiveWindow.setData(s as StationEstate);
+                    }
                     for(const key of Direction.asArray){
                         const nearSta = this.field.getNearestStation(s,key);
                         if(nearSta != null){
@@ -109,14 +103,27 @@ export class EditScene extends Scene{
                             }
                         }
                     }
+                }else{
+                    if(sta.stationType == 'estate'){
+                        const esta = sta as StationEstate;
+                        const layer = SceneManager.layer('field');
+                        for(let i = 0; i < esta.estates.length; i++){
+                            layer.add.text(100, (i + 1) * 50, esta.estates[i].name).setColor('0x000000').setInteractive().on('pointerdown', function(pointer, localX, localY, event){
+                                console.log(`clicked : ${esta.estates[i].name}`);
+                            });;
+                        }
+                    }
                 }
             }else if(KeyManager.down('C')){
                 this.editStationNum = (this.editStationNum + 1) % Object.keys(stations).length;
                 this.editArea.setTexture(Object.keys(stations)[this.editStationNum]);
             }
-            else if(KeyManager.down('DELETE')){
+            else if(KeyManager.down('X')){
                 const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
                 if(sta != null && sta != this.player.location){
+                    if(sta.stationType == 'estate'){
+                        this.interactiveWindow.removeData();
+                    }
                     this.field.removeStationByID(sta.id);
                 }
             }
@@ -153,5 +160,3 @@ export class EditScene extends Scene{
         }
     }
 }
-
-// https://rexrainbow.github.io/phaser3-rex-notes/docs/site/inputtext/
