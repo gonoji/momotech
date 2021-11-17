@@ -19,7 +19,7 @@ export interface FieldBase{
 }
 export interface FieldInGame extends FieldBase{
     routineMonthStart(data: GameData): subroutine<void>;
-    canGo(start: Station, steps: number, from?: Direction.asType): Station[];
+    accessibleStations(start: Station, steps: number, from?: Direction.asType): Station[];
     putSpiritRock(location: Station): void;
     removeSpiritRock(spiritRock: SpiritRock): void;
 }
@@ -92,7 +92,7 @@ export class Field implements FieldInGame, FieldInEdit{
         }
     }
 
-    canGo(start: Station, steps: number, from?: Direction.asType){
+    accessibleStations(start: Station, steps: number, from?: Direction.asType){
         type typeFrom = Direction.asType | 'CENTER';
         let possibleDest: {[id: number]: typeFrom} = {};
         possibleDest[start.id] = from ?? 'CENTER';

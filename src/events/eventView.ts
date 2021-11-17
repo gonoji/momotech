@@ -27,7 +27,7 @@ export class EventView implements GameEvent<typeof resume>{
             .setStrokeStyle(10, 0xabcdef, 1)
             .setDepth(15);
         layer.cameras.main.startFollow(this.focus);
-        this.canGoList = data.field.canGo(data.turnPlayer.location, this.steps, this.from);
+        this.canGoList = data.field.accessibleStations(data.turnPlayer.location, this.steps, this.from);
         for(const i in this.canGoList){
             const pos = Field.at(this.canGoList[i].x, this.canGoList[i].y);
             this.canGoMark[i] = layer.add.circle(pos.x, pos.y, 50)

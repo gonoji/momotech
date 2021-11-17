@@ -15,7 +15,7 @@ export class EventMove implements GameEvent<typeof routineStation | typeof routi
      */
     constructor(private readonly steps: number){
     }
-    init(){
+    init(data: GameData){
         const margin = 30;
         this.window = new Window(margin, margin, 0, [EventMove.stepsText(10)]);
         this.window.setTexts([EventMove.stepsText(this.stepsLeft)]);
