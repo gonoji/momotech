@@ -22,14 +22,17 @@ export class StationEstate extends Station{
         if(data != null){
             this.estateData = data;
             for(let v of Object.values(data.estates)){
-                this._estates.push(new Estate(v, this));
+                if(v != null)
+                    this._estates.push(new Estate(v, this));
             }
         }
         
         for(let key in Object.keys(estates)){
             this._estates.push(new Estate(data.estates[key], this));
-        }this.addEstate(new Estate({name: "po", price: 100, profit: 10, isAgri: true}, this));
-        this.addEstate(new Estate({name: "pi", price: 100, profit: 10, isAgri: true}, this));
+        }
+        if(this._estates.length == 0){
+            this.addEstate(new Estate({name: "new Estate", price: 100, profit: 10, isAgri: false}, this));
+        }
     }
     *routine(gameData: GameData): subroutine<void> {
         yield new EventMessage('物件駅に止まった');
@@ -49,6 +52,10 @@ export class StationEstate extends Station{
     }
     changeEstate(estate: Estate){
         this.estateData.estates[estate.id] = estate.data;
+    }
+    removeEstate(index: number){
+        this.estateData.estates[this._estates[index].id] = null;
+        this._estates.splice(index, 1);
     }
     get estates(): Estate[]{
         return this._estates;

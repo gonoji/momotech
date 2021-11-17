@@ -22,6 +22,7 @@ export class KeyManager {
             this.keys[key] = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[key]);
             this.counts[key] = 0;
         }
+        scene.input.keyboard.disableGlobalCapture();
         for(const key of this.replaceKeys){
             this.replaceKey(key.key1, key.key2, false);
         }
