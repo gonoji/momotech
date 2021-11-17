@@ -2,15 +2,16 @@ import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { GameEvent } from "./event";
 
-export class EventDice implements GameEvent<number>{
+export class EventDice implements GameEvent<number | null>{
     private message: Phaser.GameObjects.Text;
     private dices: number[]
     private rolls: boolean;
 
     /** ダイスを振るイベント
      * @param num ダイスの個数
+     * @param canCancel 振るのをやめられるかどうか
      */
-    constructor(num: number){
+    constructor(num: number, private readonly canCancel: boolean){
         this.dices = Array(num).fill(null);
         this.rolls = true;
     }
@@ -30,6 +31,9 @@ export class EventDice implements GameEvent<number>{
                 this.dices[i] = Math.floor(Math.random() * 6) + 1;
             }
             this.message.setText(this.dices.join(' '));
+        }
+        if(KeyManager.down('X') && this.canCancel && this.rolls){
+            return { result: null };
         }
         if(KeyManager.down('Z')){
             if(!this.rolls) return { result: this.dices.reduce((x, y) => x + y) };

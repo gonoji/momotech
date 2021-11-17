@@ -31,7 +31,7 @@ class RoutineTurn extends Routine<Routines>{
     }
     private static action(data: GameData, choice: typeof choicesTurn[number]){
         switch(choice){
-            case 'サイコロ': return new RoutineDice(data, false);
+            case 'サイコロ': return new RoutineDice(data, true);
             case 'カード': return new RoutineCard(data);
         }
     }

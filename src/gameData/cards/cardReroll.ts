@@ -11,7 +11,7 @@ export class CardReroll extends Card{
         return yield* yield* new RoutineMove(data, dice);
     }
     private *roll(){
-        const dice = yield* Routine.execute(new EventDice(1));
+        const dice = yield* Routine.execute(new EventDice(1, false));
         yield* Routine.execute(new EventMessage(`${dice} が出ましたが振り直しますか？`));
         const yes = yield* Routine.askYesNo();
         yield 'end';
@@ -19,7 +19,7 @@ export class CardReroll extends Card{
         return yes? yield* this.reroll(): dice;
     }
     private *reroll(){
-        const dice = yield* Routine.execute(new EventDice(1));
+        const dice = yield* Routine.execute(new EventDice(1, false));
         yield 'end';
         return dice;
     }
