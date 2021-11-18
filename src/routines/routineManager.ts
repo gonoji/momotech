@@ -4,10 +4,12 @@ import { Routine, Routines } from "./routine";
 import { RoutineInit } from "./routineInit";
 
 export class RoutineManager{
-    private routine: Routine<Routines>;
+    private routine?: Routine<Routines>;
     private eventManager: EventManager;
-    constructor(data: GameData){
+    constructor(){
         this.eventManager = new EventManager();
+    }
+    create(data: GameData){
         this.routine = new RoutineInit(data);
         this.next(data);
     }
@@ -16,6 +18,7 @@ export class RoutineManager{
         if(done) this.next(data, done.result);
     }
     next(data: GameData, eventResult?: unknown){
+        if(!this.routine) return;
         const next = this.routine.next(eventResult);
         if(next.done == true){
             this.routine = next.value;

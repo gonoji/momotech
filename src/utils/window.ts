@@ -75,8 +75,8 @@ export class InteractiveWindow{
     profits: InputText[];
     isAgris: InputText[];
     texts: Phaser.GameObjects.Text[];
-    addText: Phaser.GameObjects.Text;
-    removeText: Phaser.GameObjects.Text;
+    addText?: Phaser.GameObjects.Text;
+    removeText?: Phaser.GameObjects.Text;
     static margin = 16;
 
     /** 位置・サイズを指定してウィンドウを作成
@@ -116,39 +116,34 @@ export class InteractiveWindow{
         this.prices.forEach(inputText => inputText.destroy());
         this.profits.forEach(inputText => inputText.destroy());
         this.isAgris.forEach(inputText => inputText.destroy());
-        this.addText.destroy();
-        this.removeText.destroy();
+        this.addText?.destroy();
+        this.removeText?.destroy();
     }
 
-    private yText(line: number){
-        return line * (this.fontSize + Window.margin);
-    }
-
-    setData(editScene: EditScene,station: StationEstate){
+    setData(editScene: EditScene, station: StationEstate){
+        const window = editScene.interactiveWindow;
+        if(!window) throw new Error('not initalized');
         editScene.estateEditFlag = true;
         this.texts = [];
         this.names = [];
         this.profits = [];
         this.isAgris = [];
         this.prices = [];
-        station.estates.forEach(e => {
-            this.addData(e);
-        });
+        station.estates.forEach(e => this.addData(e));
         const layer = SceneManager.layer('dialog');
         this.addText = layer.add.text(450, 660, 'add').setInteractive();
-        this.addText.on('pointerdown', function (pointer) {
+        this.addText.on('pointerdown', () => {
             station.addEstate(new Estate({name: "new Estate", price: 100, profit: 10, isAgri: false}, station));
-            
-            editScene.interactiveWindow.removeData();
-            editScene.interactiveWindow.setData(editScene, station);
+            window.removeData();
+            window.setData(editScene, station);
         });
         this.setVisible(true);
 
         this.removeText = layer.add.text(520, 660, 'remove').setInteractive();
-        this.removeText.on('pointerdown', function (pointer) {
-            station.removeEstate(editScene.interactiveWindow.names.length-1);
-            editScene.interactiveWindow.removeData();
-            editScene.interactiveWindow.setData(editScene, station);
+        this.removeText.on('pointerdown', () => {
+            station.removeEstate(window.names.length-1);
+            window.removeData();
+            window.setData(editScene, station);
         });
         this.setVisible(true);
     }
@@ -167,7 +162,7 @@ export class InteractiveWindow{
         name.resize(100, 20)
             .setOrigin(0.5)
             .setFontColor('#000000')
-            .on('textchange', function (inputText) {
+            .on('textchange', (inputText: InputText) => {
                 estate.name = inputText.text;
                 estate.data.name = inputText.text;
                 estate.station.estateData.estates[estate.id] = estate.data;
@@ -184,7 +179,7 @@ export class InteractiveWindow{
         price.resize(100, 20)
             .setOrigin(0.5)
             .setFontColor('#000000')
-            .on('textchange', function (inputText) {
+            .on('textchange', (inputText: { text: string }) => {
                 estate.price = parseInt(inputText.text);
                 estate.data.price = parseInt(inputText.text);
                 estate.station.estateData.estates[estate.id] = estate.data;
@@ -201,7 +196,7 @@ export class InteractiveWindow{
         profit.resize(100, 20)
             .setOrigin(0.5)
             .setFontColor('#000000')
-            .on('textchange', function (inputText) {
+            .on('textchange', (inputText: InputText) => {
                 estate.profit = parseInt(inputText.text);
                 estate.data.profit = parseInt(inputText.text);
                 estate.station.estateData.estates[estate.id] = estate.data;
@@ -213,13 +208,15 @@ export class InteractiveWindow{
         const isAgri = new InputText(layer, 200 + Math.floor(this.isAgris.length / 6) * 250, 120 + this.isAgris.length % 6 * 100, 10, 15, {
             type: 'textArea',
             text: `${estate.isAgri}`,
-            fontSize: '15px',});
+            fontSize: '15px'
+        });
         layer.add.existing(isAgri);
         isAgri.resize(100, 20)
             .setOrigin(0.5)
             .setFontColor('#000000')
-            .on('textchange', function (inputText) {
-                estate.isAgri = (inputText == 'true' ) ? true : false;
+            .on('textchange', (inputText: InputText) => {
+                console.log(inputText);
+                estate.isAgri = inputText.text == 'true';
                 estate.data.isAgri = estate.isAgri;
                 estate.station.estateData.estates[estate.id] = estate.data;
             });
@@ -249,7 +246,6 @@ export class InteractiveWindow{
         this.setVisible(false);
     }
 
-    /** 画面下に表示される、3 行のテキストボックス */
     static side(){
         const margin = 30;
         return new InteractiveWindow(margin, margin, 560, SceneManager.layer('dialog').height - margin * 2);

@@ -12,7 +12,7 @@ export class EventManager{
     }
     update(data: GameData){
         if(KeyManager.down('P')) this.events.print();
-        return this.events.front().update(data);
+        return this.events.front()?.update(data);
     }
     /**
      * @returns 再度ルーチンを進めてイベントを更新する必要があるかどうか
@@ -20,7 +20,7 @@ export class EventManager{
     next(data: GameData, command: command){
         if(command == 'end'){
             console.log('end');
-            this.events.popFront().final(data);
+            this.events.popFront()?.final(data);
             return true;
         }
         if(command == this.events.front()){

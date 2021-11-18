@@ -41,8 +41,7 @@ class RoutineView extends Routine<null>{
         case 'resume':
             yield 'end';
             return null;
-        default:
-            const _: never = result;
         }
+        const _: never = result;
     }
 }

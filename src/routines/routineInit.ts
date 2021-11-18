@@ -1,5 +1,5 @@
 import { EventMessage } from "../events/eventMessage";
-import { Card } from "../gameData/cards/card";
+import { Card, cardID } from "../gameData/cards/card";
 import { GameData } from "../gameData/gameData";
 import { Routine, Routines } from "./routine";
 import { RoutineTurnStart } from "./routineTurn";
@@ -13,7 +13,7 @@ export class RoutineInit extends Routine<Routines>{
     }
 
     private debug(data: GameData){
-        const cardIDs = [
+        const cardIDs: cardID[] = [
             'DiceAndSpiritRock',
             'Advance30',
             'Reroll',

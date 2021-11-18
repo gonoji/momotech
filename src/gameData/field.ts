@@ -16,6 +16,7 @@ export interface FieldBase{
     create(): void;
     update(): void;
     final(): void;
+    getStationByID(id: number): Station | null;
 }
 export interface FieldInGame extends FieldBase{
     routineMonthStart(data: GameData): subroutine<void>;
@@ -23,9 +24,8 @@ export interface FieldInGame extends FieldBase{
     removeSpiritRock(spiritRock: SpiritRock): void;
 }
 export interface FieldInEdit extends FieldBase, Exportable{
-    getStationByCoordinate(x: number, y: number): Station;
-    getStationByPosition(x: number, y: number): Station;
-    getNearestStation(current: Station, dir: Direction.asType): Station;
+    getStationByPosition(x: number, y: number): Station | null;
+    getNearestStation(current: Station, dir: Direction.asType): Station | null;
     connectStationWithID(id1: number, id2: number): void;
     disconnectStationWithID(id1: number, id2: number): void;
     removeStationByID(id: number): void;
@@ -71,8 +71,8 @@ export class Field implements FieldInGame, FieldInEdit{
             }
         });
     }
-    private getStationByID(id: number){
-        return this.stations.find(station => station.id == id);
+    getStationByID(id: number){
+        return this.stations.find(station => station.id == id) ?? null;
     }
 
     /*--- FieldInGame ---*/
@@ -100,26 +100,18 @@ export class Field implements FieldInGame, FieldInEdit{
     }
 
     /*--- FieldInEdit ---*/
-
-    /**
-     * @param x scene座標でのx
-     * @param y scene座標でのy
-     */
-    getStationByCoordinate(x: number, y: number){
-        return this.getStationByPosition( x / Station.size , y / Station.size);
-    }
     /**
      * @param x size倍する前のx
      * @param y size倍する前のy
      */
     getStationByPosition(x: number, y: number){
-        return this.stations.find(station => station.x == x && station.y == y);
+        return this.stations.find(station => station.x == x && station.y == y) ?? null;
     }
     
     // current から dir 方向を見て、最も近い駅があればそれを返す
     getNearestStation(current: Station, dir: Direction.asType){
         const nearest = {
-            station: null as Station,
+            station: null as Station | null,
             dist: Number.MAX_SAFE_INTEGER
         };
         this.stations.forEach(s => {
@@ -149,8 +141,10 @@ export class Field implements FieldInGame, FieldInEdit{
     connectStationWithID(id1: number, id2: number){
         const s1 = this.getStationByID(id1);
         const s2 = this.getStationByID(id2);
-        this.addUpDownStation(s1, s2);
-        this.addLeftRightStation(s1, s2);
+        if(s1 && s2){
+            this.addUpDownStation(s1, s2);
+            this.addLeftRightStation(s1, s2);
+        }
     }
     disconnectStationWithID(id1: number, id2: number){
         const station1 = this.getStationByID(id1);
@@ -167,9 +161,10 @@ export class Field implements FieldInGame, FieldInEdit{
         const station = this.getStationByID(id);
         if(!station) return;
         for(const key of Direction.asArray){
-            if(station.nexts[key]){
-                this.removeLeftRightStation(station.nexts[key], station);
-                this.removeUpDownStation(station.nexts[key], station);
+            const next = station.nexts[key];
+            if(next){
+                this.removeLeftRightStation(next, station);
+                this.removeUpDownStation(next, station);
             }
         }
         station.final();

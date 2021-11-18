@@ -38,4 +38,12 @@ export namespace Util{
         }
         return id;
     }
+
+    // 型を厳しくした標準ライブラリの関数たち
+    export function keys<T extends object, K extends keyof T>(object: T): K[]{
+        return Object.keys(object) as any;
+    }
+    export function fromEntries<K extends string, V>(entries: [K, V][]): { [key in K]: V }{
+        return Object.fromEntries(entries) as any;
+    }
 }

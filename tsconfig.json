@@ -3,7 +3,10 @@
       "target": "ES6",
       "module": "commonjs",
       "sourceMap": true,
-      "noImplicitAny": false,
-      "strict": false
-    }
+      "strict": true,
+    },
+    "include": [
+      "**/*",
+      "node_modules/phaser3-rex-plugins-types"
+    ]
 }

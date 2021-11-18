@@ -2,14 +2,13 @@ import { GameEvent } from "./event";
 import { KeyManager } from "../utils/keyManager";
 import { Window } from "../utils/window";
 
+/** メッセージを表示するイベント
+ * @param text メッセージの内容
+ * @param event 次のイベント
+ */
 export class EventMessage implements GameEvent<void>{
-    private window: Window;
+    private window?: Window;
     private index = 0;
-
-    /** メッセージを表示するイベント
-     * @param text メッセージの内容
-     * @param event 次のイベント
-     */
     constructor(private text: string){
     }
     init(){
@@ -26,10 +25,10 @@ export class EventMessage implements GameEvent<void>{
             }
             else this.index += 0.5;
         }
-        this.window.setTexts(this.text.substr(0, this.index).split('\n'));
+        this.window?.setTexts(this.text.substr(0, this.index).split('\n'));
         if(KeyManager.down('Z')) return { result: undefined };
     }
     final(){
-        this.window.final();
+        this.window?.final();
     }
 }

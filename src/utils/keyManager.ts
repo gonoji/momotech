@@ -1,5 +1,5 @@
 import { FileIO } from "./fileIO";
-import { SceneManager } from "./sceneManager";
+import { Util } from "./util";
 
 const alphabetKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] as const;
 const numberKeys = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'] as const;
@@ -12,16 +12,15 @@ type KeyName = typeof keyNames[number];
 
 export class KeyManager {
     private static loadKeyConfigFlag : boolean = false;
-    static keys: { [key in KeyName]?: Phaser.Input.Keyboard.Key };
-    static counts: { [key in KeyName]?: number };
+    static keys: { [key in KeyName]: Phaser.Input.Keyboard.Key };
+    static counts: { [key in KeyName]: number };
     static replaceKeys : { key1 : KeyName, key2 : KeyName}[] = [];
     static init(scene: Phaser.Scene){
-        this.keys = {};
-        this.counts = {};
-        for(const key of keyNames){
-            this.keys[key] = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[key]);
-            this.counts[key] = 0;
-        }
+        // this.keys = Object.fromEntries(keyNames.map(key => [key, key]));
+        this.keys = Util.fromEntries(keyNames.map(
+            key => [key, scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[key])]
+        ));
+        this.counts = Util.fromEntries(keyNames.map(key => [key, 0]));
         scene.input.keyboard.disableGlobalCapture();
         for(const key of this.replaceKeys){
             this.replaceKey(key.key1, key.key2, false);
@@ -58,10 +57,8 @@ export class KeyManager {
     static loadKeyConfig(){
         if(!KeyManager.loadKeyConfigFlag){
             KeyManager.loadKeyConfigFlag = true;
-            const json = FileIO.getJson('keyConfig');
-            json.forEach(element => {
-                this.replaceKey(element.key1,element.key2);
-            });
+            const json = FileIO.getJson('keyConfig') as { key1: KeyName, key2: KeyName }[];
+            json.forEach(e => this.replaceKey(e.key1, e.key2));
         }
     }
 }
