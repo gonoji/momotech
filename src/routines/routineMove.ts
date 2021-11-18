@@ -5,8 +5,9 @@ import { EventView } from "../events/eventView";
 import { RoutineStation } from "./routineStation";
 import { Routine } from "./routine";
 import { EventMessage } from "../events/eventMessage";
+import { RoutineTurnEnd } from "./routineTurn";
 
-export class RoutineMove extends Routine<RoutineStation>{
+export class RoutineMove extends Routine<RoutineStation | RoutineTurnEnd>{
     constructor(data: GameData, private readonly steps: number){
         super(data);
     }
@@ -14,7 +15,7 @@ export class RoutineMove extends Routine<RoutineStation>{
         if(!this.canMove(data)){
             yield new EventMessage('移動できる駅がない！');
             yield 'end';
-            return new RoutineStation(data);
+            return new RoutineTurnEnd(data);
         }
         const move = new EventMove(this.steps);
         while(true){

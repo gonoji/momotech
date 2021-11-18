@@ -34,6 +34,11 @@ export namespace EventDice{
                 if(!this.rolls) return { result: this.dices.reduce((x, y) => x + y) };
                 this.rolls = false;
             }
+
+            // デバッグ用：押した数字キーに対応する数を出す
+            for(let n = 0; n <= 9; n++){
+                if(KeyManager.down(KeyManager.numberToKey(n))) return { result: n };
+            }
         }
         final(){
             this.message?.destroy();
