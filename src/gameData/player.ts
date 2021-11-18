@@ -5,16 +5,16 @@ import { Field, FieldInGame } from "./field";
 import { Station } from "./stations/station";
 
 export class Player{
-    location: Station;
+    private _location: Station | null = null;
     money: number = 10;
     readonly cards: Card[] = [];
 
-    private sprite: Phaser.GameObjects.Group;
-    private test: Phaser.GameObjects.Ellipse;
+    private sprite?: Phaser.GameObjects.Group;
+    private test?: Phaser.GameObjects.Ellipse;
     constructor(readonly id: number){
     }
     create(initial: Station){
-        this.location = initial;
+        this._location = initial;
         const layer = SceneManager.layer('field');
 
         // 画像ロード周りが整備されるまで group {ellipse + text} で代用
@@ -26,7 +26,12 @@ export class Player{
         this.updatePos();
     }
     final(){
-        this.sprite.destroy(true);
+        this.sprite?.destroy(true);
+    }
+
+    get location(){
+        if(!this._location) throw new Error('not initialized');
+        return this._location;
     }
 
     /** 隣の駅に移動する
@@ -36,7 +41,7 @@ export class Player{
     moveTo(dir: Direction.asType){
         const next = this.location.nexts[dir];
         if(next){
-            this.location = next;
+            this._location = next;
             this.updatePos();
             return true;
         }
@@ -44,14 +49,14 @@ export class Player{
     }
 
     focus(){
-        SceneManager.layer('field').cameras.main.startFollow(this.test);
+        if(this.test) SceneManager.layer('field').cameras.main.startFollow(this.test);
     }
 
     private updatePos(){
         const {x, y} = Field.at(this.location.x, this.location.y);
-        this.sprite.setXY(x, y);
+        this.sprite?.setXY(x, y);
     }
     get pos(){
-        return { x: this.test.x, y: this.test.y };
+        return this.test? { x: this.test.x, y: this.test.y }: null;
     }
 }

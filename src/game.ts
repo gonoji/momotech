@@ -1,7 +1,7 @@
 import "phaser";
 import "./gameData/cards/cards"; // Card より先に import されないとエラーを吐く
 import { TitleScene } from "./scenes/titleScene";
-import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin.js';
+import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin';
 
 export namespace Game{
     export const width = 1280;

@@ -7,12 +7,13 @@ import { TitleScene } from "./titleScene";
 import { RoutineManager } from "../routines/routineManager";
 
 export class GameScene extends Scene{
-    private routineManager: RoutineManager;
     private gameData: GameData;
+    private routineManager: RoutineManager;
     
     constructor(numPlayers: number){
         super('game');
         this.gameData = new GameData(numPlayers);
+        this.routineManager = new RoutineManager();
     }
     init(){
         super.init();
@@ -26,7 +27,7 @@ export class GameScene extends Scene{
     create(){
         this.gameData.create();
         this.cameras.main.setBackgroundColor('0xeeeeee');
-        this.routineManager = new RoutineManager(this.gameData);
+        this.routineManager.create(this.gameData);
         SceneManager.scene.add.sprite(0, 0, 'frame').setOrigin(0).setScale(2/3);
     }
     update(){

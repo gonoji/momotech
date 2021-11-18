@@ -3,6 +3,7 @@ import { EventUseCard } from "../events/eventUseCard";
 import { Card } from "../gameData/cards/card";
 import { GameData } from "../gameData/gameData";
 import { Routine, Routines } from "./routine";
+import { routineAskYesNo } from "./routineAskYesNo";
 
 export class RoutineCard extends Routine<RoutineUseCard | null>{
     *routine(data: GameData){
@@ -19,7 +20,7 @@ export class RoutineCard extends Routine<RoutineUseCard | null>{
                 return null;
             }
             yield new EventMessage('このカードを使いますか？');
-            const yes = yield* Routine.askYesNo();
+            const yes = yield* routineAskYesNo();
             yield 'end';
             if(!yes) continue;
 

@@ -6,7 +6,7 @@ import { GameData } from "../gameData";
 import { Station, stationData } from "./station";
 
 export class StationPlus extends Station{
-    constructor(data: stationData, x: number = 0, y: number = 0, z: number = 0, id: number = -1){
+    constructor(data: stationData | null, x: number = 0, y: number = 0, z: number = 0, id: number | null = null){
         super(data,x, y, z, 'plus', id);
     }
     *routine(gameData: GameData){

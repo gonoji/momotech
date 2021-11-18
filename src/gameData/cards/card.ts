@@ -4,46 +4,32 @@ import { GameData } from "../gameData";
 import { cards } from "./cards";
 
 type cardsData = {
-    [id: string]: { name: string, price: number, description: string }
+    [id in cardID]: { name: string, price: number, description: string }
 };
-const undefinedCardData = {
-    name: 'undefined card',
-    price: 0,
-    description: '指定された ID のカードが存在しません\ncards.json が最新の状態ではない可能性があります'
-};
-
-class CardsData{
-    private data: cardsData;
-    constructor(){
-        this.data = FileIO.getJson('cards');
-    }
-    get(id: string){
-        return this.data[id] ?? undefinedCardData;
-    }
-};
+export type cardID = keyof typeof cards;
 
 export abstract class Card{
-    static data: CardsData;
+    static data: cardsData;
     static create(){
-        Card.data = new CardsData();
+        Card.data = FileIO.getJson('cards');
     }
-    static get(id: string): Card{
+    static get(id: cardID): Card{
         return new cards[id](id);
     }
 
     private _name: string;
-    constructor(private readonly id: string){
-        this._name = Card.data.get(this.id).name;
+    constructor(private readonly id: cardID){
+        this._name = Card.data[this.id].name;
     }
     
     get name(){
         return this._name;
     }
     get price(){
-        return Card.data.get(this.id).price;
+        return Card.data[this.id].price;
     }
     get description(){
-        return Card.data.get(this.id).description;
+        return Card.data[this.id].description;
     }
 
     abstract routine(data: GameData): subroutine<Routines>;

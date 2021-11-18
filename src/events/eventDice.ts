@@ -1,46 +1,63 @@
+import { GameData } from "../gameData/gameData";
 import { KeyManager } from "../utils/keyManager";
 import { SceneManager } from "../utils/sceneManager";
 import { GameEvent } from "./event";
 
-export class EventDice implements GameEvent<number | null>{
-    private message: Phaser.GameObjects.Text;
-    private dices: number[]
-    private rolls: boolean;
+export namespace EventDice{
 
-    /** ダイスを振るイベント
+    /** ダイスを振るイベント（キャンセル不可能）
      * @param num ダイスの個数
-     * @param canCancel 振るのをやめられるかどうか
-     */
-    constructor(num: number, private readonly canCancel: boolean){
-        this.dices = Array(num).fill(null);
-        this.rolls = true;
-    }
-    init(){
-        const layer = SceneManager.layer('dialog');
-        this.message = layer.add.text(layer.width / 2, layer.height / 2, '', {color: 'black', fontSize: '50px'})
-            .setOrigin(0.5)
-            .setPadding(0, 10, 0, 0)
-            .setDepth(0);
-    }
-    /**
      * @returns 出目の和
      */
-    update(){
-        if(this.rolls){
-            for(const i in this.dices){
-                this.dices[i] = Math.floor(Math.random() * 6) + 1;
+    export class Forced implements GameEvent<number>{
+        private message?: Phaser.GameObjects.Text;
+        private dices: number[]
+        rolls: boolean = true;
+        constructor(num: number){
+            this.dices = Array(num).fill(null);
+        }
+        init(){
+            const layer = SceneManager.layer('dialog');
+            this.message = layer.add.text(layer.width / 2, layer.height / 2, '', {color: 'black', fontSize: '50px'})
+                .setOrigin(0.5)
+                .setPadding(0, 10, 0, 0)
+                .setDepth(0);
+        }
+        update(){
+            if(this.rolls){
+                for(const i in this.dices){
+                    this.dices[i] = Math.floor(Math.random() * 6) + 1;
+                }
+                this.message?.setText(this.dices.join(' '));
             }
-            this.message.setText(this.dices.join(' '));
+            if(KeyManager.down('Z')){
+                if(!this.rolls) return { result: this.dices.reduce((x, y) => x + y) };
+                this.rolls = false;
+            }
         }
-        if(KeyManager.down('X') && this.canCancel && this.rolls){
-            return { result: null };
-        }
-        if(KeyManager.down('Z')){
-            if(!this.rolls) return { result: this.dices.reduce((x, y) => x + y) };
-            this.rolls = false;
+        final(){
+            this.message?.destroy();
         }
     }
-    final(){
-        this.message.destroy();
+
+    /** ダイスを振るイベント（キャンセル可能）
+     * @param num ダイスの個数
+     * @returns ダイスを振ったら出目の和、振らなかったら `null`
+     */
+    export class CanCancel implements GameEvent<number | null>{
+        private inner: Forced;
+        constructor(num: number){
+            this.inner = new Forced(num);
+        }
+        init(){
+            this.inner.init();
+        }
+        update(){
+            if(KeyManager.down('X') && this.inner.rolls) return { result: null };
+            return this.inner.update();
+        }
+        final(){
+            this.inner.final();
+        }
     }
 }

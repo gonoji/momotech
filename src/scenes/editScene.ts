@@ -18,16 +18,14 @@ export class EditScene extends Scene{
     private player: Player;
     private editStationNum: number = 0;
     private editFlag: boolean = false;
-    private editArea: GameObjects.Sprite;
-    public interactiveWindow : InteractiveWindow;
+    private editArea?: GameObjects.Sprite;
+    public interactiveWindow? : InteractiveWindow;
     estateEditFlag: boolean = false;
-
 
     constructor(){
         super(`edit`);
-    }
-    preload(){
         this.field = new Field();
+        this.player = new Player(0);
     }
     init(){
         super.init();
@@ -46,16 +44,15 @@ export class EditScene extends Scene{
             .setVisible(false)
             .setDepth(100);
         this.field.create();
-        this.player = new Player(0);
         this.player.create(this.field.stations[0]);
         this.player.focus();
 
         this.interactiveWindow = InteractiveWindow.side();
         this.interactiveWindow.setVisible(false);
-        
-        
     }
     update(){
+        if(!this.editArea || !this.interactiveWindow) throw new Error('not initialized');
+
         KeyManager.update();
         if(this.estateEditFlag){
             if(KeyManager.down('ESC')){
@@ -93,21 +90,27 @@ export class EditScene extends Scene{
                 }
             }
             if(KeyManager.down('Z')){
-                const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
-                if(sta == null){
-                    const s: Station = new stations[Object.keys(stations)[this.editStationNum]](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
-                    this.field.stations.push(s);
-                    if(s.type == 'estate'){
-                        this.interactiveWindow.setData(this, s as StationEstate);
+                if(this.pointed(this.editArea) == null){
+                    const type = Util.keys(stations)[this.editStationNum];
+                    let placed: Station;
+                    if(type == 'estate'){
+                        const s = new stations[type](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
+                        this.interactiveWindow.setData(this, s);
+                        placed = s;
                     }
+                    else{
+                        placed = new stations[type](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
+                    }
+                    this.field.stations.push(placed);
+
                     for(const key of Direction.asArray){
-                        const nearSta = this.field.getNearestStation(s,key);
+                        const nearSta = this.field.getNearestStation(placed, key);
                         if(nearSta != null){
                             const nextSta = nearSta.nexts[Direction.opposite(key)];
-                            if(nextSta != null && nextSta != s){
+                            if(nextSta != null && nextSta != placed){
                                 this.field.disconnectStationWithID(nextSta.id,nearSta.id);
-                                this.field.connectStationWithID(s.id, nearSta.id);
-                                this.field.connectStationWithID(s.id, nextSta.id);
+                                this.field.connectStationWithID(placed.id, nearSta.id);
+                                this.field.connectStationWithID(placed.id, nextSta.id);
                             }
                         }
                     }
@@ -156,5 +159,9 @@ export class EditScene extends Scene{
         if(KeyManager.down('ESC')){
             SceneManager.start(new TitleScene());
         }
+    }
+
+    private pointed(pos: { x: number, y: number }){
+        return this.field.getStationByPosition(pos.x / Field.size, pos.y / Field.size);
     }
 }

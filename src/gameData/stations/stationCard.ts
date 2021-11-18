@@ -8,12 +8,12 @@ import { Card } from "../cards/card";
 import { Routine } from "../../routines/routine";
 
 export class StationCard extends Station{
-    constructor(data : stationData, x: number = 0, y: number = 0, z: number = 0, id: number = -1){
-        super(data,x, y, z, 'card', id);
+    constructor(data: stationData | null, x: number = 0, y: number = 0, z: number = 0, id: number | null = null){
+        super(data, x, y, z, 'card', id);
     }
     *routine(gameData: GameData){
         yield new EventMessage('カード駅に止まった');
-        const id = yield* Routine.execute(new EventRoulette(StationCard.getCard, id => Card.data.get(id).name));
+        const id = yield* Routine.execute(new EventRoulette(StationCard.getCard, id => Card.data[id].name));
         yield 'end';
         yield 'end';
         const card = Card.get(id);
@@ -23,6 +23,6 @@ export class StationCard extends Station{
     }
 
     private static getCard(){
-        return Util.pick(Object.keys(cards));
+        return Util.pick(Util.keys(cards));
     }
 }
