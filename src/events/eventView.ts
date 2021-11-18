@@ -27,7 +27,7 @@ export class EventView implements GameEvent<typeof resume>{
             .setStrokeStyle(10, 0xabcdef, 1)
             .setDepth(15);
         layer.cameras.main.startFollow(this.focus);
-        this.canGoList = this.canGo(data);
+        this.canGoList = data.field.accessibleStations(data.turnPlayer.location, this.steps, this.from);
         for(const i in this.canGoList){
             const pos = Field.at(this.canGoList[i].x, this.canGoList[i].y);
             this.canGoMark[i] = layer.add.circle(pos.x, pos.y, 50)
@@ -53,37 +53,4 @@ export class EventView implements GameEvent<typeof resume>{
         this.focus?.destroy();
         this.canGoMark.forEach(mark => mark.destroy());
     }
-
-    canGo(data: GameData){
-        let possibleDest: {[id: number]: from} = {};
-        possibleDest[data.turnPlayer.location.id] = this.from ?? 'CENTER';
-        console.log(data.field.stations);
-        for(let i = 1; i <= this.steps; i++){
-            const nextPossibleDest: {[id: number]: from} = {};
-            for(const id of Util.keys(possibleDest)){
-                const station = data.field.getStationByID(id);
-                if(!station) continue;
-                console.log(id);
-                for(const dir of Direction.asArray){
-                    if(!station.passable(dir, data.field) || dir == possibleDest[id]) continue;
-                    const destID = station.nexts[dir]?.id;
-                    console.log('>', destID);
-                    if(destID){
-                        if(nextPossibleDest[destID] != undefined){
-                            nextPossibleDest[destID] = 'CENTER';
-                        }
-                        else nextPossibleDest[destID] = Direction.opposite(dir);    
-                    }
-                }  
-            }
-            possibleDest = nextPossibleDest;
-        }
-        return Util.keys(possibleDest).map(id => {
-            const station = data.field.getStationByID(id);
-            if(!station) throw new Error();
-            return station;
-        });
-    }
 }
-
-type from = Direction.asType | 'CENTER';

@@ -70,7 +70,7 @@ export abstract class Station implements Exportable{
         delete other.nexts[Direction.opposite(dir)];
         delete other.data.nexts[Direction.opposite(dir)];
     }
-    toJSON(): object{
+    toJSON(){
         return this.data;
     }
 

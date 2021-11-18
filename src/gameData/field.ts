@@ -3,6 +3,7 @@ import { subroutine } from "../routines/routine";
 import { Direction } from "../utils/direction";
 import { Exportable } from "../utils/exportable";
 import { FileIO } from "../utils/fileIO";
+import { Util } from "../utils/util";
 import { GameData } from "./gameData";
 import { Road } from "./road";
 import { SpiritRock } from "./spiritRock";
@@ -16,10 +17,11 @@ export interface FieldBase{
     create(): void;
     update(): void;
     final(): void;
-    getStationByID(id: number): Station | null;
+    getStationByID(id: number): Station;
 }
 export interface FieldInGame extends FieldBase{
     routineMonthStart(data: GameData): subroutine<void>;
+    accessibleStations(start: Station, steps: number, from?: Direction.asType): Station[];
     putSpiritRock(location: Station): void;
     removeSpiritRock(spiritRock: SpiritRock): void;
 }
@@ -72,7 +74,9 @@ export class Field implements FieldInGame, FieldInEdit{
         });
     }
     getStationByID(id: number){
-        return this.stations.find(station => station.id == id) ?? null;
+        const station = this.stations.find(station => station.id == id);
+        if(station) return station;
+        throw new Error(`not found`);
     }
 
     /*--- FieldInGame ---*/
@@ -91,6 +95,34 @@ export class Field implements FieldInGame, FieldInEdit{
             }
         }
     }
+
+    accessibleStations(start: Station, steps: number, from?: Direction.asType){
+        type typeFrom = Direction.asType | 'CENTER';
+        let possibleDest: {[id: number]: typeFrom} = {};
+        possibleDest[start.id] = from ?? 'CENTER';
+
+        for(let i = 1; i <= steps; i++){
+            const nextPossibleDest: {[id: number]: typeFrom} = {};
+            for(const id of Util.keys(possibleDest)){
+                const station = this.getStationByID(id);
+                for(const dir of Direction.asArray){
+                    if(!station.passable(dir, this) || dir == possibleDest[id]) continue;
+                    const destID = station.nexts[dir]?.id;
+                    if(destID){
+                        if(nextPossibleDest[destID] != undefined){
+                            nextPossibleDest[destID] = 'CENTER';
+                        }
+                        else{
+                            nextPossibleDest[destID] = Direction.opposite(dir);    
+                        }
+                    }
+                }               
+            }
+            possibleDest = nextPossibleDest;
+        }
+        return Util.keys(possibleDest).map(id => this.getStationByID(id));
+    }
+
     putSpiritRock(location: Station){
         this.spiritRocks.push(new SpiritRock(location));
     }

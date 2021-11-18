@@ -4,12 +4,19 @@ import { EventMove } from "../events/eventMove";
 import { EventView } from "../events/eventView";
 import { RoutineStation } from "./routineStation";
 import { Routine } from "./routine";
+import { EventMessage } from "../events/eventMessage";
+import { RoutineTurnEnd } from "./routineTurn";
 
-export class RoutineMove extends Routine<RoutineStation>{
+export class RoutineMove extends Routine<RoutineStation | RoutineTurnEnd>{
     constructor(data: GameData, private readonly steps: number){
         super(data);
     }
     *routine(data: GameData){
+        if(!this.canMove(data)){
+            yield new EventMessage('移動できる駅がない！');
+            yield 'end';
+            return new RoutineTurnEnd(data);
+        }
         const move = new EventMove(this.steps);
         while(true){
             const result = yield* Routine.execute(move);
@@ -28,6 +35,9 @@ export class RoutineMove extends Routine<RoutineStation>{
                 const _: never = result;
             }
         }
+    }
+    private canMove(data: GameData){
+        return data.field.accessibleStations(data.turnPlayer.location, this.steps).length > 0;
     }
 }
 
