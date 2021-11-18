@@ -9,7 +9,7 @@ export interface GameEvent<T = unknown>{
     /** イベントの処理
      * @returns イベントが終了する場合はその結果 `result` を持つオブジェクト、継続する場合はなし（`undefined`）
      */
-    update(data: GameData): {result: T};
+    update(data: GameData): {result: T} | void;
 
     /** イベントの終了処理
      */

@@ -27,12 +27,6 @@ export abstract class Routine<T> implements subroutine<T>{
     static *execute<T>(event: GameEvent<T>): subroutine<T>{
         return (yield event) as T;
     }
-    static *askYesNo(){
-        const choice = yield* Routine.execute(new EventChoose(['はい'], 'いいえ'));
-        yield 'end';
-        return choice == 'はい';
-    }
-    
 }
 
 export type Routines = Routine<Routines>;

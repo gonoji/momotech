@@ -27,4 +27,23 @@ export namespace Util{
      export function pick<T>(array: T[]){
         return array[Util.getRandomInt(0, array.length)];
     }
+
+    /** ランダムなIDを取得する
+     * @returns ランダムな文字列
+     */
+     export function getRandomStringID(length: number){
+        let id = '';
+        for(let i = 0; i < length; i++){
+            id += pick<String>('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split(''));
+        }
+        return id;
+    }
+
+    // 型を厳しくした標準ライブラリの関数たち
+    export function keys<T extends object, K extends keyof T>(object: T): K[]{
+        return Object.keys(object) as any;
+    }
+    export function fromEntries<K extends string, V>(entries: [K, V][]): { [key in K]: V }{
+        return Object.fromEntries(entries) as any;
+    }
 }

@@ -1,6 +1,7 @@
 import "phaser";
 import "./gameData/cards/cards"; // Card より先に import されないとエラーを吐く
 import { TitleScene } from "./scenes/titleScene";
+import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin';
 
 export namespace Game{
     export const width = 1280;
@@ -17,6 +18,16 @@ window.addEventListener('load', () => {
         height: Game.height, // 画面高さ
         parent: 'game',      // DOM上の親
         type: Phaser.AUTO,   // canvasかwebGLかを自動選択
-        scene                // 利用するSceneクラス
+        scene,                // 利用するSceneクラス
+        dom: {
+            createContainer: true
+        },plugins: {
+            global: [{
+                key: 'rexInputTextPlugin',
+                plugin: InputTextPlugin,
+                start: true
+            }
+            ]
+        }
     });
 });

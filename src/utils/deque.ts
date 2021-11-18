@@ -28,10 +28,10 @@ export class Deque<T>{
         return this.backs.pop();
     }
 
-    front(){
+    front(): T | undefined {
         return this.fronts[this.fronts.length - 1] ?? this.backs[0];
     }
-    back(){
+    back(): T | undefined {
         return this.backs[this.backs.length - 1] ?? this.fronts[0];
     }
     empty(){

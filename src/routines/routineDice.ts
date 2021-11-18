@@ -1,20 +1,18 @@
 import { EventDice } from "../events/eventDice";
-import { GameData } from "../gameData/gameData";
+import { subroutine } from "./routine";
 import { Routine } from "./routine";
-import { RoutineMove } from "./routineMove";
 
 /**
- * サイコロを振るルーチン
+ * サイコロを振るサブルーチン
+ * @param num サイコロの個数
  * @param canCancel 振るのをやめられるかどうか
- * @returns 振ったら RoutineMove、振らなかったら `null`
+ * @returns 振ったら出目の和、振らなかったら `null`
  */
-export class RoutineDice extends Routine<RoutineMove | null>{
-    constructor(data: GameData, private readonly canCancel: boolean){
-        super(data);
-    }
-    *routine(data: GameData){
-        const dice = yield* Routine.execute(new EventDice(1, this.canCancel));
-        yield 'end';
-        return dice && new RoutineMove(data, dice);
-    }
+export function routineDice(num: number, canCancel: true): subroutine<number | null>;
+export function routineDice(num: number, canCancel: false): subroutine<number>;
+export function* routineDice(num: number, canCancel: boolean): subroutine<number | null>{
+    const event = canCancel? new EventDice.CanCancel(num): new EventDice.Forced(num);
+    const dice = yield* Routine.execute(event);
+    yield 'end';
+    return dice == null? null: dice;
 }

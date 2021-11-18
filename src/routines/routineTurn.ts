@@ -1,10 +1,11 @@
 import { EventChoose } from "../events/eventChoose";
+import { EventDice } from "../events/eventDice";
 import { EventMessage } from "../events/eventMessage";
 import { GameData } from "../gameData/gameData";
 import { GameDate } from "../gameData/gameDate";
 import { Routine, Routines } from "./routine";
 import { RoutineCard } from "./routineCard";
-import { RoutineDice } from "./routineDice";
+import { RoutineMove } from "./routineMove";
 
 export class RoutineTurnStart extends Routine<Routines>{
     *routine(data: GameData){
@@ -19,7 +20,7 @@ export class RoutineTurnStart extends Routine<Routines>{
 const choicesTurn = ['サイコロ', 'カード'] as const;
 class RoutineTurn extends Routine<Routines>{
     *routine(data: GameData){
-        const eventChoose = new EventChoose(choicesTurn);
+        const eventChoose = new EventChoose.Forced(choicesTurn);
         while(true){
             const choice = yield* Routine.execute(eventChoose);
             console.log(choice);
@@ -32,11 +33,19 @@ class RoutineTurn extends Routine<Routines>{
     }
     private static action(data: GameData, choice: typeof choicesTurn[number]){
         switch(choice){
-            case 'サイコロ': return new RoutineDice(data, true);
+            case 'サイコロ': return new RoutineDice(data);
             case 'カード': return new RoutineCard(data);
         }
     }
 }
+class RoutineDice extends Routine<RoutineMove | null>{
+    *routine(data: GameData){
+        const dice = yield* Routine.execute(new EventDice.CanCancel(1));
+        yield 'end';
+        return dice == null? null: new RoutineMove(data, dice);
+    }
+}
+
 
 export class RoutineTurnEnd extends Routine<Routines>{
     *routine(data: GameData){

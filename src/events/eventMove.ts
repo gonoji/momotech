@@ -7,12 +7,12 @@ import { Window } from "../utils/window";
 const routineStation = 'station' as const;
 const routineView = 'view' as const;
 
-export class EventMove implements GameEvent<typeof routineStation | typeof routineView>{
+/** プレイヤーがフィールド上を移動するイベント
+ * @param steps 何マス進むか
+ */
+ export class EventMove implements GameEvent<typeof routineStation | typeof routineView>{
     private dirHistory: Direction.asType[] = [];
-    private window: Window;
-    /** プレイヤーがフィールド上を移動するイベント
-     * @param steps 何マス進むか
-     */
+    private window?: Window;
     constructor(private readonly steps: number){
     }
     init(data: GameData){
@@ -36,14 +36,14 @@ export class EventMove implements GameEvent<typeof routineStation | typeof routi
                         this.dirHistory.push(dir);
                     }
                 }
-                this.window.setTexts([EventMove.stepsText(this.stepsLeft)]);
+                this.window?.setTexts([EventMove.stepsText(this.stepsLeft)]);
             }
         }
         if(this.stepsLeft == 0) return { result: routineStation };
         if(KeyManager.down('C')) return { result: routineView };
     }
     final(){
-        this.window.final();
+        this.window?.final();
     }
 
     static stepsText(steps: number){

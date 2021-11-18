@@ -3,6 +3,7 @@ import { subroutine } from "../routines/routine";
 import { Direction } from "../utils/direction";
 import { Exportable } from "../utils/exportable";
 import { FileIO } from "../utils/fileIO";
+import { Util } from "../utils/util";
 import { GameData } from "./gameData";
 import { Road } from "./road";
 import { SpiritRock } from "./spiritRock";
@@ -16,6 +17,7 @@ export interface FieldBase{
     create(): void;
     update(): void;
     final(): void;
+    getStationByID(id: number): Station;
 }
 export interface FieldInGame extends FieldBase{
     routineMonthStart(data: GameData): subroutine<void>;
@@ -24,9 +26,8 @@ export interface FieldInGame extends FieldBase{
     removeSpiritRock(spiritRock: SpiritRock): void;
 }
 export interface FieldInEdit extends FieldBase, Exportable{
-    getStationByCoordinate(x: number, y: number): Station;
-    getStationByPosition(x: number, y: number): Station;
-    getNearestStation(current: Station, dir: Direction.asType): Station;
+    getStationByPosition(x: number, y: number): Station | null;
+    getNearestStation(current: Station, dir: Direction.asType): Station | null;
     connectStationWithID(id1: number, id2: number): void;
     disconnectStationWithID(id1: number, id2: number): void;
     removeStationByID(id: number): void;
@@ -54,6 +55,7 @@ export class Field implements FieldInGame, FieldInEdit{
 
     private importFromJson(name: string){
         const json = FileIO.getJson(name);
+
         json.forEach((e: stationData & stationEstateData) => {
             switch(e.type){
                 case 'estate': 
@@ -63,16 +65,18 @@ export class Field implements FieldInGame, FieldInEdit{
             }
         });
         json.forEach((e: stationData) => {
-            if(e.nexts.up != null){
-                this.connectStationWithID(e.nexts.up, e.id);
+            if(e.nexts.UP != null){
+                this.connectStationWithID(e.nexts.UP, e.id);
             }
-            if(e.nexts.left != null){
-                this.connectStationWithID(e.nexts.left, e.id);
+            if(e.nexts.LEFT != null){
+                this.connectStationWithID(e.nexts.LEFT, e.id);
             }
         });
     }
-    private getStationByID(id: number){
-        return this.stations.find(station => station.id == id);
+    getStationByID(id: number){
+        const station = this.stations.find(station => station.id == id);
+        if(station) return station;
+        throw new Error(`not found`);
     }
 
     /*--- FieldInGame ---*/
@@ -99,22 +103,24 @@ export class Field implements FieldInGame, FieldInEdit{
 
         for(let i = 1; i <= steps; i++){
             const nextPossibleDest: {[id: number]: typeFrom} = {};
-            for(const id in possibleDest){
-                const station = this.stations[id];
+            for(const id of Util.keys(possibleDest)){
+                const station = this.getStationByID(id);
                 for(const dir of Direction.asArray){
                     if(!station.passable(dir, this) || dir == possibleDest[id]) continue;
-                    const destID = station.nexts[dir].id;
-                    if(nextPossibleDest[destID] != undefined){
-                        nextPossibleDest[destID] = 'CENTER';
-                    }
-                    else{
-                        nextPossibleDest[destID] = Direction.opposite(dir);    
+                    const destID = station.nexts[dir]?.id;
+                    if(destID){
+                        if(nextPossibleDest[destID] != undefined){
+                            nextPossibleDest[destID] = 'CENTER';
+                        }
+                        else{
+                            nextPossibleDest[destID] = Direction.opposite(dir);    
+                        }
                     }
                 }               
             }
             possibleDest = nextPossibleDest;
         }
-        return Object.keys(possibleDest).map(id => this.stations[id]);
+        return Util.keys(possibleDest).map(id => this.getStationByID(id));
     }
 
     putSpiritRock(location: Station){
@@ -126,26 +132,18 @@ export class Field implements FieldInGame, FieldInEdit{
     }
 
     /*--- FieldInEdit ---*/
-
-    /**
-     * @param x scene座標でのx
-     * @param y scene座標でのy
-     */
-    getStationByCoordinate(x: number, y: number){
-        return this.getStationByPosition( x / Station.size , y / Station.size);
-    }
     /**
      * @param x size倍する前のx
      * @param y size倍する前のy
      */
     getStationByPosition(x: number, y: number){
-        return this.stations.find(station => station.x == x && station.y == y);
+        return this.stations.find(station => station.x == x && station.y == y) ?? null;
     }
     
     // current から dir 方向を見て、最も近い駅があればそれを返す
     getNearestStation(current: Station, dir: Direction.asType){
         const nearest = {
-            station: null as Station,
+            station: null as Station | null,
             dist: Number.MAX_SAFE_INTEGER
         };
         this.stations.forEach(s => {
@@ -175,8 +173,10 @@ export class Field implements FieldInGame, FieldInEdit{
     connectStationWithID(id1: number, id2: number){
         const s1 = this.getStationByID(id1);
         const s2 = this.getStationByID(id2);
-        this.addUpDownStation(s1, s2);
-        this.addLeftRightStation(s1, s2);
+        if(s1 && s2){
+            this.addUpDownStation(s1, s2);
+            this.addLeftRightStation(s1, s2);
+        }
     }
     disconnectStationWithID(id1: number, id2: number){
         const station1 = this.getStationByID(id1);
@@ -193,9 +193,10 @@ export class Field implements FieldInGame, FieldInEdit{
         const station = this.getStationByID(id);
         if(!station) return;
         for(const key of Direction.asArray){
-            if(station.nexts[key]){
-                this.removeLeftRightStation(station.nexts[key], station);
-                this.removeUpDownStation(station.nexts[key], station);
+            const next = station.nexts[key];
+            if(next){
+                this.removeLeftRightStation(next, station);
+                this.removeUpDownStation(next, station);
             }
         }
         station.final();
