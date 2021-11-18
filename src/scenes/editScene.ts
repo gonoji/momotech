@@ -65,10 +65,12 @@ export class EditScene extends Scene{
             this.editFlag = Util.xor(this.editFlag, true);
             this.editArea.setVisible(this.editFlag);
             this.editArea.setPosition(this.player.location.x * Field.size, this.player.location.y * Field.size);
-            this.interactiveWindow.removeData();
-            const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size); 
-            if(sta != null && sta.type == 'estate'){
-                this.interactiveWindow.setData(this, sta as StationEstate);
+            if(this.editFlag){
+                this.interactiveWindow.removeData();
+                const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size); 
+                if(sta != null && sta.type == 'estate'){
+                    this.interactiveWindow.setData(this, sta as StationEstate);
+                }
             }
         }
         if(this.editFlag){
