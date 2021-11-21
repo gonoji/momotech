@@ -9,7 +9,7 @@ import { GameData } from "./gameData";
 import { Road } from "./road";
 import { SpiritRock } from "./spiritRock";
 import { Station, stationData } from "./stations/station";
-import { stationEstateData } from "./stations/stationEstate";
+import { StationEstate, stationEstateData } from "./stations/stationEstate";
 import { stations } from "./stations/stations";
 
 export interface FieldBase{
@@ -21,8 +21,9 @@ export interface FieldBase{
     getStationByID(id: number): Station;
 }
 export interface FieldInGame extends FieldBase{
-    destination?: Destination;
     routineMonthStart(data: GameData): subroutine<void>;
+    destination?: Destination;
+    setDestination(station: StationEstate): void;
     accessibleStations(start: Station, steps: number, from?: Direction.asType): Station[];
     putSpiritRock(location: Station): void;
     removeSpiritRock(spiritRock: SpiritRock): void;
@@ -38,7 +39,7 @@ export interface FieldInEdit extends FieldBase, Exportable{
 export class Field implements FieldInGame, FieldInEdit{
     readonly stations: Station[] = [];
     readonly spiritRocks: SpiritRock[] = [];
-    destination?: Destination;
+    private _destination?: Destination;
     private readonly roads: Road[] = [];
 
     create(){
@@ -99,6 +100,14 @@ export class Field implements FieldInGame, FieldInEdit{
                 yield 'end';
             }
         }
+    }
+
+    get destination(){
+        return this._destination;
+    }
+    setDestination(station: StationEstate){
+        this._destination?.final();
+        this._destination = new Destination(station);
     }
 
     accessibleStations(start: Station, steps: number, from?: Direction.asType){
