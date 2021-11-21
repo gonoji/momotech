@@ -20,6 +20,7 @@ export interface FieldBase{
     getStationByID(id: number): Station;
 }
 export interface FieldInGame extends FieldBase{
+    destination?: Station;
     routineMonthStart(data: GameData): subroutine<void>;
     accessibleStations(start: Station, steps: number, from?: Direction.asType): Station[];
     putSpiritRock(location: Station): void;
@@ -37,7 +38,8 @@ export class Field implements FieldInGame, FieldInEdit{
     readonly stations: Station[] = [];
     readonly spiritRocks: SpiritRock[] = [];
     private readonly roads: Road[] = [];
-    
+    destination?: Station;
+
     create(){
         this.importFromJson('stations');
     }
