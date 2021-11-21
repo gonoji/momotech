@@ -4,7 +4,7 @@ import { Station, stationData } from "./station";
 import { estateData } from "../estates/estate";
 
 type estates = Record<string, estateData>;
-export type stationEstateData = { estates: estates };
+export type stationEstateData = { name:string ,estates: estates };
 
 export class StationEstate extends Station{
     readonly estates: Estate[];
@@ -12,7 +12,7 @@ export class StationEstate extends Station{
     constructor(data: stationEstateData & stationData | null, x: number = 0, y: number = 0, z: number = 0, id: number | null = null, estates: estates = {}){
         super(data, x, y, z, 'estate', id);
         this.estates = [];
-        this.estateData = { estates: {} };
+        this.estateData = {name: '新しい駅', estates: {} };
         if(data != null){
             this.estateData = data;
             for(const v of Object.values(data.estates)){

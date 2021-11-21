@@ -43,7 +43,8 @@ export class EditScene extends Scene{
             .setDisplaySize(Field.size, Field.size)
             .setVisible(false)
             .setDepth(100);
-        this.field.create();
+        this.field.removeAllData();
+           this.field.importFromJson('edit');
         this.player.create(this.field.stations[0]);
         this.player.focus();
 
