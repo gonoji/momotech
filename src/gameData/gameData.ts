@@ -20,7 +20,7 @@ export class GameData{
         this.factors = new Factors(this.date);
     }
     create(){
-        this.field.create();
+        this.field.importFromJson(`stations`);
         this.frame.create();
         Card.create();
         for(const player of this.players) player.create(this.field.stations[0]);

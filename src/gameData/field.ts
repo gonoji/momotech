@@ -14,7 +14,7 @@ import { stations } from "./stations/stations";
 export interface FieldBase{
     readonly stations: Station[];
     readonly spiritRocks: SpiritRock[];
-    create(): void;
+    importFromJson(name: string): void;
     update(): void;
     final(): void;
     getStationByID(id: number): Station;
@@ -31,6 +31,7 @@ export interface FieldInEdit extends FieldBase, Exportable{
     connectStationWithID(id1: number, id2: number): void;
     disconnectStationWithID(id1: number, id2: number): void;
     removeStationByID(id: number): void;
+    removeAllData():void;
 }
 
 export class Field implements FieldInGame, FieldInEdit{
@@ -38,9 +39,6 @@ export class Field implements FieldInGame, FieldInEdit{
     readonly spiritRocks: SpiritRock[] = [];
     private readonly roads: Road[] = [];
     
-    create(){
-        this.importFromJson('stations');
-    }
     update(){
         for(const station of this.stations) station.update();
     }
@@ -48,12 +46,21 @@ export class Field implements FieldInGame, FieldInEdit{
         for(const station of this.stations) station.final();        
     }
 
+    removeAllData(){
+        for(const station of this.stations) station.final();
+        for(const rock of this.spiritRocks) rock.final();
+        for(const road of this.roads) road.final();
+        this.stations.splice(0);
+        this.spiritRocks.splice(0);
+        this.roads.splice(0);
+    }
+
     static size = 64;
     static at(x: number, y: number){
         return {x: x * Field.size, y: y * Field.size};
     }
 
-    private importFromJson(name: string){
+    importFromJson(name: string): void{
         const json = FileIO.getJson(name);
 
         json.forEach((e: stationData & stationEstateData) => {

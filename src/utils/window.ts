@@ -70,6 +70,7 @@ export class Window{
 
 export class InteractiveWindow{
     private readonly box: Phaser.GameObjects.Rectangle;
+    stationName: InputText;
     names: InputText[];
     prices: InputText[];
     profits: InputText[];
@@ -99,6 +100,7 @@ export class InteractiveWindow{
         this.isAgris = [];
         this.prices = [];
         const layer = SceneManager.layer('dialog');
+        this.stationName = new InputText(layer,0,0);
         if(w < 0) w += layer.width - x;
         if(x < 0) x += layer.width - w;
         if(y < 0) y += layer.height - h;
@@ -111,6 +113,7 @@ export class InteractiveWindow{
     }
     final(){
         this.box.destroy();
+        this.stationName?.destroy();
         this.texts.forEach(text => text.destroy());
         this.names.forEach(inputText => inputText.destroy());
         this.prices.forEach(inputText => inputText.destroy());
@@ -131,13 +134,25 @@ export class InteractiveWindow{
         this.prices = [];
         station.estates.forEach(e => this.addData(e));
         const layer = SceneManager.layer('dialog');
+
+        this.stationName = new InputText(layer, 100, 660 , 10, 30, {
+            type: 'textarea',
+            text: `${station.estateData.name}`,
+            fontSize: '20px',});
+        layer.add.existing(this.stationName);
+        this.stationName.resize(200, 25)
+            .setOrigin(0)
+            .setFontColor('#000000')
+            .on('textchange', (inputText: InputText) => {
+                station.estateData.name = inputText.text;
+            });
+
         this.addText = layer.add.text(450, 660, 'add').setInteractive();
         this.addText.on('pointerdown', () => {
             station.addEstate(new Estate({name: "new Estate", price: 100, profit: 10, isAgri: false}, station));
             window.removeData();
             window.setData(editScene, station);
         });
-        this.setVisible(true);
 
         this.removeText = layer.add.text(520, 660, 'remove').setInteractive();
         this.removeText.on('pointerdown', () => {
@@ -236,6 +251,7 @@ export class InteractiveWindow{
         });this.isAgris.forEach(e =>{
             e.destroy();
         });
+        this.stationName?.destroy();
         this.texts = [];
         this.names = [];
         this.profits = [];
