@@ -1,5 +1,6 @@
 import { EventMessage } from "../events/eventMessage";
 import { EventRoulette } from "../events/eventRoulette";
+import { Destination } from "../gameData/destination";
 import { GameData } from "../gameData/gameData";
 import { StationEstate } from "../gameData/stations/stationEstate";
 import { Util } from "../utils/util";
@@ -11,7 +12,7 @@ export class RoutinePickDest extends Routine<void>{
         yield mes;
         const dest = yield* this.pickDest(data);
         yield mes;
-        data.field.destination = dest;
+        data.field.destination = new Destination(dest);
         yield new EventMessage(this.stringify(dest) + 'の駅です！');
         yield 'end';
         yield 'end';
