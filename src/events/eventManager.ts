@@ -1,18 +1,16 @@
 import { GameData } from "../gameData/gameData";
-import { Deque } from "../utils/deque";
 import { KeyManager } from "../utils/keyManager";
 import { GameEvent } from "./event";
+import { EventList } from "./eventList";
 
-export type command = GameEvent<unknown> | 'end';
+export type command = GameEvent | 'end';
 
 export class EventManager{
-    private readonly events: Deque<GameEvent<unknown>>;
-    constructor(){
-        this.events = new Deque<GameEvent<unknown>>();
-    }
+    private readonly events = new EventList();
+
     update(data: GameData){
         if(KeyManager.down('P')) this.events.print();
-        return this.events.front()?.update(data);
+        return this.events.last.update(data);
     }
     /**
      * @returns 再度ルーチンを進めてイベントを更新する必要があるかどうか
@@ -20,19 +18,20 @@ export class EventManager{
     next(data: GameData, command: command){
         if(command == 'end'){
             console.log('end');
-            this.events.popFront()?.final(data);
+            this.events.pop(data);
             return true;
         }
-        if(command == this.events.front()){
+        if(command == this.events.last){
             console.log('wait');
             return false;
         }
         if(!this.events.includes(command)){
             console.log('start', command);
-            this.events.pushFront(command);
-            command.init(data);
+            this.events.push(command, data);
             return false;
         }
-        throw new Error(`EventManager: 'remove' is not implemented`);
+        console.log('remove', command);
+        this.events.remove(command, data);
+        return true;
     }
 }

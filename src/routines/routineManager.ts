@@ -23,8 +23,9 @@ export class RoutineManager{
         if(next.done == true){
             this.routine = next.value;
             this.next(data);
+            return;
         }
-        else if(this.eventManager.next(data, next.value)){
+        if(this.eventManager.next(data, next.value)){
             this.next(data);
         }
     }
