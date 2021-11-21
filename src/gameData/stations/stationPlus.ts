@@ -10,12 +10,13 @@ export class StationPlus extends Station{
         super(data,x, y, z, 'plus', id);
     }
     *routine(gameData: GameData){
-        yield new EventMessage('プラス駅に止まった');
+        const mes = new EventMessage('プラス駅に止まった');
+        yield mes;
         const gain = yield* Routine.execute(new EventRoulette(StationPlus.gain(gameData), GameData.moneyToText));
-        yield 'end';
-        yield 'end';
+        yield mes;
         gameData.turnPlayer.money += gain;
         yield new EventMessage(GameData.moneyToText(gain) + '手に入れた');
+        yield 'end';
         yield 'end';
     }
 

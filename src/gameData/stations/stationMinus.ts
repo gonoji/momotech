@@ -10,12 +10,13 @@ export class StationMinus extends Station{
         super(data, x, y, z, 'minus', id);
     }
     *routine(gameData: GameData){
-        yield new EventMessage('マイナス駅に止まった');
+        const mes = new EventMessage('マイナス駅に止まった');
+        yield mes;
         const loss = yield* Routine.execute(new EventRoulette(StationMinus.loss(gameData), GameData.moneyToText));
-        yield 'end';
-        yield 'end';
+        yield mes;
         gameData.turnPlayer.money -= loss;
         yield new EventMessage(GameData.moneyToText(loss) + '失った');
+        yield 'end';
         yield 'end';
     }
 

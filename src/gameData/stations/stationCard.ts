@@ -12,13 +12,14 @@ export class StationCard extends Station{
         super(data, x, y, z, 'card', id);
     }
     *routine(gameData: GameData){
-        yield new EventMessage('カード駅に止まった');
+        const mes = new EventMessage('カード駅に止まった');
+        yield mes;
         const id = yield* Routine.execute(new EventRoulette(StationCard.getCard, id => Card.data[id].name));
-        yield 'end';
-        yield 'end';
+        yield mes;
         const card = Card.get(id);
         gameData.turnPlayer.cards.push(card);
         yield new EventMessage(card.name + 'を手に入れた');
+        yield 'end';
         yield 'end';
     }
 
