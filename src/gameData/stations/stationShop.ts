@@ -17,7 +17,7 @@ export class StationShop extends Station{
 
     }
     private readCardData(data: any){
-        if(data.cards != null)
+        if(data!=null && data.cards != null)
             for(const card of data.cards)
                 this.cardsData.push(card);
     }
