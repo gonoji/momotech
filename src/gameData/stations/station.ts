@@ -6,7 +6,7 @@ import { Util } from "../../utils/util";
 import { Field, FieldInGame } from "../field";
 import { GameData } from "../gameData";
 
-export type stationType = 'plus' | 'minus' | 'card' | 'estate';
+export type stationType = 'plus' | 'minus' | 'card' | 'estate' | 'shop';
 export type stationData = {
     id: number,
     type: stationType,
