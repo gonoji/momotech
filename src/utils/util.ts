@@ -38,12 +38,18 @@ export namespace Util{
         }
         return id;
     }
-
+    
     // 型を厳しくした標準ライブラリの関数たち
-    export function keys<T extends object, K extends keyof T>(object: T): K[]{
+    export function keys<T extends object>(object: T): (keyof T)[]{
         return Object.keys(object) as any;
     }
-    export function fromEntries<K extends string, V>(entries: [K, V][]): { [key in K]: V }{
+    export function entries<T extends object>(object: T): [keyof T, T[keyof T]][]{
+        return Object.entries(object) as any;
+    }
+    export function fromEntries<K extends keyof any, V>(entries: (readonly [K, V])[]): { [key in K]: V }{
         return Object.fromEntries(entries) as any;
+    }
+    export function mapObject<T extends object, R>(object: T, f: (key: keyof T, value: T[keyof T]) => R){
+        return Util.fromEntries(Util.entries(object).map(([key, value]) => [key, f(key, value)] as const));
     }
 }

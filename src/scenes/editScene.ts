@@ -23,7 +23,7 @@ export class EditScene extends Scene{
     estateEditFlag: boolean = false;
 
     constructor(){
-        super(`edit`);
+        super('edit');
         this.field = new Field();
         this.player = new Player(0);
     }
@@ -97,12 +97,30 @@ export class EditScene extends Scene{
                     const type = Util.keys(stations)[this.editStationNum];
                     let placed: Station;
                     if(type == 'estate'){
-                        const s = new stations[type](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
+                        const s = new stations[type]({
+                            id: Util.getRandomInt(0, 0x10000),
+                            type,
+                            position: { x: this.editArea.x / Field.size, y: this.editArea.y / Field.size },
+                            name: '物件駅',
+                            estates: {}
+                        });
                         this.interactiveWindow.setData(this, s);
                         placed = s;
                     }
+                    else if(type == 'shop'){
+                        placed = new stations[type]({
+                            id: Util.getRandomInt(0, 0x10000),
+                            type,
+                            position: { x: this.editArea.x / Field.size, y: this.editArea.y / Field.size },
+                            cards: []
+                        });
+                    }
                     else{
-                        placed = new stations[type](null, this.editArea.x /Field.size, this.editArea.y / Field.size);
+                        placed = new stations[type]({
+                            id: Util.getRandomInt(0, 0x10000),
+                            type,
+                            position: { x: this.editArea.x / Field.size, y: this.editArea.y / Field.size }
+                        });
                     }
                     this.field.stations.push(placed);
 

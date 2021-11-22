@@ -1,8 +1,9 @@
+import { stationBaseData } from "./station";
 import { StationCard } from "./stationCard";
-import { StationEstate } from "./stationEstate";
+import { StationEstate, stationEstateData } from "./stationEstate";
 import { StationMinus } from "./stationMinus";
 import { StationPlus } from "./stationPlus";
-import { StationShop } from "./stationShop";
+import { StationShop, stationShopData } from "./stationShop";
 
 export const stations = {
     'plus': StationPlus,
@@ -11,3 +12,5 @@ export const stations = {
     'estate' :StationEstate,
     'shop' : StationShop
 } as const;
+
+export type stationData = stationBaseData | stationEstateData | stationShopData;

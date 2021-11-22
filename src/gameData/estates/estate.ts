@@ -7,26 +7,27 @@ export type estateData = {
 };
 
 export class Estate implements Exportable{
-    public name: string;
-    public price: number;
-    public profit: number;
-    public isAgri: boolean;
-    public readonly id: string;
+    readonly id: string;
+    name: string;
+    price: number;
+    profit: number;
+    isAgri: boolean;
 
-    constructor(public data: estateData, public station: StationEstate){
+    constructor(data: estateData, public location: StationEstate){
+        this.id = Util.getRandomStringID(4);
         this.name = data.name;
         this.price = data.price;
         this.profit = data.profit;
         this.isAgri = data.isAgri;
-        this.id = Util.getRandomStringID(4);
     }
-
     final(){
-
     }
-
-
-    toJSON(): Object {
-        return {};
+    toJSON(): estateData{
+        return {
+            name: this.name,
+            price: this.price,
+            profit: this.profit,
+            isAgri: this.isAgri
+        };
     }
 }

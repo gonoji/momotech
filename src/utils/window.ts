@@ -137,14 +137,14 @@ export class InteractiveWindow{
 
         this.stationName = new InputText(layer, 100, 660 , 10, 30, {
             type: 'textarea',
-            text: `${station.estateData.name}`,
+            text: `${station.name}`,
             fontSize: '20px',});
         layer.add.existing(this.stationName);
         this.stationName.resize(200, 25)
             .setOrigin(0)
             .setFontColor('#000000')
             .on('textchange', (inputText: InputText) => {
-                station.estateData.name = inputText.text;
+                station.name = inputText.text;
             });
 
         this.addText = layer.add.text(450, 660, 'add').setInteractive();
@@ -179,8 +179,7 @@ export class InteractiveWindow{
             .setFontColor('#000000')
             .on('textchange', (inputText: InputText) => {
                 estate.name = inputText.text;
-                estate.data.name = inputText.text;
-                estate.station.estateData.estates[estate.id] = estate.data;
+                // estate.station.estateData.estates[estate.id] = estate.data;
             });
         
         
@@ -195,9 +194,8 @@ export class InteractiveWindow{
             .setOrigin(0.5)
             .setFontColor('#000000')
             .on('textchange', (inputText: { text: string }) => {
-                estate.price = parseInt(inputText.text);
-                estate.data.price = parseInt(inputText.text);
-                estate.station.estateData.estates[estate.id] = estate.data;
+                estate.price = parseInt(inputText.text, 10);
+                // estate.station.estateData.estates[estate.id] = estate.data;
             });
         
         
@@ -213,8 +211,7 @@ export class InteractiveWindow{
             .setFontColor('#000000')
             .on('textchange', (inputText: InputText) => {
                 estate.profit = parseInt(inputText.text);
-                estate.data.profit = parseInt(inputText.text);
-                estate.station.estateData.estates[estate.id] = estate.data;
+                // estate.station.estateData.estates[estate.id] = estate.data;
             });
         
         
@@ -230,10 +227,8 @@ export class InteractiveWindow{
             .setOrigin(0.5)
             .setFontColor('#000000')
             .on('textchange', (inputText: InputText) => {
-                console.log(inputText);
                 estate.isAgri = inputText.text == 'true';
-                estate.data.isAgri = estate.isAgri;
-                estate.station.estateData.estates[estate.id] = estate.data;
+                // estate.station.estateData.estates[estate.id] = estate.data;
             });
         
         
