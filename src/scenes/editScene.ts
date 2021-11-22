@@ -2,7 +2,7 @@ import { GameObjects } from "phaser";
 import { Game } from "../game";
 import { Field, FieldInEdit } from "../gameData/field";
 import { Player } from "../gameData/player";
-import { Station } from "../gameData/stations/station";
+import { Station, stationBaseData, stationType } from "../gameData/stations/station";
 import { stations } from "../gameData/stations/stations";
 import { Direction } from "../utils/direction";
 import { KeyManager } from "../utils/keyManager";
@@ -19,8 +19,9 @@ export class EditScene extends Scene{
     private player: Player;
     private editStationNum: number = 0;
     private mode: editMode = 'editRoad';
+    private _cursor = { x: 0, y: 0 };
     private editArea?: GameObjects.Sprite;
-    public interactiveWindow? : InteractiveWindow;
+    public interactiveWindow?: InteractiveWindow;
 
     constructor(){
         super('edit');
@@ -67,73 +68,32 @@ export class EditScene extends Scene{
         // 編集中に間違えてタイトルに戻ると悲しいので消してある
         // if(KeyManager.down('ESC')) SceneManager.start(new TitleScene());
     }
-
-    editStation(){
-        if(!this.editArea || !this.interactiveWindow) throw new Error('not initialized');
-
+    private editStation(){
         // カーソルの移動
         for(const key of Direction.asArray){
             if(KeyManager.down(key)){
-                switch(key){
-                    case 'UP': this.editArea.setPosition(this.editArea.x, this.editArea.y - Field.size);break;
-                    case 'DOWN': this.editArea.setPosition(this.editArea.x, this.editArea.y + Field.size);break;
-                    case 'LEFT': this.editArea.setPosition(this.editArea.x - Field.size, this.editArea.y );break;
-                    case 'RIGHT': this.editArea.setPosition(this.editArea.x + Field.size, this.editArea.y );break;
-                }
-                const sta = this.pointed(this.editArea);
-                if(sta != null && sta.type == 'estate'){
-                    this.mode = 'editStationData';
-                    this.interactiveWindow.setData(this, sta as StationEstate);
-                }else{
-                    this.interactiveWindow.removeData();
-                }
+                const delta = Direction.unitVector(key);
+                this.cursor = { x: this.cursor.x + delta.x, y: this.cursor.y + delta.y };
                 return;
             }
         }
 
         // 駅の配置
         if(KeyManager.down('Z')){
-            if(this.pointed(this.editArea) == null){
-                const type = Util.keys(stations)[this.editStationNum];
-                let placed: Station;
-                if(type == 'estate'){
-                    const s = new stations[type]({
-                        id: Util.getRandomInt(0, 0x10000),
-                        type,
-                        position: { x: this.editArea.x / Field.size, y: this.editArea.y / Field.size },
-                        name: '物件駅',
-                        estates: []
-                    });
-                    this.mode = 'editStationData';
-                    this.interactiveWindow.setData(this, s);
-                    placed = s;
-                }
-                else if(type == 'shop'){
-                    placed = new stations[type]({
-                        id: Util.getRandomInt(0, 0x10000),
-                        type,
-                        position: { x: this.editArea.x / Field.size, y: this.editArea.y / Field.size },
-                        cards: []
-                    });
-                }
-                else{
-                    placed = new stations[type]({
-                        id: Util.getRandomInt(0, 0x10000),
-                        type,
-                        position: { x: this.editArea.x / Field.size, y: this.editArea.y / Field.size }
-                    });
-                }
-                this.field.stations.push(placed);
+            if(this.pointed(this.cursor)) return;
 
-                for(const key of Direction.asArray){
-                    const nearSta = this.field.getNearestStation(placed, key);
-                    if(nearSta != null){
-                        const nextSta = nearSta.nexts[Direction.opposite(key)];
-                        if(nextSta != null && nextSta != placed){
-                            this.field.disconnectStationWithID(nextSta.id,nearSta.id);
-                            this.field.connectStationWithID(placed.id, nearSta.id);
-                            this.field.connectStationWithID(placed.id, nextSta.id);
-                        }
+            const type = Util.keys(stations)[this.editStationNum];
+            const station = EditScene.defaultStation(type, this.cursor);
+            this.field.stations.push(station);
+            
+            for(const dir of Direction.asArray){
+                const front = this.field.getNearestStation(station, dir);
+                if(front != null){
+                    const back = front.nexts[Direction.opposite(dir)];
+                    if(back != null && back != station){
+                        this.field.disconnectStationWithID(front.id, back.id);
+                        this.field.connectStationWithID(station.id, front.id);
+                        this.field.connectStationWithID(station.id, back.id);
                     }
                 }
             }
@@ -147,65 +107,92 @@ export class EditScene extends Scene{
 
         // 駅の削除
         else if(KeyManager.down('X')){
-            const sta = this.field.getStationByPosition(this.editArea.x / Field.size, this.editArea.y / Field.size);
+            const sta = this.pointed(this.cursor);
             if(sta != null && sta != this.player.location){
-                if(sta.type == 'estate'){
-                    this.interactiveWindow.removeData();
-                }
                 this.field.removeStationByID(sta.id);
             }
         }
 
         // 道編集モードに切り替え
-        else if(KeyManager.down('CTRL')){
-            this.mode = 'editRoad';
-            this.editArea.setVisible(false);
+        else if(KeyManager.down('CTRL')) this.changeToEditRoad();
+
+        // 駅データ編集モードに切り替え
+        else if(KeyManager.down('ENTER')){
+            const pointed = this.pointed(this.cursor);
+            if(pointed?.type == 'estate'){
+                this.changeToEditStationData(pointed as StationEstate);
+            }
         }
     }
-    editRoad(){
-        if(!this.editArea || !this.interactiveWindow) throw new Error('not initialized');
-
+    private editRoad(){
         // カーソルの移動・道の配置
         for(const key of Direction.asArray){
             if(KeyManager.down(key)){
                 if(KeyManager.pressed('SHIFT')){
-                    const sta = this.field.getNearestStation(this.player.location, key);
-                    if(sta != null){
-                        console.log(sta.id+" " +this.player.location.id);
-                        if(sta.nexts[Direction.opposite(key)] == null){
-                            this.field.connectStationWithID(this.player.location.id, sta.id);
-                        }else if(sta.nexts[Direction.opposite(key)] == this.player.location){
-                            this.field.disconnectStationWithID(this.player.location.id, sta.id);
+                    const next = this.field.getNearestStation(this.player.location, key);
+                    if(next != null){
+                        // console.log(sta.id, this.player.location.id);
+                        if(next.nexts[Direction.opposite(key)] == null){
+                            this.field.connectStationWithID(this.player.location.id, next.id);
+                        }
+                        else{
+                            this.field.disconnectStationWithID(this.player.location.id, next.id);
                         }
                     }
-                }else{
-                    this.player.moveTo(key);
                 }
+                else this.player.moveTo(key);
             }
         }
 
         // 駅編集モードに切り替え
         if(KeyManager.down('CTRL')){
-            this.mode = 'editStation';
-            this.editArea.setVisible(true);
-            this.editArea.setPosition(this.player.location.x * Field.size, this.player.location.y * Field.size);
-            this.interactiveWindow.removeData();
-            const sta = this.pointed(this.editArea);
-            if(sta?.type == 'estate'){
-                this.mode = 'editStationData';
-                this.interactiveWindow.setData(this, sta as StationEstate);
-            }
+            this.cursor = this.player.location;
+            this.changeToEditStation();
         }
 
     }
-    editStationData(){
-        if(KeyManager.down('ESC')){
-            this.mode = 'editStation';
-            this.interactiveWindow?.removeData();
-        }
+    private editStationData(){
+        if(KeyManager.down('ESC')) this.changeToEditStation();
+    }
+
+    private changeToEditRoad(){
+        this.mode = 'editRoad';
+        this.editArea?.setVisible(false);
+        this.interactiveWindow?.removeData();
+    }
+    private changeToEditStation(){
+        this.mode = 'editStation';
+        this.editArea?.setVisible(true);
+        this.interactiveWindow?.removeData();
+    }
+    private changeToEditStationData(station: StationEstate){
+        this.mode = 'editStationData';
+        this.interactiveWindow?.setData(this, station);
+    }
+
+
+    get cursor(){
+        return this._cursor;
+    }
+    set cursor(c: { x: number, y: number }){
+        this._cursor = c;
+        const pos = Field.at(c);
+        this.editArea?.setPosition(pos.x, pos.y);
     }
 
     private pointed(pos: { x: number, y: number }){
-        return this.field.getStationByPosition(pos.x / Field.size, pos.y / Field.size);
+        return this.field.getStationByPosition(pos.x, pos.y);
+    }
+
+    private static defaultStation(type: stationType, position: { x: number, y: number }){
+        const base = {id: Util.getRandomInt(0, 0xffffff), type, position};
+        switch(type){
+        case 'estate':
+            return new stations[type]({ ...base, name: '物件駅', estates: [] });
+        case 'shop':
+            return new stations[type]({ ...base, cards: [] });
+        default:
+            return new stations[type](base);
+        }
     }
 }

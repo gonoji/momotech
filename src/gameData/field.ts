@@ -56,8 +56,13 @@ export class Field implements FieldInGame, FieldInEdit{
     }
 
     static size = 64;
-    static at(x: number, y: number){
-        return {x: x * Field.size, y: y * Field.size};
+    static at(x: number, y: number): { x: number, y: number };
+    static at(pos: { x: number, y: number }): { x: number, y: number };
+    static at(arg1: number | { x: number, y: number }, arg2?: number){
+        if(typeof arg1 != 'number'){
+            [arg1, arg2] = [arg1.x, arg1.y];
+        }
+        return {x: arg1 * Field.size, y: arg2! * Field.size};
     }
 
     importFromJson(name: string): void{
