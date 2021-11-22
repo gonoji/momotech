@@ -7,46 +7,43 @@ import { Field, FieldInGame } from "../field";
 import { GameData } from "../gameData";
 
 export type stationType = 'plus' | 'minus' | 'card' | 'estate' | 'shop';
-export type stationData = {
+export type stationBaseData = {
     id: number,
     type: stationType,
     position: { x: number, y: number },
+}
+export type roadData = {
     nexts: { [dir in Direction.asType]?: number };
 };
 
 export abstract class Station implements Exportable{
     static size: number = 64;
-    private static id_max: number = 2147483647;
+    // private static id_max: number = 2147483647;
+
+    readonly type: stationType;
+    readonly id: number;
+    x: number;
+    y: number;
+    z: number;
+    readonly nexts: { [dir in Direction.asType]?: Station };
+
     private sprite: Phaser.GameObjects.Sprite;
 
-    data: stationData;
-    readonly nexts: { [dir in Direction.asType]?: Station };
-    id: number;
-    constructor(
-        data: stationData | null,
-        public x: number,
-        public y: number,
-        public z: number,
-        readonly type: stationType,
-        id: number | null
-    ){
-        this.data = data ?? {
-            id: id ?? Util.getRandomInt(0, Station.id_max),
-            type: this.type,
-            position: {x, y},
-            nexts: {}
-        };
+    constructor(data: stationBaseData){
+        this.type = data.type;
+        this.id = data.id;
+        this.x = data.position.x;
+        this.y = data.position.y;
+        this.z = 0;
+        this.nexts = {};
 
         const layer = SceneManager.layer('field');
-        this.sprite = layer.add.sprite(0, 0, this.data.type).setDepth(0);
+        this.sprite = layer.add.sprite(0, 0, this.type).setDepth(0);
         this.sprite.setDisplaySize(Station.size, Station.size);
-        this.nexts = {};
-        this.x = this.data.position.x;
-        this.y = this.data.position.y;
-        const pos = Field.at(this.x,this.y);
+
+        const pos = Field.at(this.x, this.y);
         this.sprite.x = pos.x;
         this.sprite.y = pos.y;
-        this.id = this.data.id;
     }
     update(){
     }
@@ -60,18 +57,19 @@ export abstract class Station implements Exportable{
     }
     setNext(dir: Direction.asType, other: Station){
         this.nexts[dir] = other;
-        this.data.nexts[dir] = other.id;
         other.nexts[Direction.opposite(dir)] = this;
-        other.data.nexts[Direction.opposite(dir)] = this.id;
     }
     removeNext(dir: Direction.asType, other: Station){
         delete this.nexts[dir];
-        delete this.data.nexts[dir];
         delete other.nexts[Direction.opposite(dir)];
-        delete other.data.nexts[Direction.opposite(dir)];
     }
-    toJSON(){
-        return this.data;
+    toJSON(): stationBaseData & roadData{
+        return {
+            id: this.id,
+            type: this.type,
+            position: { x: this.x, y: this.y },
+            nexts: Util.mapObject(this.nexts, (_, station) => station?.id)
+        };
     }
 
     abstract routine(gameData: GameData): subroutine<void>;

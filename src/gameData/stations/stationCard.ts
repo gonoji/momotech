@@ -2,15 +2,12 @@ import { EventMessage } from "../../events/eventMessage";
 import { EventRoulette } from "../../events/eventRoulette";
 import { Util } from "../../utils/util";
 import { GameData } from "../gameData";
-import { Station, stationData } from "./station";
+import { Station } from "./station";
 import { cards } from "../cards/cards";
 import { Card } from "../cards/card";
 import { Routine } from "../../routines/routine";
 
 export class StationCard extends Station{
-    constructor(data: stationData | null, x: number = 0, y: number = 0, z: number = 0, id: number | null = null){
-        super(data, x, y, z, 'card', id);
-    }
     *routine(gameData: GameData){
         const mes = new EventMessage('カード駅に止まった');
         yield mes;

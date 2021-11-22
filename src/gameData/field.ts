@@ -8,9 +8,10 @@ import { Destination } from "./destination";
 import { GameData } from "./gameData";
 import { Road } from "./road";
 import { SpiritRock } from "./spiritRock";
-import { Station, stationData } from "./stations/station";
+import { roadData, Station } from "./stations/station";
 import { StationEstate, stationEstateData } from "./stations/stationEstate";
-import { stations } from "./stations/stations";
+import { stationData, stations } from "./stations/stations";
+import { stationShopData } from "./stations/stationShop";
 
 export interface FieldBase{
     readonly stations: Station[];
@@ -34,7 +35,7 @@ export interface FieldInEdit extends FieldBase, Exportable{
     connectStationWithID(id1: number, id2: number): void;
     disconnectStationWithID(id1: number, id2: number): void;
     removeStationByID(id: number): void;
-    removeAllData():void;
+    removeAllData(): void;
 }
 
 export class Field implements FieldInGame, FieldInEdit{
@@ -49,35 +50,37 @@ export class Field implements FieldInGame, FieldInEdit{
     }
     final(){
         for(const station of this.stations) station.final();
+        for(const rock of this.spiritRocks) rock.final();
+        for(const road of this.roads) road.final();
         this.destination?.final();
     }
 
-    removeAllData(){
-        for(const station of this.stations) station.final();
-        for(const rock of this.spiritRocks) rock.final();
-        for(const road of this.roads) road.final();
-        this.stations.splice(0);
-        this.spiritRocks.splice(0);
-        this.roads.splice(0);
-    }
-
     static size = 64;
-    static at(x: number, y: number){
-        return {x: x * Field.size, y: y * Field.size};
+    static at(x: number, y: number): { x: number, y: number };
+    static at(pos: { x: number, y: number }): { x: number, y: number };
+    static at(arg1: number | { x: number, y: number }, arg2?: number){
+        if(typeof arg1 != 'number'){
+            [arg1, arg2] = [arg1.x, arg1.y];
+        }
+        return {x: arg1 * Field.size, y: arg2! * Field.size};
     }
 
     importFromJson(name: string): void{
         const json = FileIO.getJson(name);
 
-        json.forEach((e: stationData & stationEstateData) => {
+        json.forEach((e: stationData) => {
             switch(e.type){
-                case 'estate': 
-                    this.stations.push(new stations[e.type](e)); 
-                    break;
-                default: this.stations.push(new stations[e.type](e));
+            case 'estate':
+                this.stations.push(new stations[e.type](e as stationEstateData));
+                break;
+            case 'shop':
+                this.stations.push(new stations[e.type](e as stationShopData));
+                break;
+            default:
+                this.stations.push(new stations[e.type](e));
             }
         });
-        json.forEach((e: stationData) => {
+        json.forEach((e: stationData & roadData) => {
             if(e.nexts.UP != null){
                 this.connectStationWithID(e.nexts.UP, e.id);
             }
@@ -273,6 +276,13 @@ export class Field implements FieldInGame, FieldInEdit{
             }
         }
     }
+
+    removeAllData(){
+        this.final();
+        this.stations.splice(0);
+        this.roads.splice(0);
+    }
+
     toJSON(){
         return this.stations;
     }
