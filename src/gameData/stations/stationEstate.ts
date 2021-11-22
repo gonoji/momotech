@@ -2,10 +2,8 @@ import { EventMessage } from "../../events/eventMessage";
 import { Estate } from "../estates/estate";
 import { roadData, Station, stationBaseData } from "./station";
 import { estateData } from "../estates/estate";
-import { Util } from "../../utils/util";
 
-type estatesData = { [id: string]: estateData };
-export type stationEstateData = { name: string, estates: estatesData } & stationBaseData;
+export type stationEstateData = { name: string, estates: estateData[] } & stationBaseData;
 
 export class StationEstate extends Station{
     name: string;
@@ -23,11 +21,10 @@ export class StationEstate extends Station{
     }
     toJSON(): stationEstateData & roadData{
         const json = super.toJSON();
-        const estatesData = Util.fromEntries(this.estates.map((estate, i) => [i.toString(), estate.toJSON()] as const));
         return {
             ...json,
             name: this.name,
-            estates: estatesData
+            estates: this.estates
         };
     }
 

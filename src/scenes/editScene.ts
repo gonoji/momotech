@@ -44,7 +44,7 @@ export class EditScene extends Scene{
             .setVisible(false)
             .setDepth(100);
         this.field.removeAllData();
-           this.field.importFromJson('edit');
+        this.field.importFromJson('edit');
         this.player.create(this.field.stations[0]);
         this.player.focus();
 
@@ -102,7 +102,7 @@ export class EditScene extends Scene{
                             type,
                             position: { x: this.editArea.x / Field.size, y: this.editArea.y / Field.size },
                             name: '物件駅',
-                            estates: {}
+                            estates: []
                         });
                         this.interactiveWindow.setData(this, s);
                         placed = s;

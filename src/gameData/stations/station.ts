@@ -64,7 +64,6 @@ export abstract class Station implements Exportable{
         delete other.nexts[Direction.opposite(dir)];
     }
     toJSON(): stationBaseData & roadData{
-        console.log(this.nexts);
         return {
             id: this.id,
             type: this.type,
