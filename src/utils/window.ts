@@ -126,7 +126,6 @@ export class InteractiveWindow{
     setData(editScene: EditScene, station: StationEstate){
         const window = editScene.interactiveWindow;
         if(!window) throw new Error('not initalized');
-        editScene.estateEditFlag = true;
         this.texts = [];
         this.names = [];
         this.profits = [];
