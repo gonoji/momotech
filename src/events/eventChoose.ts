@@ -18,7 +18,7 @@ class Choices<T extends string> implements IChoices<T>{
         this.choices = choices;
     }
     down(){
-        if(this.index < this.choices.length) this.index++;
+        if(this.index < this.choices.length-1) this.index++;
     }
     up(){
         if(this.index > 0) this.index --;
